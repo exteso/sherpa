@@ -1,0 +1,7 @@
+{
+  "name": "ConProBio",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}
