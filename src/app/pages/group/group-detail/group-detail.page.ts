@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController, AlertController, ModalController } from '@ionic/angular';
 
 import { Subscription } from 'rxjs';
 
@@ -13,6 +13,7 @@ import {
 } from '../../../services';
 
 import { Group } from '../../../models';
+import { SelectUsersPage } from '../../modal/select-users/select-users.page';
 
 @Component({
   selector: 'app-group-detail',
@@ -38,7 +39,8 @@ export class GroupDetailPage implements OnInit, OnDestroy {
     public translate: TranslateProvider,
     public navCtrl: NavController,
     private firestore: FirestoreService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public modalController: ModalController
   ) {
   }
 
@@ -152,6 +154,13 @@ export class GroupDetailPage implements OnInit, OnDestroy {
     }
   }
 
-
+  async presentUserModal() {
+    
+    const modal = await this.modalController.create({
+      component: SelectUsersPage
+    });
+    return await modal.present();
+    
+  }
 
 }

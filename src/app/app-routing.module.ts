@@ -24,7 +24,10 @@ const routes: Routes = [
   { path: 'group-detail/:id', loadChildren: () => import('./pages/group/group-detail/group-detail.module').then(m => m.GroupDetailPageModule), canActivate: [AuthGuard] },
   { path: 'group-list', loadChildren: () => import('./pages/group/group-list/group-list.module').then(m => m.GroupListPageModule), canActivate: [AuthGuard], data: {preload: true} },
   { path: 'show-user', loadChildren: () => import('./pages/modal/show-user/show-user.module').then(m => m.ShowUserPageModule) },
-  { path: 'loader', loadChildren: () => import('./pages/loader/loader/loader.module').then(m => m.LoaderPageModule) }];
+  { path: 'loader', loadChildren: () => import('./pages/loader/loader/loader.module').then(m => m.LoaderPageModule) },
+  { path: 'select-users', loadChildren: () => import('./pages/modal/select-users/select-users.module').then( m => m.SelectUsersPageModule) },
+  ]
+;
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloaderService })],

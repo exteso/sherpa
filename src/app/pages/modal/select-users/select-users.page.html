@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Select users</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Cancel</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar color="dark" debounce="0" [(ngModel)]="searchUser" [placeholder]="translate.get('userlist.search')" focus cancelButtonText="Custom Cancel" animated></ion-searchbar>
+
+  <ion-list class="ion-no-padding">
+    <ion-item-sliding *ngFor="let user of users | usersFilter: [excludedIds, searchUser]">
+      <ion-item lines="none" color="light">
+        <ion-avatar slot="start">
+          <img appLazyLoad *ngIf="user?.photo" [src]="user?.photo">
+        </ion-avatar>
+        <ion-label>
+          <h2>
+            <ion-text color="primary"><strong>{{ user?.firstName }} {{ user?.lastName }}</strong></ion-text>
+          </h2>
+          <h3>
+            <ion-text color="primary">{{ user?.username }}</ion-text>
+          </h3>
+        </ion-label>
+      </ion-item>
+
+      <ion-item-options>
+        <ion-item-option color="primary" tappable (click)="sendPushNotification(user)">
+          <ion-icon slot="start" name="text"></ion-icon>
+          Send Push
+        </ion-item-option>
+        <ion-item-option color="secondary" tappable (click)="showUser(user.userId)">
+          <ion-icon slot="start" name="person"></ion-icon>
+          Profile
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+</ion-content>

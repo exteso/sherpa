@@ -36,6 +36,7 @@ import { IonImgLazyLoadModule } from './directives/ionimg-lazy-load.module';
 import { environment } from '../environments/environment';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { SelectUsersPageModule } from './pages/modal/select-users/select-users.module';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -56,6 +57,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     IonicModule.forRoot(environment.config),
     AppRoutingModule,
     HttpClientModule,
+    SelectUsersPageModule,
     ShowUserPageModule,
     IonImgLazyLoadModule,
     IonicStorageModule.forRoot({
