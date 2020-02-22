@@ -27,7 +27,7 @@ export const environment = {
     projectId: "sherpa-30d3a",
     storageBucket: "sherpa-30d3a.appspot.com",
     messagingSenderId: "675870338903",
-    //appId: "1:525845878170:web:2d6516700d76414d74d623"
+    appId: "1:675870338903:web:4868f7a9a0dd3c2a585812"
   },
   
   // You can find your googleWebClientId on your Firebase app console -> Authentication -> Sign-in Method -> Google -> Web client ID
