@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button routerLink="/crud">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>{{ 'grouplist.title' | translate }}</ion-title>
+
+    <ion-buttons slot="primary">
+      <ion-button color="light" routerLink="/group-create">
+        <ion-icon slot="start" name="add-circle"></ion-icon>
+        {{ 'grouplist.detail.buttom.add' | translate }}
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card color="secondary" *ngIf="(groupList | async)?.length === 0">
+    <ion-card-header color="dark" class="ion-margin-bottom">
+      <ion-card-title>
+        <ion-text color="light">{{ 'grouplist.msg.notavailable' | translate }}</ion-text>
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p>Create one clicking on above plus icon.</p>
+      <!-- {{ 'grouplist.msg.notavailable' | translate }} -->
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card color="secondary" *ngFor="let group of groupList | async" tappable routerLink="/group-detail/{{group.id}}">
+    <ion-card-header color="dark">
+      <ion-card-title>
+          <ion-icon name="bookmarks" color="tertiary" class="vaicon"></ion-icon> 
+          <ion-text color="tertiary">{{ group.groupName }}</ion-text>
+      </ion-card-title>
+      <ion-card-subtitle>
+        <ion-text color="secondary">{{ group.groupDate }}</ion-text>
+      </ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content class="ion-no-padding">
+      <ion-item color="primary">
+        <ion-icon name="pin" class="vaicon" slot="start"></ion-icon> 
+        {{ group.groupLocation }}
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

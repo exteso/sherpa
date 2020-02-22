@@ -1,24 +1,57 @@
 <ion-app>
-  <ion-split-pane contentId="main-content">
-    <ion-menu contentId="main-content" type="overlay">
+  <ion-split-pane contentId="menu-content">
+    <ion-menu contentId="menu-content">
       <ion-header>
-        <ion-toolbar>
-          <ion-title>Menu</ion-title>
+        <ion-toolbar *ngIf="auth.getUserData()" color="dark" class="user-profile">
+
+          <ion-item lines="none" class="ion-margin-bottom">
+            <ion-avatar slot="start" class="user-avatar">
+              <img [src]="auth.getUserData().photo">
+            </ion-avatar>
+            <ion-label>
+              <ion-text *ngIf="auth.getUserData().firstName" color="light">
+                <h2>
+                  <strong>{{ auth.getUserData().firstName }} {{ auth.getUserData().lastName }}</strong>
+                </h2>
+              </ion-text>
+              <ion-text color="tertiary">
+                <h3>
+                  {{ auth.getUserData().email }}
+                </h3>
+              </ion-text>
+              <ion-menu-toggle class="mto" auto-hide="false">
+                <ion-button size="small" (click)="goToEditProgile()">
+                  <ion-icon slot="start" name="contact"></ion-icon>
+                  <ion-text>Edit</ion-text>
+                </ion-button> 
+                <ion-button size="small" (click)="logout()">
+                  <ion-icon slot="start" name="log-out"></ion-icon>
+                  {{ 'auth.button.logout' | translate }}
+                </ion-button>
+              </ion-menu-toggle>
+            </ion-label>
+          </ion-item>
+
         </ion-toolbar>
       </ion-header>
+
       <ion-content>
         <ion-list>
-          <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
-            <ion-item [routerDirection]="'root'" [routerLink]="[p.url]">
-              <ion-icon slot="start" [name]="p.icon"></ion-icon>
+          <ion-list-header>
+            <ion-label><strong>Menu</strong></ion-label>
+          </ion-list-header>
+
+          <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages | async">
+            <ion-item [routerLink]="[p?.url]">
+              <ion-icon slot="start" [name]="p?.icon" color="dark"></ion-icon>
               <ion-label>
-                {{p.title}}
+                {{p?.title}}
               </ion-label>
             </ion-item>
           </ion-menu-toggle>
         </ion-list>
       </ion-content>
     </ion-menu>
-    <ion-router-outlet id="main-content"></ion-router-outlet>
+    <ion-router-outlet id="menu-content"></ion-router-outlet>
   </ion-split-pane>
 </ion-app>

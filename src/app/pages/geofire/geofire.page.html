@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ 'geofirestore.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom">
+    <agm-marker *ngFor="let marker of markers" [latitude]="marker.l[0]" [longitude]="marker.l[1]" [iconUrl]="(u === marker.u) ? markerIcon.you : markerIcon.users">
+      <agm-info-window [disableAutoPan]="false">
+
+        <div *ngIf="u === marker.u">
+          <h4>
+              <ion-text color="primary"><strong>{{ 'geofirestore.location' | translate }}</strong></ion-text>
+          </h4>
+          <p>
+            <ion-text color="dark">
+              <strong>{{ 'geofirestore.checkpoint.date' | translate }}:</strong> {{ showDate(marker.t) }} <br> 
+              <strong>{{ 'geofirestore.checkpoint.geo' | translate }}:</strong> {{marker.l[0]}}, {{marker.l[1]}}
+            </ion-text>
+          </p>
+        </div>
+
+        <div *ngIf="u !== marker.u">
+          <h4>
+            <ion-text color="primary"><strong>{{ 'geofirestore.usrlocation' | translate }}</strong></ion-text>
+          </h4>
+          <p>
+            <ion-text color="dark">
+              <strong>{{ 'geofirestore.checkpoint.date' | translate }}:</strong> {{ showDate(marker.t) }} <br> 
+              <strong>{{ 'geofirestore.checkpoint.geo' | translate }}:</strong> {{marker.l[0]}}, {{marker.l[1]}}
+            </ion-text>
+          </p>
+
+          <ion-button expand="full" shape="round" color="primary" (click)="showUser(marker.u)">
+            <ion-icon name="log-in" slot="start"></ion-icon>
+            {{ 'geofirestore.showuser' | translate }}
+          </ion-button>
+        </div>
+
+      </agm-info-window>
+    </agm-marker>
+  </agm-map>    
+</ion-content>

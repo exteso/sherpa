@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar color="primary" class="animated fadeIn">
+    <ion-buttons slot="start">
+      <ion-menu-button color="tertiary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-text color="light">
+        {{ 'home.title' | translate }}
+      </ion-text>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-card class="ion-no-margin bg-white">
+      <ion-card-header class="ion-no-padding bg-dark">
+        <ion-item lines="none">
+          <ion-avatar slot="start" class="user-avatar">
+            <ion-img class="list-logo" src="../../../assets/icon/icon256.png"></ion-img>
+          </ion-avatar>
+          <ion-label>
+            <ion-text color="light">
+              <h2>
+                {{ 'home.card.titlea' | translate }}<strong>{{ 'home.card.titleb' | translate }}</strong> 2
+              </h2>
+            </ion-text>
+            <ion-text color="tertiary">
+              <h3>
+                {{ 'home.card.description' | translate }}
+              </h3>
+            </ion-text>
+          </ion-label>
+        </ion-item>
+      </ion-card-header>
+
+      <ion-card-content class="ion-no-padding">
+        <ion-list inset="false" class="bg-tertiary">
+
+          <ion-item *ngFor="let item of items" color="secondary">
+            <ion-icon name="flame" color="light" slot="start"></ion-icon>
+            <ion-label>
+              <h2>
+                <ion-text color="light">
+                  <strong>{{ item.title | translate }}</strong>
+                </ion-text>
+              </h2>
+              <p>
+                <ion-text color="dark">
+                  {{ item.desc | translate }}
+                </ion-text>
+              </p>
+            </ion-label>
+          </ion-item>
+
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+    
+</ion-content>

@@ -1,0 +1,91 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>
+      {{ 'grouplist.detail.buttom.add' | translate }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card color="dark" class="ion-no-margin">
+    <ion-card-content>
+      <!-- Create profile form  (keydown)="keyDownFunction($group)" -->
+      <form [formGroup]="createGroupForm" class="list-form">
+        <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+          <ion-label color="tertiary" position="floating">
+            <ion-icon name="list" slot="start"></ion-icon>
+            {{ 'grouplist.detail.groupname.title' | translate }}
+          </ion-label>
+          <ion-input color="light" type="text" formControlName="groupName"></ion-input>
+        </ion-item>
+        <p class="text08 msg" *ngIf="f.groupName.errors && hasError">
+          <ion-text color="danger" *ngIf="f.groupName.errors.required">
+            {{ 'form.error.required' | translate }}
+          </ion-text>
+        </p>
+
+        <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+          <ion-label color="tertiary" position="floating">
+            <ion-icon name="list" slot="start"></ion-icon>
+            {{ 'grouplist.detail.contactemail.title' | translate }}
+          </ion-label>
+          <ion-input color="light" formControlName="contactEmail"></ion-input>
+        </ion-item>
+        <p class="text08 msg" *ngIf="f.contactEmail.errors && hasError">
+          <ion-text color="danger" *ngIf="f.contactEmail.errors.required">
+            {{ 'form.error.required' | translate }}
+          </ion-text>
+        </p>
+
+        <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+          <ion-label color="tertiary" position="floating">
+            <ion-icon name="list" slot="start"></ion-icon>
+            {{ 'grouplist.detail.grouplocation.title' | translate }}
+          </ion-label>
+          <ion-input color="light" type="text" formControlName="groupLocation"></ion-input>
+        </ion-item>
+        <p class="text08 msg" *ngIf="f.groupLocation.errors && hasError">
+          <ion-text color="danger" *ngIf="f.groupLocation.errors.required">
+            {{ 'form.error.required' | translate }}
+          </ion-text>
+        </p>
+
+        <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+          <ion-label color="tertiary" position="floating">
+            <ion-icon name="calendar" slot="start"></ion-icon>
+            {{ 'grouplist.detail.groupdate.title' | translate }}
+          </ion-label>
+          <!-- <ion-input color="light" type="text" formControlName="groupDate"></ion-input> -->
+      
+          <ion-select  color="light" interface="popover" formControlName="groupDate">
+            <!-- <ion-select-option value="0">{{ 'weekday.sunday' | translate }}</ion-select-option> -->
+            <ion-select-option value="1">{{ 'weekday.monday' | translate }}</ion-select-option>
+            <ion-select-option value="2">{{ 'weekday.tuesday' | translate }}</ion-select-option>
+            <ion-select-option value="3">{{ 'weekday.wednesday' | translate }}</ion-select-option>
+            <ion-select-option value="4">{{ 'weekday.thursday' | translate }}</ion-select-option>
+            <ion-select-option value="5">{{ 'weekday.friday' | translate }}</ion-select-option>
+            <!-- <ion-select-option value="6">{{ 'weekday.saturday' | translate }}</ion-select-option> -->
+          </ion-select>
+
+        </ion-item>
+        <p class="text08 msg" *ngIf="f.groupDate.errors && hasError">
+          <ion-text color="danger" *ngIf="f.groupDate.errors.required">
+            {{ 'form.error.required' | translate }}
+          </ion-text>
+        </p>
+
+        <div class="ion-margin-top">
+          <ion-button size="large" expand="full" color="primary" (click)="createGroup()">
+            <!-- [disabled]="isOffline" -->
+            <ion-icon name="bookmarks" slot="start"></ion-icon>
+            {{ 'grouplist.detail.buttom.add' | translate }}
+          </ion-button>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

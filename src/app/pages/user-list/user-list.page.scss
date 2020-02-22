@@ -1,0 +1,25 @@
+:host {
+    ion-content {
+        --background: var(--ion-color-light);
+    }
+  
+    ion-item {
+        border-radius: 0;
+        border-bottom: 1px dotted var(--ion-color-tertiary);
+    }
+  
+    ion-img {
+        overflow: hidden;
+    }
+
+    ion-searchbar {
+        background: var(--ion-color-dark-tint);
+        border-radius: 0;
+    }
+
+    ion-avatar {
+        img {
+            background-color: var(--ion-color-primary);
+        }
+    }
+}

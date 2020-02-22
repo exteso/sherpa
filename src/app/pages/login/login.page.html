@@ -1,0 +1,102 @@
+<ion-content class="ion-padding animated fadeIn login auth-page">
+
+  <div class="auth-content">
+
+    <!-- Logo -->
+    <div class="ion-padding-horizontal ion-text-center animated fadeInDown">
+      <div class="logo"></div>
+      <h2 class="ion-no-margin">
+        <ion-text color="light">
+          {{ 'home.card.titlea' | translate }}<ion-text class="fw700">{{ 'home.card.titleb' | translate }} </ion-text>
+          {{ 'home.card.version' | translate }}
+        </ion-text>
+      </h2>
+    </div>
+
+    <!-- Login form -->
+    <form [formGroup]="loginForm" (keydown)="keyDownFunction($event)" class="list-form">
+      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="mail" item-start></ion-icon>
+          {{ 'auth.form.email' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="email" formControlName="email"></ion-input>
+      </ion-item>
+      <p class="ion-no-margin text08 msg" *ngIf="f.email.errors && hasError">
+        <ion-text color="light" *ngIf="f.email.errors.required">
+          {{ 'auth.form.error.email' | translate }}
+        </ion-text>
+        <ion-text color="light" *ngIf="f.email.errors.email"> 
+          {{ 'auth.form.error.email.isvalid' | translate }}
+        </ion-text>
+      </p>
+
+      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="lock" item-start></ion-icon>
+          {{ 'auth.form.password' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="password" formControlName="password"></ion-input>
+      </ion-item>
+      <p class="ion-no-margin text08 msg" *ngIf="f.password.errors && hasError">
+        <ion-text color="light" *ngIf="f.password.errors.required">
+          {{ 'auth.form.error.password' | translate }}
+        </ion-text>
+        <ion-text color="light" *ngIf="f.password.errors.minlength"> 
+          {{ 'auth.form.error.password.minlength' | translate }}
+        </ion-text>
+      </p>
+    </form>
+
+    <p tappable (click)="forgotPass()" class="ion-text-right paz">
+      <ion-text color="light">
+        <strong>{{ 'auth.form.label.forgot' | translate }}</strong>
+      </ion-text>
+    </p>
+
+    <div>
+      <ion-button size="large" expand="full" shape="round" color="dark" (click)="login(loginForm)">
+        <!-- [disabled]="isOffline" -->
+        <ion-icon name="log-in" slot="end"></ion-icon>
+        {{ 'auth.button.login' | translate }}
+      </ion-button>
+
+      <p class="ion-text-center ion-no-margin ion-margin-top">
+        <ion-text color="light">
+          {{ 'auth.login.text' | translate }}
+        </ion-text>
+      </p>
+
+      <ion-grid class="btn-group">
+        <ion-row>
+          <ion-col size="6">
+            <ion-button color="facebook" shape="round" expand="full" (click)="loginWithFacebook()">
+              <ion-icon slot="icon-only" name="logo-facebook"></ion-icon>
+            </ion-button>
+          </ion-col>
+          <!-- <ion-col size="4">
+            <ion-button color="twitter" shape="round" expand="full" (click)="loginWithTwitter()">
+              <ion-icon slot="icon-only" name="logo-twitter"></ion-icon>
+            </ion-button>
+          </ion-col> -->
+          <ion-col size="6">
+            <ion-button color="google" shape="round" expand="full" (click)="loginWithGoogle()">
+              <ion-icon slot="icon-only" name="logo-googleplus"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+    </div>
+
+    <!-- Other links -->
+    <div class="ion-text-center ion-margin-top">
+      <span (click)="goToRegister()" class="paz" tappable>
+        <ion-text color="light">
+          {{ 'auth.login.question' | translate }} <strong>{{ 'auth.register.question.button' | translate }}</strong>
+        </ion-text>
+      </span>
+    </div>
+
+  </div>
+</ion-content>

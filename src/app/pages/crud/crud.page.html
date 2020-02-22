@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button routerLink="/home">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'crudlist.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item *ngFor="let p of pages" [routerLink]="[p.url]" color="secondary">
+    <ion-icon slot="start" [name]="p.icon" color="light"></ion-icon>
+    <ion-label>
+      <ion-text color="light">{{p.title}}</ion-text>
+    </ion-label>
+  </ion-item>
+</ion-content>

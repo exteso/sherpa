@@ -1,0 +1,46 @@
+:host {
+    ion-content {
+        --background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-tertiary));
+    }
+  
+    ion-item {
+        border-radius: 0;
+        border-bottom: 1px dotted var(--ion-color-tertiary);
+    }
+
+    ion-img {
+        overflow: hidden;
+    }
+}
+
+ion-button {
+    --background: linear-gradient(135deg, var(--ion-color-tertiary), var(--ion-color-secondary));
+    --box-shadow: 0 2px 2px rgba( var(--ion-color-primary-rgb), .65);
+}
+
+.paz {
+    position: relative;
+    z-index: 10;
+}
+
+.uploadweb {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.msg {
+    padding: 5px 10px;
+    background-color: var(--ion-color-tertiary);
+    border-radius: 12px;
+}
+
+.photo {
+    width: 92px;
+    height: 92px;
+    margin: 20px auto 8px;
+    border-radius: 50%;
+}

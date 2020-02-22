@@ -1,0 +1,48 @@
+:host {
+  ion-content {
+      --background: var(--ion-color-dark);
+  }
+}
+
+ion-button {
+  --background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-tertiary));
+}
+
+// :host(.button-solid.ion-color) .button-native {
+//   background-image: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary)) !important;
+// }
+
+ion-slides {
+  height: 100%;
+  img {
+    max-width: 96px !important;
+    border-radius: 50%;
+  }
+}
+
+.toolbar-background {
+  background: var(--ion-color-primary) !important;
+  border-color: transparent;
+}
+
+.slide-zoom {
+  height: 99vh;
+}
+
+.slide-title {
+  margin-top: 0;
+}
+
+.slide-image {
+  // max-height: 50%;
+  max-width: 128px !important;
+  margin: 0 0 18px;
+}
+
+.slide-image {
+  box-shadow: 0 0 30px rgba(var(--ion-color-light-rgb), .4);
+}
+
+.ts {
+  text-shadow: 1px 1px 0 var(--ion-color-primary) !important;
+}

@@ -1,0 +1,113 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ 'auth.nav.title.profile' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<div class="ion-padding ion-text-center bg-secondary">
+  <!-- <ion-avatar [src]="photo" class="photo"></ion-avatar> -->
+  <ion-avatar class="photo">
+    <img [src]="photo">
+  </ion-avatar>
+  <input type="file" (change)="setPhotoByWeb($event)" class="uploadweb" #photoInput />
+  
+  <ion-button size="small" (click)="photoInput.click()" *ngIf="network.isPlatform('desktop')">
+    <ion-icon slot="start" name="photos" color="light"></ion-icon> 
+    <ion-text color="light">{{ 'auth.form.editphoto' | translate }}</ion-text>
+  </ion-button>
+  <ion-button size="small" color="tertiary" (click)="setPhoto()" *ngIf="network.isPlatform('mobile')">
+    <ion-icon slot="start" name="photos" color="light"></ion-icon> 
+    <ion-text color="light">{{ 'auth.form.editphoto' | translate }}</ion-text>
+  </ion-button>
+</div>
+
+
+<ion-content class="ion-padding animated fadeIn login auth-page">
+  
+  <div class="auth-content">
+
+    <!-- Create profile form -->
+    <form [formGroup]="eprofileForm" (keydown)="keyDownFunction($event)" class="list-form">
+      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="list" item-start></ion-icon>
+          {{ 'auth.form.firstName' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="text" formControlName="firstName"></ion-input>
+      </ion-item>
+      <p class="text08 msg" *ngIf="f.firstName.errors && hasError">
+        <ion-text color="danger" *ngIf="f.firstName.errors.required">
+          {{ 'auth.form.error.firstName' | translate }}
+        </ion-text>
+      </p>
+
+
+      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="list" item-start></ion-icon>
+          {{ 'auth.form.lastName' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="text" formControlName="lastName"></ion-input>
+      </ion-item>
+      <p class="text08 msg" *ngIf="f.lastName.errors && hasError">
+        <ion-text color="danger" *ngIf="f.lastName.errors.required">
+          {{ 'auth.form.error.lastName' | translate }}
+        </ion-text>
+      </p>
+
+      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="mail" item-start></ion-icon>
+          {{ 'auth.form.email' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="email" formControlName="email"></ion-input>
+      </ion-item>
+      <p class="text08 msg" *ngIf="f.email.errors && hasError">
+        <ion-text color="danger" *ngIf="f.email.errors.required">
+          {{ 'auth.form.error.email' | translate }}
+        </ion-text>
+        <ion-text color="danger" *ngIf="f.email.errors.email"> 
+          {{ 'auth.form.error.email.isvalid' | translate }}
+        </ion-text>
+      </p>
+
+      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="person" item-start></ion-icon>
+          {{ 'auth.form.username' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="text" formControlName="username" (input)="onInput($event.target.value)"></ion-input>
+      </ion-item>
+      <p class="text08 msg" *ngIf="f.username.errors && hasError">
+        <ion-text color="danger" *ngIf="f.username.errors.required">
+          {{ 'auth.form.error.username' | translate }}
+        </ion-text>
+        <ion-text color="danger" *ngIf="!uniqueUsername && f.username.valid && hasError"> 
+          {{ 'auth.form.error.exists' | translate }}
+        </ion-text>
+      </p>
+
+    </form>
+
+    <ion-item color="primary" lines="none" class="animated fadeInUp">
+      <ion-label color="light" stacked>
+        <ion-icon name="notifications" slot="start"></ion-icon>
+        {{ 'auth.profile.notifications' | translate }}
+      </ion-label>
+      <ion-toggle color="tertiary" [(ngModel)]="hasPushToken"></ion-toggle>
+    </ion-item>
+
+    <div class="ion-margin-top">
+      <ion-button size="medium" expand="full" shape="round" color="dark" (click)="updateProfile()">
+        <!-- [disabled]="isOffline" -->
+        <ion-icon name="save" slot="end"></ion-icon>
+        {{ 'auth.button.save' | translate }}
+      </ion-button>
+    </div>
+
+  </div>
+
+</ion-content>

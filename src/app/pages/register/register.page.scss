@@ -1,0 +1,30 @@
+:host {
+  ion-content {
+    --background: linear-gradient(135deg, var(--ion-color-tertiary), var(--ion-color-primary));
+  }
+
+  ion-item {
+    border-radius: 0;
+    border-bottom: 1px dotted var(--ion-color-primary);
+  }
+}
+
+ion-button {
+  --background: linear-gradient(135deg, var(--ion-color-tertiary), var(--ion-color-secondary));
+  --box-shadow: 0 2px 2px rgba( var(--ion-color-primary-rgb), .65);
+}
+
+.paz {
+  position: relative;
+  z-index: 10;
+}
+
+.msg {
+  padding: 8px 10px;
+  background-color: var(--ion-color-danger);
+  border-radius: 0 0 12px 12px;
+}
+
+.logo {
+  box-shadow: 0 0 40px rgba(var(--ion-color-light-rgb), .7);
+}

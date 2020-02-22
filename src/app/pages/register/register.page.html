@@ -1,0 +1,116 @@
+<ion-content class="ion-padding animated fadeIn login auth-page">
+
+  <div class="auth-content">
+    <!-- Logo -->
+    <div class="ion-padding-horizontal ion-text-center animated fadeInDown">
+      <div class="logo"></div>
+      <h3 class="ion-no-margin">
+        <ion-text color="light" class="fw700">
+          {{ 'auth.button.register' | translate }}
+        </ion-text>
+      </h3>
+    </div>
+
+    <!-- Register form -->
+    <form [formGroup]="onRegisterForm" class="list-form">
+      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="mail" item-start></ion-icon>
+          {{ 'auth.form.email' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="email" formControlName="email"></ion-input>
+      </ion-item>
+      <p class="ion-no-margin text08 msg" *ngIf="f.email.errors && hasError">
+        <ion-text color="light" *ngIf="f.email.errors.required">
+          {{ 'auth.form.error.email' | translate }}
+        </ion-text>
+        <ion-text color="light" *ngIf="f.email.errors.email"> 
+          {{ 'auth.form.error.email.isvalid' | translate }}
+        </ion-text>
+      </p>
+
+      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="lock" item-start></ion-icon>
+          {{ 'auth.form.password' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="password" formControlName="password"></ion-input>
+      </ion-item>
+      <p class="ion-no-margin text08 msg" *ngIf="f.password.errors && hasError">
+        <ion-text color="light" *ngIf="f.password.errors.required">
+          {{ 'auth.form.error.password' | translate }}
+        </ion-text>
+        <ion-text color="light" *ngIf="f.password.errors.minlength"> 
+          {{ 'auth.form.error.password.minlength' | translate }}
+        </ion-text>
+      </p>
+
+      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="lock" item-start></ion-icon>
+          {{ 'auth.form.confirm' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="password" formControlName="confirmPassword"></ion-input>
+      </ion-item>
+      <div *ngIf="f.confirmPassword.errors && hasError">
+        <p class="ion-no-margin text08 msg" *ngIf="f.confirmPassword.errors.required">
+          <ion-text color="light">
+            {{ 'auth.form.error.password' | translate }}
+          </ion-text>
+        </p>
+        <p class="ion-no-margin text08 msg" *ngIf="f.confirmPassword.errors.minlength">
+          <ion-text color="light"> 
+            {{ 'auth.form.error.password.minlength' | translate }}
+          </ion-text>
+        </p>
+        <!-- <p class="text08 msg" *ngIf="f.password.value !== f.confirmPassword.value">
+          <ion-text color="danger">{{ 'auth.form.error.mismatch' | translate }}</ion-text>
+        </p> -->
+      </div>
+      <!-- {{ f.password.value }} - {{ f.confirmPassword.value }} -->
+    </form>
+
+    <div class="ion-margin-top">
+      <ion-button icon-left size="medium" expand="full" shape="round" color="dark" (click)="register(onRegisterForm)">
+        <!-- [disabled]="isOffline" -->
+        <ion-icon name="log-in"></ion-icon>
+        {{ 'auth.button.register' | translate }}
+      </ion-button>
+
+      <p class="ion-text-center">
+        <ion-text color="light">
+          {{ 'auth.register.text' | translate }}
+        </ion-text>
+      </p>
+
+      <ion-grid class="btn-group">
+        <ion-row>
+          <ion-col size="12">
+            <ion-button color="facebook" shape="round" expand="full" (click)="registerWithFacebook()">
+              <ion-icon slot="icon-only" name="logo-facebook"></ion-icon>
+            </ion-button>
+          </ion-col>
+          <!-- <ion-col size="4">
+            <ion-button color="twitter" shape="round" expand="full">
+              <ion-icon slot="icon-only" name="logo-twitter"></ion-icon>
+            </ion-button>
+          </ion-col> -->
+          <!-- <ion-col size="6">
+            <ion-button color="google" shape="round" expand="full" (click)="registerWithGoogle()">
+              <ion-icon slot="icon-only" name="logo-googleplus"></ion-icon>
+            </ion-button>
+          </ion-col> -->
+        </ion-row>
+      </ion-grid>
+
+    </div>
+
+    <!-- Other links -->
+    <div class="ion-text-center ion-margin-top">
+      <span (click)="goToLogin()" tappable>
+        <ion-text color="light">{{ 'auth.register.question' | translate }} <strong>{{ 'auth.button.login' | translate }}</strong></ion-text>
+      </span>
+    </div>
+
+  </div>
+</ion-content>

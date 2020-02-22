@@ -1,0 +1,129 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>
+      {{ 'grouplist.detail.title' | translate }}
+    </ion-title>
+
+    <ion-buttons slot="primary">
+      <ion-button color="light" *ngIf="mode === 'detail'" (click)="mode = 'edit'">
+        <ion-icon slot="start" name="create"></ion-icon>
+        Edit
+      </ion-button>
+      <ion-button color="light" *ngIf="mode === 'edit'" (click)="mode = 'detail'">
+        <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+        Cancel edit
+      </ion-button>
+      <ion-button color="light" (click)="deleteGroup()">
+        <ion-icon slot="start" name="trash"></ion-icon>
+        Delete
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-card color="primary" class="ion-no-margin" *ngIf="mode === 'detail'">
+    <ion-card-header color="dark" class="ion-margin-bottom">
+      <ion-card-title>
+        {{ group?.groupName }}
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p>
+        <ion-text color="light">{{ group?.contactEmail }}</ion-text>
+      </p>
+
+      <ion-item color="secondary" class="ion-margin-top">
+        <ion-icon name="pin" class="vaicon" slot="start"></ion-icon> 
+        {{ group?.groupLocation }}
+      </ion-item>
+      <ion-item color="secondary">
+        <ion-icon name="calendar" class="vaicon" slot="start"></ion-icon> 
+        {{ 'weekday.'+group?.groupDeliveryDay | translate }}
+      </ion-item>       
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card color="dark" class="ion-no-margin" *ngIf="mode === 'edit'">
+    <ion-card-content>
+
+      <form [formGroup]="editGroupForm" class="list-form">
+        <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+          <ion-label color="tertiary" position="floating">
+            <ion-icon name="list" slot="start"></ion-icon>
+            {{ 'grouplist.detail.groupname.title' | translate }}
+          </ion-label>
+          <ion-input color="light" type="text" formControlName="groupName"></ion-input>
+        </ion-item>
+        <p class="text08 msg" *ngIf="f.groupName.errors && hasError">
+          <ion-text color="danger" *ngIf="f.groupName.errors.required">
+            {{ 'form.error.required' | translate }}
+          </ion-text>
+        </p>
+
+        <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+          <ion-label color="tertiary" position="floating">
+            <ion-icon name="list" slot="start"></ion-icon>
+            {{ 'grouplist.detail.contactemail.title' | translate }}
+          </ion-label>
+          <ion-input color="light" formControlName="contactEmail"></ion-input>
+        </ion-item>
+        <p class="text08 msg" *ngIf="f.contactEmail.errors && hasError">
+          <ion-text color="danger" *ngIf="f.contactEmail.errors.required">
+            {{ 'form.error.required' | translate }}
+          </ion-text>
+        </p>
+
+        <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+          <ion-label color="tertiary" position="floating">
+            <ion-icon name="list" slot="start"></ion-icon>
+            {{ 'grouplist.detail.grouplocation.title' | translate }}
+          </ion-label>
+          <ion-input color="light" type="text" formControlName="groupLocation"></ion-input>
+        </ion-item>
+        <p class="text08 msg" *ngIf="f.groupLocation.errors && hasError">
+          <ion-text color="danger" *ngIf="f.groupLocation.errors.required">
+            {{ 'form.error.required' | translate }}
+          </ion-text>
+        </p>
+
+        <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+          <ion-label color="tertiary" position="floating">
+            <ion-icon name="calendar" slot="start"></ion-icon>
+            {{ 'grouplist.detail.groupdate.title' | translate }}
+          </ion-label>
+
+          <ion-select  color="light" interface="popover" formControlName="groupDate">
+            <!-- <ion-select-option value="0">{{ 'weekday.0' | translate }}</ion-select-option> -->
+            <ion-select-option value="1">{{ 'weekday.1' | translate }}</ion-select-option>
+            <ion-select-option value="2">{{ 'weekday.2' | translate }}</ion-select-option>
+            <ion-select-option value="3">{{ 'weekday.3' | translate }}</ion-select-option>
+            <ion-select-option value="4">{{ 'weekday.4' | translate }}</ion-select-option>
+            <ion-select-option value="5">{{ 'weekday.5' | translate }}</ion-select-option>
+            <!-- <ion-select-option value="6">{{ 'weekday.6' | translate }}</ion-select-option> -->
+          </ion-select>
+        </ion-item>
+        <p class="text08 msg" *ngIf="f.groupDate.errors && hasError">
+          <ion-text color="danger" *ngIf="f.groupDate.errors.required">
+            {{ 'form.error.required' | translate }}
+          </ion-text>
+        </p>
+
+        <div class="ion-margin-top">
+          <ion-button size="large" expand="full" color="primary" (click)="editGroup()">
+            <!-- [disabled]="isOffline" -->
+            <ion-icon name="create" slot="start"></ion-icon>
+            {{ 'grouplist.detail.buttom.edit' | translate }}
+          </ion-button>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
