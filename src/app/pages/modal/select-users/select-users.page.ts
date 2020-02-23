@@ -81,6 +81,10 @@ export class SelectUsersPage implements OnInit, OnDestroy  {
       return null;
     }
   
+    selectUser(user:User){
+      this.modalCtrl.dismiss(user);
+    }
+
     dismiss() {
       // using the injected ModalController this page
       // can "dismiss" itself and optionally pass back data

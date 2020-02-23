@@ -16,7 +16,6 @@ import { WeekDay } from '@angular/common';
 @Injectable({
   providedIn: 'root'
 })
-
 export class FirestoreService {
   fsRef: any;
   // geoFirestore: any;
@@ -137,52 +136,6 @@ export class FirestoreService {
   /* CRUD */
   /////////////////
 
- 
-  // Event //
-  createEvent(
-    eventName: string,
-    eventDescription: string,
-    eventLocation: string,
-    eventDate: string,
-    userId: string
-  ): Promise<void> {
-    const id = this.afs.createId();
-
-    return this.afs.doc(`eventList/${id}`).set({
-      id,
-      eventName,
-      eventDescription,
-      eventLocation,
-      eventDate,
-      userId
-    });
-  }
-
-  getEventList(userId: string): AngularFirestoreCollection<Event> {
-    return this.afs.collection('eventList', ref => ref.where('userId', '==', userId));
-  }
-
-  deleteEvent(eventId: string): Promise<void> {
-    return this.afs.doc(`eventList/${eventId}`).delete();
-  }
-
-  updateEvent(
-    eventId: string,
-    eventName: string,
-    eventDescription: string,
-    eventLocation: string,
-    eventDate: number
-    ): Promise<void> {
-    return this.afs.doc(`eventList/${eventId}`).update({
-      eventName,
-      eventDescription,
-      eventLocation,
-      eventDate
-    });
-  }
-  ////
-
-
     // Group //
     createGroup(
       groupName: string,
@@ -209,8 +162,8 @@ export class FirestoreService {
       return this.afs.collection('groups', ref => ref.where('userId', '==', userId));
     }
   
-    deleteGroup(eventId: string): Promise<void> {
-      return this.afs.doc(`groups/${eventId}`).delete();
+    deleteGroup(groupId: string): Promise<void> {
+      return this.afs.doc(`groups/${groupId}`).delete();
     }
   
     updateGroup(
@@ -226,6 +179,21 @@ export class FirestoreService {
         groupLocation,
         contactEmail
       });
+    }
+
+    getGroupMembers(groupId: string): AngularFirestoreCollection<User>  {
+      return this.afs.collection(`groups/${groupId}/members`);
+    }
+
+    addMemberToGroup(user: User, groupId: string){
+      return this.afs.doc(`groups/${groupId}/members/${user.email}`)
+                     .set({
+                       ...user
+                     });
+    }
+
+    removeMemberFromGroup(user: User, groupId: string){
+      return this.afs.doc(`groups/${groupId}/members/${user.email}`).delete();
     }
     ////
 }

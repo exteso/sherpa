@@ -12,8 +12,9 @@ import {
   ToastService
 } from '../../../services';
 
-import { Group } from '../../../models';
+import { Group, User } from '../../../models';
 import { SelectUsersPage } from '../../modal/select-users/select-users.page';
+import { OverlayEventDetail } from '@ionic/core';
 
 @Component({
   selector: 'app-group-detail',
@@ -26,6 +27,7 @@ export class GroupDetailPage implements OnInit, OnDestroy {
   public eID;
   public mode = 'detail';
   private subscription: Subscription;
+  private subscription2: Subscription;
 
   hasError: boolean;
   // groupID = this.route.snapshot.paramMap.get('id');
@@ -55,6 +57,10 @@ export class GroupDetailPage implements OnInit, OnDestroy {
       this.subscription = res.valueChanges().subscribe((r: Group) => {
         this.group = new Group(r.id, r.groupName, r.groupLocation, r.groupDeliveryDay, r.contactEmail);
 
+        this.subscription2 = this.firestore.getGroupMembers(this.eID)
+          .valueChanges()
+          .subscribe(members => this.group.members = members);
+
         this.editGroupForm = this.formBuilder.group({
           groupName: [this.group.groupName, Validators.compose([
             Validators.required
@@ -71,12 +77,14 @@ export class GroupDetailPage implements OnInit, OnDestroy {
         });
       });
     });
-
   }
 
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+    if (this.subscription2) {
+      this.subscription2.unsubscribe();
     }
   }
 
@@ -159,8 +167,17 @@ export class GroupDetailPage implements OnInit, OnDestroy {
     const modal = await this.modalController.create({
       component: SelectUsersPage
     });
+    modal.onDidDismiss().then(data => {
+      let user: User = data.data;
+      if (user.email) {
+        this.firestore.addMemberToGroup(user, this.eID);
+      }
+    });
     return await modal.present();
     
   }
 
+  removeUser(user) {
+    this.firestore.removeMemberFromGroup(user, this.group.id);
+  }
 }
