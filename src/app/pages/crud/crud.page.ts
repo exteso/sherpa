@@ -14,7 +14,7 @@ export class CrudPage implements OnInit {
   constructor() {
     this.pages = [
       { title: 'Group List', url: '/group-list', direct: 'forward', icon: 'people' },
-      { title: 'WeeklyCatalog List', url: '/weekly-catalog-list', direct: 'forward', icon: 'calendar' },
+      { title: 'WeeklyCatalog List', url: '/catalog-list', direct: 'forward', icon: 'calendar' },
       { title: 'Order List', url: '/order-list', direct: 'forward', icon: 'cart' }
     ];
   }

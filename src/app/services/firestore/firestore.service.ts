@@ -12,6 +12,7 @@ import { take } from 'rxjs/operators';
 
 import { User, GeoMap, Group } from '../../models';
 import { WeekDay } from '@angular/common';
+import { Catalog } from 'src/app/models/catalog';
 
 @Injectable({
   providedIn: 'root'
@@ -194,6 +195,41 @@ export class FirestoreService {
 
     removeMemberFromGroup(user: User, groupId: string){
       return this.afs.doc(`groups/${groupId}/members/${user.email}`).delete();
+    }
+    ////
+
+    // Catalog //
+    private catalogId(year: string, week: string){
+      return year+'w'+week;
+    }
+
+    createCatalog(
+      year: string, 
+      week: string
+    ): Promise<void> {
+      const id = this.catalogId(year, week);
+      return this.afs.doc(`catalogs/${id}`)
+                     .set({id: id,
+                          year: year,
+                          week: week });
+    }
+  
+    getCatalog(year: string, week: string): Promise<AngularFirestoreDocument<Catalog>>  {
+      return new Promise(resolve => {
+        const id = this.catalogId(year, week);
+        resolve(this.afs.doc(`catalogs/${id}`));
+      });
+    }
+
+    getCatalogList(): AngularFirestoreCollection<Catalog> {
+      return this.afs.collection('catalogs/', 
+                                  ref =>
+                                    ref.orderBy("id", "desc").limit(3));
+    }
+  
+    deleteCatalog(year: string, week: string): Promise<void> {
+      const id = this.catalogId(year, week);
+      return this.afs.doc(`pcatalogs/${id}`).delete();
     }
     ////
 }
