@@ -1,15 +1,14 @@
-import { Injectable, Pipe, PipeTransform } from '@angular/core';
 import { User } from '../models';
+import { Injectable, Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'usersFilter',
   pure: false
 })
-
 @Injectable()
 export class UsersPipe implements PipeTransform {
   // Accepts an array of userIds to filter out users, and a search string to search for a user based on their first, last, and username.
-  transform(users: User[], data: [[string], string]): any {
+  transform(users: User[], data: [string[], string]): User[] {
     const excludedIds = data[0];
     let search = data[1];
 

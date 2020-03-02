@@ -18,7 +18,7 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-card color="secondary" *ngIf="(cataloglist | async)?.length === 0">
+  <ion-card color="secondary" *ngIf="(catalogList | async)?.length === 0">
     <ion-card-header color="dark" class="ion-margin-bottom">
       <ion-card-title>
         <ion-text color="light">{{ 'cataloglist.msg.notavailable' | translate }}</ion-text>
