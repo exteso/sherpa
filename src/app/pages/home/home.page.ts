@@ -14,35 +14,13 @@ export class HomePage {
   items = [
     {
       title: 'home.card.item1.title',
-      desc: 'home.card.item1.desc'
+      desc: 'home.card.item1.desc',
+      url: '/next-order'
     },
     {
       title: 'home.card.item2.title',
-      desc: 'home.card.item2.desc'
-    },
-    {
-      title: 'home.card.item3.title',
-      desc: 'home.card.item3.desc'
-    },
-    {
-      title: 'home.card.item4.title',
-      desc: 'home.card.item4.desc'
-    },
-    {
-      title: 'home.card.item5.title',
-      desc: 'home.card.item5.desc'
-    },
-    {
-      title: 'home.card.item6.title',
-      desc: 'home.card.item6.desc'
-    },
-    {
-      title: 'home.card.item7.title',
-      desc: 'home.card.item7.desc'
-    },
-    {
-      title: 'home.card.item8.title',
-      desc: 'home.card.item8.desc'
+      desc: 'home.card.item2.desc',
+      url: '/order-to-collect'
     }
   ];
 

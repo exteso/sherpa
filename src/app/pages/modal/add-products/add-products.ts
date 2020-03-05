@@ -67,9 +67,9 @@ export class AddProductsPage implements OnInit, OnDestroy  {
           if (!searchQuery) { return products; }
           const q = searchQuery.toLowerCase();
           return products.filter(item => {
-            if (item.name && item.name.toLowerCase().includes(searchQuery) ||
-                item.category && item.category.toLowerCase().includes(searchQuery) ||
-                item.origin && item.origin.toLowerCase().includes(searchQuery)) {
+            if (item.name && item.name.toLowerCase().includes(q) ||
+                item.category && item.category.toLowerCase().includes(q) ||
+                item.origin && item.origin.toLowerCase().includes(q)) {
                   return true;
             }
             return false;
