@@ -77,7 +77,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     AgmCoreModule.forRoot({
       apiKey: environment.googleMapsKey
     }),
-    ServiceWorkerModule.register('combined-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('combined-worker.js', { enabled: environment.production }),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     Camera,
