@@ -55,7 +55,7 @@ export class AppComponent implements OnInit {
       { title: 'Home', url: '/home', icon: 'home', direct: 'root' },
       { title: 'User List', url: '/user-list', direct: 'forward', icon: 'people' },
       { title: 'Geo Firestore', url: '/geofire', direct: 'forward', icon: 'map' },
-      { title: 'CRUD List', url: '/crud', direct: 'forward', icon: 'list-box' }
+      { title: 'CRUD List', url: '/crud', direct: 'forward', icon: 'list' }
     ]));
   }
 

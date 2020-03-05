@@ -37,6 +37,8 @@ import { environment } from '../environments/environment';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { SelectUsersPageModule } from './pages/modal/select-users/select-users.module';
+import { AddProductsPage } from './pages/modal/add-products/add-products';
+import { AddProductsPageModule } from './pages/modal/add-products/add-products.module';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -58,6 +60,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppRoutingModule,
     HttpClientModule,
     SelectUsersPageModule,
+    AddProductsPageModule,
     ShowUserPageModule,
     IonImgLazyLoadModule,
     IonicStorageModule.forRoot({

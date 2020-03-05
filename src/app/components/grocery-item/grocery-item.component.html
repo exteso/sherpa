@@ -1,0 +1,38 @@
+<ion-card>
+  <ion-item class="ion-activated">
+    <ion-label class="ion-text-wrap">
+      <ion-text color="primary">
+        <h3>{{ grocery.name }}</h3>
+      </ion-text>
+      <p>{{ grocery.price }} {{ grocery.currency }}/{{ grocery.priceUnit }}</p>
+      <ion-text color="secondary">
+        <p>{{ grocery.origin }}</p>
+      </ion-text>
+    </ion-label>
+    <ion-icon
+      *ngIf="!open"
+      name="arrow-down"
+      slot="end"
+      (click)="open = true"
+    ></ion-icon>
+    <ion-icon
+      *ngIf="open"
+      name="arrow-up"
+      slot="end"
+      (click)="open = false"
+    ></ion-icon>
+  </ion-item>
+
+  <ion-item *ngIf="open">
+    <ion-label slot="end">
+      <ion-text>{{grocery.qty}} {{grocery.orderUnit}}</ion-text>
+    </ion-label>
+    <ion-button color="danger" slot="end" (click)="removeQty()">
+      <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
+    </ion-button>
+
+    <ion-button color="success" slot="end" (click)="addQty()">
+      <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+    </ion-button>
+  </ion-item>
+</ion-card>

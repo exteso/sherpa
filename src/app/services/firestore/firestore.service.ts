@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import {
   AngularFirestore,
   AngularFirestoreDocument,
-  AngularFirestoreCollection
+  AngularFirestoreCollection,
+  AngularFirestoreCollectionGroup
 } from '@angular/fire/firestore';
 
 // import { Observable } from 'rxjs';
@@ -13,6 +14,7 @@ import { take } from 'rxjs/operators';
 import { User, GeoMap, Group } from '../../models';
 import { WeekDay } from '@angular/common';
 import { Catalog } from 'src/app/models/catalog';
+import { Product } from 'src/app/models/product';
 
 @Injectable({
   providedIn: 'root'
@@ -217,8 +219,20 @@ export class FirestoreService {
     getCatalog(year: string, week: string): Promise<AngularFirestoreDocument<Catalog>>  {
       return new Promise(resolve => {
         const id = this.catalogId(year, week);
-        resolve(this.afs.doc(`catalogs/${id}`));
+        this.getCatalogById(id);
       });
+    }
+
+    getCatalogById(catalogId: string): Promise<AngularFirestoreDocument<Catalog>>  {
+      return new Promise(resolve => {
+        resolve(this.afs.doc(`catalogs/${catalogId}`));
+      });
+    }
+
+    getCatalogProducts(catalogId: string): AngularFirestoreCollection<Product> {
+      return this.afs.collection(`catalogs/${catalogId}/products`, 
+                                  ref => ref.orderBy('category')
+                                            .orderBy('guiOrder'))
     }
 
     getCatalogList(): AngularFirestoreCollection<Catalog> {
@@ -229,7 +243,39 @@ export class FirestoreService {
   
     deleteCatalog(year: string, week: string): Promise<void> {
       const id = this.catalogId(year, week);
-      return this.afs.doc(`pcatalogs/${id}`).delete();
+      return this.deleteCatalogById(id);
+    }
+
+    deleteCatalogById(id: string): Promise<void> {
+      return this.afs.doc(`catalogs/${id}`).delete();
+    }
+
+    addProductsToCatalog(products: Product[], catalogId: string){
+      products.forEach(product => this.addProductToCatalog(product, catalogId));
+    }
+
+    addProductToCatalog(product: Product, catalogId: string){
+      const id = product.id ? product.id : this.afs.createId();
+      return this.afs.doc(`catalogs/${catalogId}/products/${id}`)
+                     .set({
+                       ...product,
+                       id
+                     });
+    }
+
+    removeProductFromCatalog(productId: string, catalogId: string){
+      return this.afs.doc(`catalogs/${catalogId}/products/${productId}`).delete();
     }
     ////
+
+    getProducts(): AngularFirestoreCollection<Product> {
+
+      // Get all the products, no matter how deeply nested
+      return this.afs.collection<Product>(
+        `/products/2018/weeks/07/items`,
+        ref => ref.orderBy('category')
+                  .orderBy('guiOrder')
+      );
+      
+    }
 }

@@ -22,6 +22,7 @@ const routes: Routes = [
   { path: 'show-user', loadChildren: () => import('./pages/modal/show-user/show-user.module').then(m => m.ShowUserPageModule) },
   { path: 'loader', loadChildren: () => import('./pages/loader/loader/loader.module').then(m => m.LoaderPageModule) },
   { path: 'catalog-list', loadChildren: () => import('./pages/catalog/catalog-list/catalog-list.module').then( m => m.CatalogListPageModule) },
+  { path: 'catalog-detail/:id', loadChildren: () => import('./pages/catalog/catalog-detail/catalog-detail.module').then(m => m.CatalogDetailPageModule), canActivate: [AuthGuard] },
   ]
 ;
 

@@ -11,7 +11,7 @@
     <ion-buttons slot="primary">
       <ion-button color="light" routerLink="/catalog-create">
         <ion-icon slot="start" name="add-circle"></ion-icon>
-        {{ 'cataloglist.detail.buttom.add' | translate }}
+        {{ 'cataloglist.detail.button.add' | translate }}
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -46,4 +46,5 @@
     </ion-card-content>
   </ion-card>
 
+  <app-grocery-item [grocery]="{name: 'capperi sottaceto 130 g', origin: 'I-La Selva', orderUnit: 'PZ', price: '3.7', priceUnit: 'PZ', currency: 'CHF', qty: 0, isFavorite: false}"></app-grocery-item>
 </ion-content>

@@ -5,7 +5,7 @@
     </ion-buttons>
 
     <ion-title>
-      {{ 'grouplist.detail.title' | translate }}
+      {{ 'cataloglist.detail.title' | translate }}
     </ion-title>
 
     <ion-buttons slot="primary">
@@ -17,7 +17,7 @@
         <ion-icon slot="start" name="close-circle-outline"></ion-icon>
         Cancel edit
       </ion-button>
-      <ion-button color="light" (click)="deleteGroup()">
+      <ion-button color="light" (click)="deleteCatalog()">
         <ion-icon slot="start" name="trash"></ion-icon>
         Delete
       </ion-button>
@@ -30,22 +30,22 @@
   <ion-card color="primary" class="ion-no-margin" *ngIf="mode === 'detail'">
     <ion-card-header color="dark" class="ion-margin-bottom">
       <ion-card-title>
-        {{ group?.groupName }}
+        {{ catalog?.displayId }}
       </ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
       <p>
-        <ion-text color="light">{{ group?.contactEmail }}</ion-text>
+        <ion-text color="light">{{ catalog?.id }}</ion-text>
       </p>
 
       <ion-item color="secondary" class="ion-margin-top">
         <ion-icon name="pin" class="vaicon" slot="start"></ion-icon> 
-        {{ group?.groupLocation }}
+        {{ catalog?.vendor }}
       </ion-item>
       <ion-item color="secondary">
         <ion-icon name="calendar" class="vaicon" slot="start"></ion-icon> 
-        {{ 'weekday.'+group?.groupDeliveryDay | translate }}
+        {{ 'weekday.'+catalog?.orderDeadline | translate }}
       </ion-item>       
     </ion-card-content>
   </ion-card>
@@ -53,16 +53,16 @@
   <ion-card color="dark" class="ion-no-margin" *ngIf="mode === 'edit'">
     <ion-card-content>
 
-      <form [formGroup]="editGroupForm" class="list-form">
+      <form [formGroup]="editCatalogForm" class="list-form">
         <ion-item lines="none" class="ion-no-padding animated fadeInUp">
           <ion-label color="tertiary" position="floating">
             <ion-icon name="list" slot="start"></ion-icon>
-            {{ 'grouplist.detail.groupname.title' | translate }}
+            id
           </ion-label>
-          <ion-input color="light" type="text" formControlName="groupName"></ion-input>
+          <ion-input color="light" type="text" formControlName="id"></ion-input>
         </ion-item>
-        <p class="text08 msg" *ngIf="f.groupName.errors && hasError">
-          <ion-text color="danger" *ngIf="f.groupName.errors.required">
+        <p class="text08 msg" *ngIf="f.id.errors && hasError">
+          <ion-text color="danger" *ngIf="f.id.errors.required">
             {{ 'form.error.required' | translate }}
           </ion-text>
         </p>
@@ -70,12 +70,12 @@
         <ion-item lines="none" class="ion-no-padding animated fadeInUp">
           <ion-label color="tertiary" position="floating">
             <ion-icon name="list" slot="start"></ion-icon>
-            {{ 'grouplist.detail.contactemail.title' | translate }}
+            vendor
           </ion-label>
-          <ion-input color="light" formControlName="contactEmail"></ion-input>
+          <ion-input color="light" formControlName="vendor"></ion-input>
         </ion-item>
-        <p class="text08 msg" *ngIf="f.contactEmail.errors && hasError">
-          <ion-text color="danger" *ngIf="f.contactEmail.errors.required">
+        <p class="text08 msg" *ngIf="f.vendor.errors && hasError">
+          <ion-text color="danger" *ngIf="f.vendor.errors.required">
             {{ 'form.error.required' | translate }}
           </ion-text>
         </p>
@@ -83,12 +83,12 @@
         <ion-item lines="none" class="ion-no-padding animated fadeInUp">
           <ion-label color="tertiary" position="floating">
             <ion-icon name="list" slot="start"></ion-icon>
-            {{ 'grouplist.detail.grouplocation.title' | translate }}
+            displayId
           </ion-label>
-          <ion-input color="light" type="text" formControlName="groupLocation"></ion-input>
+          <ion-input color="light" type="text" formControlName="displayId"></ion-input>
         </ion-item>
-        <p class="text08 msg" *ngIf="f.groupLocation.errors && hasError">
-          <ion-text color="danger" *ngIf="f.groupLocation.errors.required">
+        <p class="text08 msg" *ngIf="f.displayId.errors && hasError">
+          <ion-text color="danger" *ngIf="f.displayId.errors.required">
             {{ 'form.error.required' | translate }}
           </ion-text>
         </p>
@@ -96,10 +96,10 @@
         <ion-item lines="none" class="ion-no-padding animated fadeInUp">
           <ion-label color="tertiary" position="floating">
             <ion-icon name="calendar" slot="start"></ion-icon>
-            {{ 'grouplist.detail.groupdate.title' | translate }}
+            orderDeadline
           </ion-label>
 
-          <ion-select  color="light" interface="popover" formControlName="groupDate">
+          <ion-select  color="light" interface="popover" formControlName="orderDeadline">
             <!-- <ion-select-option value="0">{{ 'weekday.0' | translate }}</ion-select-option> -->
             <ion-select-option value="1">{{ 'weekday.1' | translate }}</ion-select-option>
             <ion-select-option value="2">{{ 'weekday.2' | translate }}</ion-select-option>
@@ -109,38 +109,51 @@
             <!-- <ion-select-option value="6">{{ 'weekday.6' | translate }}</ion-select-option> -->
           </ion-select>
         </ion-item>
-        <p class="text08 msg" *ngIf="f.groupDate.errors && hasError">
-          <ion-text color="danger" *ngIf="f.groupDate.errors.required">
+        <p class="text08 msg" *ngIf="f.orderDeadline.errors && hasError">
+          <ion-text color="danger" *ngIf="f.orderDeadline.errors.required">
             {{ 'form.error.required' | translate }}
           </ion-text>
         </p>
 
+        <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+            <ion-label color="tertiary" position="floating">
+              <ion-icon name="list" slot="start"></ion-icon>
+              name
+            </ion-label>
+            <ion-input color="light" type="text" formControlName="name"></ion-input>
+          </ion-item>
+          <p class="text08 msg" *ngIf="f.name.errors && hasError">
+            <ion-text color="danger" *ngIf="f.name.errors.required">
+              {{ 'form.error.required' | translate }}
+            </ion-text>
+          </p>
+
         <div class="ion-margin-top">
-          <ion-button size="large" expand="full" color="primary" (click)="editGroup()">
+          <ion-button size="large" expand="full" color="primary" (click)="editCatalog()">
             <!-- [disabled]="isOffline" -->
             <ion-icon name="create" slot="start"></ion-icon>
-            {{ 'grouplist.detail.button.edit' | translate }}
+            {{ 'cataloglist.detail.button.edit' | translate }}
           </ion-button>
         </div>
       </form>
     </ion-card-content>
   </ion-card>
 
-  <ion-button (click)="presentUserModal()">{{ 'groupdetail.addmember' | translate }}</ion-button>
+  <ion-button (click)="presentProductModal()">{{ 'catalogdetail.addproduct' | translate }}</ion-button>
 
-  <ion-list class="ion-no-padding" *ngIf="group?.members">
-    <ion-item-sliding *ngFor="let user of group.members">
+  <ion-list class="ion-no-padding" *ngIf="catalog?.products">
+    <ion-item-sliding *ngFor="let product of catalog.products">
       <ion-item lines="none" color="light">
         
         <ion-label>
-          <h2>
-            <ion-text color="primary"><strong>{{ user.email }} </strong></ion-text>
-          </h2>
+          <h3>
+            <ion-text color="primary"><strong>{{ product.name }} </strong></ion-text>
+          </h3>
         </ion-label>
       </ion-item>
 
       <ion-item-options>
-        <ion-item-option color="danger" tappable (click)="removeUser(user)">
+        <ion-item-option color="danger" tappable (click)="removeProduct(product.id)">
           <ion-icon slot="start" name="person"></ion-icon>
           Remove
         </ion-item-option>

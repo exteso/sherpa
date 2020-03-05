@@ -141,9 +141,9 @@
   "songlist.detail.artistname.title": "Artist Name",
   "songlist.detail.albumname.title": "Album Name",
   "songlist.detail.songdesc.title": "Song Description",
-  "songlist.detail.buttom.add": "Add Song",
-  "songlist.detail.buttom.edit": "Edit Song",
-  "songlist.detail.buttom.delete": "Delete Song",
+  "songlist.detail.button.add": "Add Song",
+  "songlist.detail.button.edit": "Edit Song",
+  "songlist.detail.button.delete": "Delete Song",
 
   "alert.delete.title": "Delete",
   "alert.delete.message": "Are you sure you want to delete?",
@@ -159,9 +159,17 @@
   "grouplist.detail.grouplocation.title": "Group Location",
   "grouplist.detail.groupdate.title": "Delivery Date",
   "grouplist.detail.contactemail.title": "Main Contact email",
-  "grouplist.detail.buttom.add": "Add Group",
-  "grouplist.detail.buttom.edit": "Edit Group",
-  "grouplist.detail.buttom.delete": "Delete Group",
+  "grouplist.detail.button.add": "Add Group",
+  "grouplist.detail.button.edit": "Edit Group",
+  "grouplist.detail.button.delete": "Delete Group",
+
+  "cataloglist.title": "Catalog List",
+  "cataloglist.msg.notavailable": "No catalogs available!",
+
+  "cataloglist.detail.title": "Catalog",
+  "cataloglist.detail.button.add": "Add Catalog",
+  "cataloglist.detail.button.edit": "Edit Catalog",
+  "cataloglist.detail.button.delete": "Delete Catalog",
 
   "register.add.success": "Register added successfully!",
 
