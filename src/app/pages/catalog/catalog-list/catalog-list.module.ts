@@ -8,7 +8,6 @@ import { CatalogListPageRoutingModule } from './catalog-list-routing.module';
 
 import { CatalogListPage } from './catalog-list.page';
 import { TranslateModule } from '@ngx-translate/core';
-import { GroceryItemComponent } from 'src/app/components/grocery-item/grocery-item.component';
 
 @NgModule({
   imports: [
@@ -19,6 +18,6 @@ import { GroceryItemComponent } from 'src/app/components/grocery-item/grocery-it
     TranslateModule.forChild(),
     CatalogListPageRoutingModule
   ],
-  declarations: [CatalogListPage, GroceryItemComponent]
+  declarations: [CatalogListPage]
 })
 export class CatalogListPageModule {}

@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { NextOrderPageRoutingModule } from './next-order-routing.module';
 
 import { NextOrderPage } from './next-order.page';
+import { GroceryItemComponent } from 'src/app/components/grocery-item/grocery-item.component';
 
 @NgModule({
   imports: [
@@ -15,6 +16,6 @@ import { NextOrderPage } from './next-order.page';
     IonicModule,
     NextOrderPageRoutingModule
   ],
-  declarations: [NextOrderPage]
+  declarations: [NextOrderPage, GroceryItemComponent]
 })
 export class NextOrderPageModule {}

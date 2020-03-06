@@ -15,7 +15,10 @@
 
 <ion-content>
   <ion-searchbar color="dark" debounce="400" [(ngModel)]="searchTerm" (ionChange)="search($event.detail.value)" [placeholder]="translate.get('productlist.search')" focus cancelButtonText="Custom Cancel" animated></ion-searchbar>
-
+  <ion-item>
+      <ion-label slot="start">Select all products</ion-label>
+      <ion-toggle (ionChange)="selectAll($event.detail.checked)"></ion-toggle>
+  </ion-item>
   <ion-list class="ion-no-padding">
     <ion-virtual-scroll [items]="filteredProducts$ | async" approxItemHeight="40px">
       <ion-item lines="none" color="light" *virtualItem="let product; let itemBounds = bounds;">

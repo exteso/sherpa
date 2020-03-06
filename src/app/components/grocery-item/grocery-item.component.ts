@@ -14,14 +14,41 @@ export class GroceryItemComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (!this.grocery.qty) {
+      this.grocery.qty = 0
+    }
+  }
 
   removeQty(){
-    this.grocery.qty -= 1;
+    if (this.grocery.qty >= this.getIncrByOrderUnit()) {
+      this.grocery.qty -= this.getIncrByOrderUnit();
+    } else {
+      this.grocery.qty = 0;
+    }
   } 
 
   addQty() {
-    this.grocery.qty += 1;
+    this.grocery.qty += this.getIncrByOrderUnit();
+  }
+
+  getIncrByOrderUnit() {
+    let incr = 1;
+    switch (this.grocery.orderUnit) {
+      case "PZ": {
+        incr = 1;
+        break;
+      }
+      case "KG": {
+        incr = 0.5;
+        break;
+      }
+      case "GR": {
+        incr = 100;
+        break;
+      }
+    }
+    return incr;
   }
 
 }

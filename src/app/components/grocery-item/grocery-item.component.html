@@ -1,6 +1,6 @@
-<ion-card>
-  <ion-item class="ion-activated">
-    <ion-label class="ion-text-wrap">
+
+  <ion-item [ngClass]="{'ion-activated': grocery.qty > 0}">
+    <ion-label class="ion-text-wrap" (click)="open = !open">
       <ion-text color="primary">
         <h3>{{ grocery.name }}</h3>
       </ion-text>
@@ -9,30 +9,24 @@
         <p>{{ grocery.origin }}</p>
       </ion-text>
     </ion-label>
-    <ion-icon
-      *ngIf="!open"
-      name="arrow-down"
-      slot="end"
-      (click)="open = true"
-    ></ion-icon>
-    <ion-icon
-      *ngIf="open"
-      name="arrow-up"
-      slot="end"
-      (click)="open = false"
-    ></ion-icon>
-  </ion-item>
-
-  <ion-item *ngIf="open">
-    <ion-label slot="end">
-      <ion-text>{{grocery.qty}} {{grocery.orderUnit}}</ion-text>
-    </ion-label>
-    <ion-button color="danger" slot="end" (click)="removeQty()">
-      <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
-    </ion-button>
-
-    <ion-button color="success" slot="end" (click)="addQty()">
+    <ion-note slot="end" color="primary" *ngIf="grocery.qty > 0" (click)="open = !open">
+        {{ grocery.qty }} {{ grocery.orderUnit }}
+    </ion-note>
+    <ion-button class="grocery-button" color="success" slot="end" (click)="open=true; addQty()">
       <ion-icon slot="icon-only" name="add-circle"></ion-icon>
     </ion-button>
   </ion-item>
-</ion-card>
+
+  <ion-item [ngClass]="{'ion-activated': grocery.qty > 0}">
+    <ion-label slot="start" (click)="open=false">
+      <ion-text>{{grocery.qty * grocery.price}} CHF</ion-text>
+    </ion-label>
+    <ion-button color="dark" slot="end" (click)="grocery.qty = 0; open=false">
+      <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+    </ion-button>
+
+    <ion-button class="grocery-button" color="danger" slot="end" (click)="removeQty()">
+      <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
+    </ion-button>
+</ion-item>
+

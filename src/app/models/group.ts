@@ -4,6 +4,7 @@ import { User } from './user';
 export class Group {
     
     public members: User[];
+    public families: string[];
     
     constructor(
         public id: string,

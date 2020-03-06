@@ -27,6 +27,7 @@ export class AddProductsPage implements OnInit, OnDestroy  {
     //products: Product[];
     products$: Observable<Product[]>;
     filteredProducts$: Observable<Product[]>;
+    filteredProducts: Product[];
     selectedProducts: Product[];
     userId: string;
   
@@ -75,10 +76,20 @@ export class AddProductsPage implements OnInit, OnDestroy  {
             return false;
           });
         }));
+
+        this.subscription = this.filteredProducts$.subscribe(products => this.filteredProducts = products)
     }
   
     search(searchValue) {
       this.searchTerm$.next(searchValue);
+    }
+
+    selectAll(value){
+      if (value) {
+        this.filteredProducts.forEach(p => this.selectProduct(p));
+      } else {
+        this.selectedProducts = [];
+      }
     }
 
     ngOnDestroy() {
