@@ -1,27 +1,23 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>next-order</ion-title>
+      <ion-button (click)="previousWeek()" slot="start">
+        <ion-icon slot="icon-only"  name="arrow-back-circle"></ion-icon>
+      </ion-button>
+    <ion-title>{{orderWeek}}</ion-title>
+      <ion-button (click)="nextWeek()" slot="end">
+        <ion-icon slot="icon-only"  name="arrow-forward-circle"></ion-icon>
+      </ion-button>
   </ion-toolbar>
   <!--ion-searchbar color="dark" debounce="400" [(ngModel)]="searchTerm" (ionChange)="search($event.detail.value)" [placeholder]="translate.get('productlist.search')" focus cancelButtonText="Custom Cancel" animated></ion-searchbar-->
 </ion-header>
 
 <ion-content>
     <ion-list>
-      <!--ion-virtual-scroll [items]="availableProducts$ | async" approxItemHeight="60px" [headerFn]="myHeaderFn">
-        <ion-item-group>
-          <ion-item-divider *virtualHeader="let header">
-              <ion-label>{{ header }}</ion-label>
-          </ion-item-divider>
-          <span *virtualItem="let product">
-             <app-grocery-item [grocery]="product"></app-grocery-item>
-          </span>
-        </ion-item-group>
-      </ion-virtual-scroll-->
       <ion-virtual-scroll [items]="availableProducts$ | async" approxItemHeight="118px" [headerFn]="myHeaderFn">
         <ion-item-divider sticky="true" *virtualHeader="let header">
             <ion-label>{{ header }}</ion-label>
         </ion-item-divider>
-        <div *virtualItem="let product; let itemBounds = bounds;" style="height:118px">
+        <div *virtualItem="let product; let itemBounds = bounds;">
             <app-grocery-item [grocery]="product"></app-grocery-item>
         </div>
       </ion-virtual-scroll>

@@ -1,32 +1,31 @@
-
-  <ion-item [ngClass]="{'ion-activated': grocery.qty > 0}">
-    <ion-label class="ion-text-wrap" (click)="open = !open">
+<ion-item-group>
+  <ion-item [ngClass]="{'ion-activated': grocery.qty > 0}" lines="none">
+    <ion-label class="ion-text-wrap">
       <ion-text color="primary">
         <h3>{{ grocery.name }}</h3>
       </ion-text>
       <p>{{ grocery.price }} {{ grocery.currency }}/{{ grocery.priceUnit }}</p>
-      <ion-text color="secondary">
+      <ion-text>
         <p>{{ grocery.origin }}</p>
       </ion-text>
     </ion-label>
-    <ion-note slot="end" color="primary" *ngIf="grocery.qty > 0" (click)="open = !open">
+    <ion-note slot="end" color="dark">
         {{ grocery.qty }} {{ grocery.orderUnit }}
     </ion-note>
-    <ion-button class="grocery-button" color="success" slot="end" (click)="open=true; addQty()">
-      <ion-icon slot="icon-only" name="add-circle"></ion-icon>
-    </ion-button>
   </ion-item>
 
-  <ion-item [ngClass]="{'ion-activated': grocery.qty > 0}">
-    <ion-label slot="start" (click)="open=false">
-      <ion-text>{{grocery.qty * grocery.price}} CHF</ion-text>
+  <ion-item [ngClass]="{'ion-activated': grocery.qty > 0}" lines="none">
+    <ion-button class="grocery-button" color="dark" slot="start" (click)="grocery.qty = 0">
+        <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+      </ion-button>
+    <ion-label slot="start" (click)="open=false" class="ion-text-end">
+      <ion-text >{{grocery.qty * grocery.price}} CHF</ion-text>
     </ion-label>
-    <ion-button color="dark" slot="end" (click)="grocery.qty = 0; open=false">
-      <ion-icon slot="icon-only" name="close-circle"></ion-icon>
-    </ion-button>
-
     <ion-button class="grocery-button" color="danger" slot="end" (click)="removeQty()">
       <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
     </ion-button>
+    <ion-button class="grocery-button" color="success" slot="end" (click)="addQty()">
+        <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+      </ion-button>
 </ion-item>
-
+</ion-item-group>

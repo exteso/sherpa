@@ -34,10 +34,12 @@ export class NextOrderPage implements OnInit {
 
   nextWeek(){
     this.orderWeek = this.orderService.nextWeek(this.orderWeek);
+    this.availableProducts$ = this.firestore.getCatalogProducts(this.orderWeek).valueChanges();
   }
 
   previousWeek(){
     this.orderWeek = this.orderService.previousWeek(this.orderWeek);
+    this.availableProducts$ = this.firestore.getCatalogProducts(this.orderWeek).valueChanges();
   }
 
   search(term){
