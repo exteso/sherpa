@@ -21,6 +21,11 @@ export class GroceryItemComponent implements OnInit {
     }
   }
 
+  resetQty(){
+    this.grocery.qty = 0;
+    this.updateQty.emit(this.grocery.qty);
+  }
+  
   removeQty(){
     if (this.grocery.qty >= this.getIncrByOrderUnit()) {
       this.grocery.qty -= this.getIncrByOrderUnit();

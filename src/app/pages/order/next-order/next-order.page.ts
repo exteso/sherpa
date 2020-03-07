@@ -30,10 +30,10 @@ export class NextOrderPage implements OnInit {
 
   ngOnInit() {
     this.searchTerm$ = new BehaviorSubject("");
-    this.changeOrderWeek(this.orderService.getCurrentWeek());
-    this.myGroups$ = this.orderService.getMyGroups();
     this.groupId = "Roncaccio";
     this.familyId = "yanke";
+    this.changeOrderWeek(this.orderService.getCurrentWeek());
+    this.myGroups$ = this.orderService.getMyGroups();
     this.currentUser = this.authService.getUserData()
   }
 
@@ -43,7 +43,13 @@ export class NextOrderPage implements OnInit {
     this.familyWeekOrder$ = this.orderService.getMyOrder(orderWeek, this.groupId, this.familyId);
     this.productsWithOrderQty$ = combineLatest([this.availableProducts$, this.familyWeekOrder$]).pipe(
       map(([products, orderedItems]) => {
-        return products.map(p => { return {...p, qty:0} });
+        return products.map(p => { 
+          let qty = 0;
+          let item = orderedItems.find(i => i.id == p.id)
+          if (item && item.qty > 0){
+            qty = item.qty;
+          }
+          return {...p, qty} });
       }));
   }
 
