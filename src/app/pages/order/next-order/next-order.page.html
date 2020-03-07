@@ -8,13 +8,13 @@
         <ion-icon slot="icon-only"  name="arrow-forward-circle"></ion-icon>
       </ion-button>
   </ion-toolbar>
-  <!--ion-searchbar color="dark" debounce="400" [(ngModel)]="searchTerm" (ionChange)="search($event.detail.value)" [placeholder]="translate.get('productlist.search')" focus cancelButtonText="Custom Cancel" animated></ion-searchbar-->
+  <ion-searchbar color="dark" debounce="400" [(ngModel)]="searchTerm" (ionChange)="search($event.detail.value)" [placeholder]="translate.get('productlist.search')" focus cancelButtonText="Custom Cancel" animated></ion-searchbar>
 </ion-header>
 
 <ion-content>
     <ion-list>
-      <ion-virtual-scroll [items]="productsWithOrderQty$ | async" approxItemHeight="118px" [headerFn]="myHeaderFn">
-        <ion-item-divider sticky="true" *virtualHeader="let header">
+      <ion-virtual-scroll [items]="filteredGroceryItems$ | async" approxItemHeight="118px" [headerFn]="myHeaderFn">
+        <ion-item-divider sticky="true" *virtualHeader="let header" color="primary">
             <ion-label>{{ header }}</ion-label>
         </ion-item-divider>
         <div *virtualItem="let product; let itemBounds = bounds;">
