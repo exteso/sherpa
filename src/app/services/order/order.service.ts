@@ -4,6 +4,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Group } from 'src/app/models';
 import { filter, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { Grocery } from 'src/app/models/grocery';
+import { Product } from 'src/app/models/product';
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +41,7 @@ export class OrderService {
     return this.currentWeek;
   }
 
-  nextWeek(yearAndWeek: string): string {
+  static weekAfter(yearAndWeek: string): string {
     const year = parseFloat(yearAndWeek.substring(0,4));
     let week = parseFloat(yearAndWeek.substring(5,7));
     week++;
@@ -54,7 +56,7 @@ export class OrderService {
     }
   }
 
-  previousWeek(yearAndWeek: string): string {
+  static weekBefore(yearAndWeek: string): string {
     const year = parseFloat(yearAndWeek.substring(0,4));
     let week = parseFloat(yearAndWeek.substring(5,7));
     week--;
@@ -74,5 +76,17 @@ export class OrderService {
       map((groups: Group[]) => groups.filter(group => {return group.families.includes(this.userEmail)}),
     ));
 
+  }
+
+  public getMyOrder(orderWeek: string, groupId: string, familyId: string): Observable<Grocery[]>{
+    return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`).valueChanges();
+  }
+  
+  public updateMyOrder(orderWeek: string, groupId: string, familyId: string, product: Product, qty: number){
+    return this.afs.doc<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/${product.id}`)
+                    .set({
+                      ...product,
+                      qty
+                    });
   }
 }

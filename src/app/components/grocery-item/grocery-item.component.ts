@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Grocery } from 'src/app/models/grocery';
 
 @Component({
@@ -9,7 +9,8 @@ import { Grocery } from 'src/app/models/grocery';
 export class GroceryItemComponent implements OnInit {
 
   @Input() grocery: Grocery;
-  
+  @Output() updateQty = new EventEmitter<number>();
+
   open: boolean;
 
   constructor() { }
@@ -26,10 +27,12 @@ export class GroceryItemComponent implements OnInit {
     } else {
       this.grocery.qty = 0;
     }
+    this.updateQty.emit(this.grocery.qty);
   } 
 
   addQty() {
     this.grocery.qty += this.getIncrByOrderUnit();
+    this.updateQty.emit(this.grocery.qty);
   }
 
   getIncrByOrderUnit() {

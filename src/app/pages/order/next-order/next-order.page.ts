@@ -4,6 +4,9 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { Group, User } from 'src/app/models';
 import { AuthService, FirestoreService } from 'src/app/services';
 import { Product } from 'src/app/models/product';
+import { combineLatest } from 'rxjs';
+import { Grocery } from 'src/app/models/grocery';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-next-order',
@@ -17,7 +20,9 @@ export class NextOrderPage implements OnInit {
   groupId: string;
   myGroups$: Observable<Group[]>
   currentUser: User;
-  availableProducts$: Observable<Product[]>
+  availableProducts$: Observable<Product[]>;
+  familyWeekOrder$: Observable<Grocery[]>;
+  productsWithOrderQty$: Observable<Grocery[]>;
   searchTerm: string = '';
   searchTerm$: BehaviorSubject<string>;
 
@@ -25,21 +30,29 @@ export class NextOrderPage implements OnInit {
 
   ngOnInit() {
     this.searchTerm$ = new BehaviorSubject("");
-    this.orderWeek = this.orderService.getCurrentWeek();
+    this.changeOrderWeek(this.orderService.getCurrentWeek());
     this.myGroups$ = this.orderService.getMyGroups();
+    this.groupId = "Roncaccio";
+    this.familyId = "yanke";
     this.currentUser = this.authService.getUserData()
+  }
 
-    this.availableProducts$ = this.firestore.getCatalogProducts(this.orderWeek).valueChanges();
+  changeOrderWeek(orderWeek: string){
+    this.orderWeek = orderWeek;
+    this.availableProducts$ = this.firestore.getCatalogProducts(orderWeek).valueChanges();
+    this.familyWeekOrder$ = this.orderService.getMyOrder(orderWeek, this.groupId, this.familyId);
+    this.productsWithOrderQty$ = combineLatest([this.availableProducts$, this.familyWeekOrder$]).pipe(
+      map(([products, orderedItems]) => {
+        return products.map(p => { return {...p, qty:0} });
+      }));
   }
 
   nextWeek(){
-    this.orderWeek = this.orderService.nextWeek(this.orderWeek);
-    this.availableProducts$ = this.firestore.getCatalogProducts(this.orderWeek).valueChanges();
+    this.changeOrderWeek(OrderService.weekAfter(this.orderWeek));
   }
 
   previousWeek(){
-    this.orderWeek = this.orderService.previousWeek(this.orderWeek);
-    this.availableProducts$ = this.firestore.getCatalogProducts(this.orderWeek).valueChanges();
+    this.changeOrderWeek(OrderService.weekBefore(this.orderWeek));
   }
 
   search(term){
@@ -54,5 +67,10 @@ export class NextOrderPage implements OnInit {
       return record.category;
     }
     return null;
+  }
+
+  updateQty(product: Product, qty: number){
+    console.log("updateQty: "+ product.name + " "+ qty);
+    this.orderService.updateMyOrder(this.orderWeek, this.groupId, this.familyId, product, qty);
   }
 }

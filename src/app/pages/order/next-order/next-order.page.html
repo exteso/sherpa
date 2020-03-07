@@ -13,12 +13,12 @@
 
 <ion-content>
     <ion-list>
-      <ion-virtual-scroll [items]="availableProducts$ | async" approxItemHeight="118px" [headerFn]="myHeaderFn">
+      <ion-virtual-scroll [items]="productsWithOrderQty$ | async" approxItemHeight="118px" [headerFn]="myHeaderFn">
         <ion-item-divider sticky="true" *virtualHeader="let header">
             <ion-label>{{ header }}</ion-label>
         </ion-item-divider>
         <div *virtualItem="let product; let itemBounds = bounds;">
-            <app-grocery-item [grocery]="product"></app-grocery-item>
+            <app-grocery-item [grocery]="product" (updateQty)="updateQty(product, $event)"></app-grocery-item>
         </div>
       </ion-virtual-scroll>
     </ion-list>
