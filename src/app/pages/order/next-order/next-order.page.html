@@ -1,18 +1,39 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="tertiary"></ion-menu-button>
       <ion-button (click)="previousWeek()" slot="start">
         <ion-icon slot="icon-only"  name="arrow-back-circle"></ion-icon>
       </ion-button>
+    </ion-buttons>
     <ion-title>{{orderWeek}}</ion-title>
-      <ion-button (click)="nextWeek()" slot="end">
-        <ion-icon slot="icon-only"  name="arrow-forward-circle"></ion-icon>
+    <ion-buttons slot="end">
+      <ion-button (click)="nextWeek()" >
+        <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
       </ion-button>
+      <ion-button color="tertiary">
+          <ion-icon slot="icon-only" name="cart"></ion-icon>
+        </ion-button>
+    </ion-buttons>
   </ion-toolbar>
   <ion-searchbar color="dark" debounce="400" [(ngModel)]="searchTerm" (ionChange)="search($event.detail.value)" [placeholder]="translate.get('productlist.search')" focus cancelButtonText="Custom Cancel" animated></ion-searchbar>
 </ion-header>
 
 <ion-content>
     <ion-list>
+        <ion-card class="group-card">
+            <ion-card-header>
+              <ion-card-subtitle>{{orderWeek}} - {{nrOfProducts}}</ion-card-subtitle>
+              <ion-card-title>{{groupId}} - {{familyId}}</ion-card-title>
+            </ion-card-header>
+          
+            <ion-card-content>
+              <p *ngIf="deliveryDates">
+              L'ordine viene chiuso {{deliveryDates[0] | date:'fullDate'}} alle 12:00.
+              La consegna verrà effettuata {{deliveryDates[1] | date:'fullDate'}} alle 14:00
+            </p>
+            </ion-card-content>
+          </ion-card>
       <ion-virtual-scroll [items]="filteredGroceryItems$ | async" approxItemHeight="118px" [headerFn]="myHeaderFn">
         <ion-item-divider sticky="true" *virtualHeader="let header" color="primary">
             <ion-label>{{ header }}</ion-label>

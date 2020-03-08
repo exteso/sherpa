@@ -3,7 +3,7 @@ import { AuthService } from '../auth/auth.service';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Group } from 'src/app/models';
 import { filter, map, tap, mergeMap, switchMap } from 'rxjs/operators';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
 import { Product } from 'src/app/models/product';
 
@@ -35,6 +35,20 @@ export class OrderService {
     let weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
     // Return array of year and week number
     return [d.getUTCFullYear(), weekNo];
+  }
+
+  getOrderDeliveryDates(yearAndWeek: string){
+    const yw=yearAndWeek.split('w');
+    const year = parseFloat(yw[0]);
+    const week = parseFloat(yw[1]);
+    let yearStart: Date = new Date(Date.UTC(year,0,1));
+    const deliveryDate = new Date(yearStart.getTime() + this.weeksInMillis(week));
+    const orderDate = new Date(yearStart.getTime() + this.weeksInMillis(week) -5*86400000);
+    return [orderDate, deliveryDate];
+  }
+
+  weeksInMillis(week: number) {
+    return ((week -1)*7*86400000)-86400000;
   }
 
   getCurrentWeek(): string {
@@ -116,5 +130,24 @@ export class OrderService {
                       ...product,
                       qty
                     });
+  }
+
+  getCategories(){
+    const categories = ['Proposte', 'verdure', 'frutta', 'insalate', 'erbette','panetteria','pane',
+                         'pane frigo', 'uova', 'senza lattosio', 'latte + latticini', 'formaggi mucca',
+                         'formaggi capra', 'gastromia', 'congelati per consumo immediato','carne + pesce freschi',
+                         'salumeria', 'burger veg', 'tofu + seitan', 'diversi', 'pomodoro', 'pomodoro cartoni',
+                         'olio', 'olio box', 'aceto', 'vino', 'bibite e succhi', 'bibite casse + box', 'sciroppi',
+                         'drink diversi', 'drink cartoni', 'confetture', 'miele', 'creme + birnel', 'conserve',
+                         'prodotti soia', 'condimenti', 'spezie', 'pasta integrale', 'pasta bianca', 'pasta bianca cartoni',
+                         'pasta farro', 'paste speciali', 'riso', 'riso cartoni', 'farine e cereali', 'farine + cereali cartoni e sacchi',
+                         'flakes + muesli', 'leguminose', 'te + tisane', 'caffé + surrogati', 'zucchero + lievito + unigel',
+                         'zucchero sacchi', 'cioccolato + cacao', 'cioccolato rotto', 'biscotti + crackers', 'frutta secca + snacks', 'frutta secca cartoni', 
+                         'diversi secchi', 'idee regalo', 'stoviglie compostabili','documenti'];
+    return categories;
+  }
+
+  getCategories$(weekOrder: string): Observable<string[]>{
+    return of(this.getCategories());
   }
 }

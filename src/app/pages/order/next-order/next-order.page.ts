@@ -6,7 +6,7 @@ import { AuthService, FirestoreService, TranslateProvider } from 'src/app/servic
 import { Product } from 'src/app/models/product';
 import { combineLatest } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { map, withLatestFrom, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-next-order',
@@ -18,11 +18,14 @@ export class NextOrderPage implements OnInit {
   orderWeek: string;
   familyId: string;
   groupId: string;
+  nrOfProducts: number;
+  deliveryDates: Date[];
   myGroups$: Observable<Group[]>
   currentUser: User;
   availableProducts$: Observable<Product[]>;
   familyWeekOrder$: Observable<Grocery[]>;
   filteredGroceryItems$: Observable<Grocery[]>;
+  sortedCategories$: Observable<string[]>;
   initializeGroceryItems$: Observable<Grocery[]>;
   searchTerm: string = '';
   searchTerm$: BehaviorSubject<string>;
@@ -41,7 +44,32 @@ export class NextOrderPage implements OnInit {
 
   changeOrderWeek(orderWeek: string){
     this.orderWeek = orderWeek;
-    this.availableProducts$ = this.firestore.getCatalogProducts(orderWeek).valueChanges();
+    this.deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
+    
+    this.sortedCategories$ = this.orderService.getCategories$(orderWeek);
+    this.availableProducts$ = this.firestore.getCatalogProducts(orderWeek)
+                                  .valueChanges().pipe(
+                                    map(products => {
+                                      return products.sort((p1, p2) => { 
+                                          const categories = this.orderService.getCategories();
+                                          const c1 = categories.indexOf(p1.category.trim())
+                                          if (c1 == -1) console.log(p1.category + " Not Found");
+                                          const c2 = categories.indexOf(p2.category.trim())
+                                          if (c2 == -1) console.log(p2.category + " Not Found");
+                                          if (c1 < c2)
+                                              return -1;
+                                          if (c1 > c2)
+                                              return 1;
+                                          //same category, we sort by guiOrder
+                                          if (p1.guiOrder < p2.guiOrder)
+                                              return -1;
+                                          if (p1.guiOrder > p2.guiOrder)
+                                              return 1;
+                                          return 0;
+                                      });
+                                    }),
+                                    tap(products => this.nrOfProducts = products.length)
+                                    );
     this.familyWeekOrder$ = this.orderService.getMyOrder(orderWeek, this.groupId, this.familyId);
     this.initializeGroceryItems$ = this.availableProducts$.pipe(
       withLatestFrom(this.familyWeekOrder$),
@@ -80,6 +108,8 @@ export class NextOrderPage implements OnInit {
     this.changeOrderWeek(OrderService.weekBefore(this.orderWeek));
   }
 
+
+
   search(term){
     this.searchTerm$.next(term);
   }
@@ -95,7 +125,6 @@ export class NextOrderPage implements OnInit {
   }
 
   updateQty(product: Product, qty: number){
-    console.log("updateQty: "+ product.name + " "+ qty);
     this.orderService.updateMyOrder(this.orderWeek, this.groupId, this.familyId, product, qty);
   }
 }
