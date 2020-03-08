@@ -24,6 +24,10 @@ const routes: Routes = [
   { path: 'catalog-list', loadChildren: () => import('./pages/catalog/catalog-list/catalog-list.module').then( m => m.CatalogListPageModule) },
   { path: 'catalog-detail/:id', loadChildren: () => import('./pages/catalog/catalog-detail/catalog-detail.module').then(m => m.CatalogDetailPageModule), canActivate: [AuthGuard] },
   { path: 'next-order', loadChildren: () => import('./pages/order/next-order/next-order.module').then( m => m.NextOrderPageModule) },
+  {
+    path: 'order-list',
+    loadChildren: () => import('./pages/order/order-list/order-list.module').then( m => m.OrderListPageModule)
+  },
   ]
 ;
 

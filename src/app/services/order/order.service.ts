@@ -1,9 +1,9 @@
 import { Injectable, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Group } from 'src/app/models';
-import { filter, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { filter, map, tap, mergeMap, switchMap } from 'rxjs/operators';
+import { Observable, forkJoin } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
 import { Product } from 'src/app/models/product';
 
@@ -80,6 +80,34 @@ export class OrderService {
 
   public getMyOrder(orderWeek: string, groupId: string, familyId: string): Observable<Grocery[]>{
     return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`).valueChanges();
+  }
+
+  public getMyGroupOrder(orderWeek: string, groupId: string): Observable<Grocery[]>{
+
+    let groupMembers$ = this.afs.collection(`/orders/${orderWeek}/groups/${groupId}/member/`).valueChanges();
+    return groupMembers$.pipe(
+      map(members => {
+        console.log(members);
+        const memberOrders$: Observable<Grocery[]>[] = [];
+        members.forEach((member:any) => {
+          memberOrders$.push(this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${member.id}/items`).valueChanges());
+        })
+        return memberOrders$;
+      }),
+      switchMap(memberOrders => memberOrders[0])
+      /*mergeMap((memberOrders: Observable<Grocery[]>[]) => 
+        forkJoin(memberOrders).pipe(
+          map((items: Grocery[][]) => {
+            let all = items[0]
+            if (items.length > 0) {
+              all = all.concat(items[1])
+            }
+            return all;
+          }),
+        ))*/
+        
+      );
+
   }
   
   public updateMyOrder(orderWeek: string, groupId: string, familyId: string, product: Product, qty: number){

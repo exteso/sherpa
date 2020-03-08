@@ -1,0 +1,14 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>order-list</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-item *ngFor="let item of groupWeekOrder$ | async">
+    <ion-label>{{item.name}}</ion-label>
+    <ion-badge color="success">{{item.qty}} {{item.orderUnit}}</ion-badge>
+    <ion-badge color="danger">{{item.members}}</ion-badge>
+  </ion-item>
+</ion-content>
