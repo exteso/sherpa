@@ -64,6 +64,12 @@ export class EditProfilePage implements OnInit, OnDestroy {
       lastName: ['', Validators.compose([
         Validators.required
       ])],
+      groupId: ['', Validators.compose([
+        Validators.required
+      ])],
+      familyId: ['', Validators.compose([
+        Validators.required
+      ])],
       email: ['', Validators.compose([
         Validators.required,
         Validators.email
@@ -93,7 +99,9 @@ export class EditProfilePage implements OnInit, OnDestroy {
             firstName: user.firstName,
             lastName: user.lastName,
             username: user.username.substring(1, user.username.length),
-            email: user.email
+            email: user.email,
+            familyId: user.familyId ? user.familyId : 'DefaultFamily',
+            groupId: user.groupId ? user.groupId : 'DefaultGroup'
           });
           this.uniqueUsername = true;
         });
@@ -236,6 +244,8 @@ export class EditProfilePage implements OnInit, OnDestroy {
             this.eprofileForm.value['email'].toLowerCase(),
             firstName,
             lastName,
+            this.eprofileForm.value['groupId'],
+            this.eprofileForm.value['familyId'],
             this.photo,
             '@' + this.eprofileForm.value['username'].toLowerCase(),
             '',
@@ -247,6 +257,8 @@ export class EditProfilePage implements OnInit, OnDestroy {
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
+            groupId: user.groupId,
+            familyId: user.familyId,
             photo: this.photo,
             username: user.username,
             notifications: this.hasPushToken

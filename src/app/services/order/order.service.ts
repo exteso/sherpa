@@ -1,6 +1,6 @@
 import { Injectable, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/firestore';
 import { Group } from 'src/app/models';
 import { filter, map, tap, mergeMap, switchMap } from 'rxjs/operators';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -94,6 +94,7 @@ export class OrderService {
 
   public getMyOrder(orderWeek: string, groupId: string, familyId: string): Observable<Grocery[]>{
     return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`).valueChanges();
+    //return of([]);
   }
 
   public getMyGroupOrder(orderWeek: string, groupId: string): Observable<Grocery[]>{

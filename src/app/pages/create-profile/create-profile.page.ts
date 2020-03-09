@@ -145,6 +145,8 @@ export class CreateProfilePage implements OnInit {
             profileForm.value['email'].toLowerCase(),
             firstName,
             lastName,
+            profileForm.value['groupId'],
+            profileForm.value['familyId'],
             this.photo,
             '@' + profileForm.value['username'].toLowerCase(),
             '',

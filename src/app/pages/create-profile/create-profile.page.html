@@ -53,6 +53,32 @@
       </p>
 
       <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+          <ion-label position="floating">
+            <ion-icon name="people" item-start></ion-icon>
+            {{ 'auth.form.groupId' | translate }}
+          </ion-label>
+          <ion-input color="secondary" type="text" formControlName="groupId"></ion-input>
+        </ion-item>
+        <p class="text08 msg" *ngIf="f.groupId.errors && hasError">
+          <ion-text color="danger" *ngIf="f.groupId.errors.required">
+            {{ 'auth.form.error.groupId' | translate }}
+          </ion-text>
+        </p>
+  
+        <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+          <ion-label position="floating">
+            <ion-icon name="people" item-start></ion-icon>
+            {{ 'auth.form.familyId' | translate }}
+          </ion-label>
+          <ion-input color="secondary" type="text" formControlName="familyId"></ion-input>
+        </ion-item>
+        <p class="text08 msg" *ngIf="f.familyId.errors && hasError">
+          <ion-text color="danger" *ngIf="f.familyId.errors.required">
+            {{ 'auth.form.error.familyId' | translate }}
+          </ion-text>
+        </p>
+
+      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
         <ion-label position="floating">
           <ion-icon name="mail" item-start></ion-icon>
           {{ 'auth.form.email' | translate }}

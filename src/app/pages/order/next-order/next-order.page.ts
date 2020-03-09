@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { OrderService } from 'src/app/services/order/order.service';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
 import { Group, User } from 'src/app/models';
 import { AuthService, FirestoreService, TranslateProvider } from 'src/app/services';
 import { Product } from 'src/app/models/product';
@@ -13,7 +13,7 @@ import { map, withLatestFrom, tap } from 'rxjs/operators';
   templateUrl: './next-order.page.html',
   styleUrls: ['./next-order.page.scss'],
 })
-export class NextOrderPage implements OnInit {
+export class NextOrderPage implements OnInit, OnDestroy {
 
   orderWeek: string;
   familyId: string;
@@ -23,27 +23,41 @@ export class NextOrderPage implements OnInit {
   myGroups$: Observable<Group[]>
   currentUser: User;
   availableProducts$: Observable<Product[]>;
-  familyWeekOrder$: Observable<Grocery[]>;
+  familyWeekOrder$: BehaviorSubject<Grocery[]>;
   filteredGroceryItems$: Observable<Grocery[]>;
   sortedCategories$: Observable<string[]>;
   initializeGroceryItems$: Observable<Grocery[]>;
   searchTerm: string = '';
   searchTerm$: BehaviorSubject<string>;
+  subscription: Subscription;
+  subscription2: Subscription;
 
   constructor(private firestore: FirestoreService, private orderService: OrderService, 
     public authService: AuthService, public translate: TranslateProvider) { }
 
   ngOnInit() {
     this.searchTerm$ = new BehaviorSubject("");
-    this.groupId = "Roncaccio";
-    this.familyId = "yanke";
-    this.changeOrderWeek(this.orderService.getCurrentWeek());
+    this.familyWeekOrder$ = new BehaviorSubject([]);
     this.myGroups$ = this.orderService.getMyGroups();
-    this.currentUser = this.authService.getUserData()
+    this.subscription = this.authService.getUser$().subscribe(user => {
+      this.groupId = user.groupId;
+      this.familyId = user.familyId;
+      this.changeOrderWeek(this.orderService.getCurrentWeek());
+    })
+  }
+
+  ngOnDestroy(){
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+    if (this.subscription2) {
+      this.subscription2.unsubscribe()
+    }
   }
 
   changeOrderWeek(orderWeek: string){
     this.orderWeek = orderWeek;
+    this.initializeGroceryItems$ = of([]);
     this.deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
     
     this.sortedCategories$ = this.orderService.getCategories$(orderWeek);
@@ -70,9 +84,12 @@ export class NextOrderPage implements OnInit {
                                     }),
                                     tap(products => this.nrOfProducts = products.length)
                                     );
-    this.familyWeekOrder$ = this.orderService.getMyOrder(orderWeek, this.groupId, this.familyId);
-    this.initializeGroceryItems$ = this.availableProducts$.pipe(
-      withLatestFrom(this.familyWeekOrder$),
+    
+    this.subscription2 = this.orderService.getMyOrder(orderWeek, this.groupId, this.familyId).subscribe(
+      myOrder => this.familyWeekOrder$.next(myOrder)
+    );
+
+    this.initializeGroceryItems$ = combineLatest([this.availableProducts$, this.familyWeekOrder$]).pipe(
       map(([products, orderedItems]) => {
         return products.map(p => { 
           let qty = 0;
@@ -84,20 +101,20 @@ export class NextOrderPage implements OnInit {
       }));
     
 
-      this.filteredGroceryItems$ = combineLatest([this.initializeGroceryItems$, this.searchTerm$]).pipe(
-        map(([items, searchQuery]) => {
-          // here we imperatively implement the filtering logic
-          if (!searchQuery) { return items; }
-          const q = searchQuery.toLowerCase();
-          return items.filter(item => {
-            if (item.name && item.name.toLowerCase().includes(q) ||
-                item.category && item.category.toLowerCase().includes(q) ||
-                item.origin && item.origin.toLowerCase().includes(q)) {
-                  return true;
-            }
-            return false;
-          });
-        }));  
+    this.filteredGroceryItems$ = combineLatest([this.initializeGroceryItems$, this.searchTerm$]).pipe(
+      map(([items, searchQuery]) => {
+        // here we imperatively implement the filtering logic
+        if (!searchQuery) { return items; }
+        const q = searchQuery.toLowerCase();
+        return items.filter(item => {
+          if (item.name && item.name.toLowerCase().includes(q) ||
+              item.category && item.category.toLowerCase().includes(q) ||
+              item.origin && item.origin.toLowerCase().includes(q)) {
+                return true;
+          }
+          return false;
+        });
+      }));  
   }
 
   nextWeek(){

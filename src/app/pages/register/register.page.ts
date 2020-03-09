@@ -132,6 +132,8 @@ export class RegisterPage implements OnInit {
             res.user.email,
             res.additionalUserInfo.profile.first_name,
             res.additionalUserInfo.profile.last_name,
+            'DefaultGroup',
+            'DefaultFamily',
             res.user.photoURL,
             '@' + res.additionalUserInfo.profile.last_name.toLowerCase() + res.additionalUserInfo.profile.id.substring(0, 4),
             '',

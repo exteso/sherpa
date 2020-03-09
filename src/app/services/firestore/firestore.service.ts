@@ -15,6 +15,7 @@ import { User, GeoMap, Group } from '../../models';
 import { WeekDay } from '@angular/common';
 import { Catalog } from 'src/app/models/catalog';
 import { Product } from 'src/app/models/product';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,10 @@ export class FirestoreService {
     return new Promise(resolve => {
       resolve(this.afs.doc(path));
     });
+  }
+
+  public getUser(userId: string): Observable<User> {
+    return this.afs.doc<User>(`users/${userId}`).valueChanges();
   }
 
   // Check if the object exists on Firestore. Returns a boolean promise with true/false.
