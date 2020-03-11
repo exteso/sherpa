@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { OrderService } from 'src/app/services/order/order.service';
 import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
 import { Group, User } from 'src/app/models';
-import { AuthService, FirestoreService, TranslateProvider } from 'src/app/services';
+import { AuthService, FirestoreService, TranslateProvider, LoadingService, ToastService } from 'src/app/services';
 import { Product } from 'src/app/models/product';
 import { combineLatest } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
@@ -33,7 +33,8 @@ export class NextOrderPage implements OnInit, OnDestroy {
   subscription2: Subscription;
 
   constructor(private firestore: FirestoreService, private orderService: OrderService, 
-    public authService: AuthService, public translate: TranslateProvider) { }
+    public authService: AuthService, public translate: TranslateProvider, 
+    public loading: LoadingService, public toast: ToastService) { }
 
   ngOnInit() {
     this.searchTerm$ = new BehaviorSubject("");
@@ -57,7 +58,9 @@ export class NextOrderPage implements OnInit, OnDestroy {
 
   changeOrderWeek(orderWeek: string){
     this.orderWeek = orderWeek;
-    this.initializeGroceryItems$ = of([]);
+    this.nrOfProducts = undefined;
+    this.loading.showLoading('Loading catalog...');
+
     this.deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
     
     this.sortedCategories$ = this.orderService.getCategories$(orderWeek);
@@ -67,9 +70,9 @@ export class NextOrderPage implements OnInit, OnDestroy {
                                       return products.sort((p1, p2) => { 
                                           const categories = this.orderService.getCategories();
                                           const c1 = categories.indexOf(p1.category.trim())
-                                          if (c1 == -1) console.log(p1.category + " Not Found");
+                                          if (c1 == -1) console.log("Category "+p1.category + " Not Found");
                                           const c2 = categories.indexOf(p2.category.trim())
-                                          if (c2 == -1) console.log(p2.category + " Not Found");
+                                          if (c2 == -1) console.log("Category "+p2.category + " Not Found");
                                           if (c1 < c2)
                                               return -1;
                                           if (c1 > c2)
@@ -82,14 +85,19 @@ export class NextOrderPage implements OnInit, OnDestroy {
                                           return 0;
                                       });
                                     }),
-                                    tap(products => this.nrOfProducts = products.length)
-                                    );
+                                    tap(products => {
+                                      this.nrOfProducts = products.length;
+                                      this.loading.dismiss();
+                                      this.toast.showToast('Loaded catalog with '+this.nrOfProducts+' products');
+                                    }));
     
     this.subscription2 = this.orderService.getMyOrder(orderWeek, this.groupId, this.familyId).subscribe(
       myOrder => this.familyWeekOrder$.next(myOrder)
     );
-
-    this.initializeGroceryItems$ = combineLatest([this.availableProducts$, this.familyWeekOrder$]).pipe(
+    
+    //this.initializeGroceryItems$ = combineLatest([this.availableProducts$, this.familyWeekOrder$]).pipe(
+    this.initializeGroceryItems$ = this.availableProducts$.pipe(
+      withLatestFrom(this.familyWeekOrder$),
       map(([products, orderedItems]) => {
         return products.map(p => { 
           let qty = 0;
@@ -99,7 +107,6 @@ export class NextOrderPage implements OnInit, OnDestroy {
           }
           return {...p, qty} });
       }));
-    
 
     this.filteredGroceryItems$ = combineLatest([this.initializeGroceryItems$, this.searchTerm$]).pipe(
       map(([items, searchQuery]) => {

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { OrderService, AuthService } from 'src/app/services';
+import { OrderService, AuthService, ToastService, LoadingService } from 'src/app/services';
 import { Grocery } from 'src/app/models/grocery';
 
 @Component({
@@ -11,17 +11,19 @@ import { Grocery } from 'src/app/models/grocery';
 export class OrderListPage implements OnInit, OnDestroy {
 
   orderWeek: string;
-  familyId: string;
+  families: string[];
   groupId: string;
+  deliveryDates: Date[];
   groupWeekOrder$: Observable<Grocery[]>;
+  groupOrder: Grocery[];
   subscription: Subscription;
   
-  constructor(private orderService: OrderService, public authService: AuthService) { }
+  constructor(private orderService: OrderService, public authService: AuthService, 
+    public loading: LoadingService, public toast: ToastService) { }
 
   ngOnInit() {
     this.subscription = this.authService.getUser$().subscribe(user => {
       this.groupId = user.groupId;
-      this.familyId = user.familyId;
       this.changeOrderWeek(this.orderService.getCurrentWeek());
     })
   }
@@ -34,6 +36,10 @@ export class OrderListPage implements OnInit, OnDestroy {
 
   changeOrderWeek(orderWeek: string){
     this.orderWeek = orderWeek;
+    this.orderService.getMembers().subscribe(members => this.families = members);
+    this.loading.showLoading('Loading order...');
+    this.deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
+
     this.groupWeekOrder$ = this.orderService.getMyGroupOrder(orderWeek, this.groupId);
   }
 

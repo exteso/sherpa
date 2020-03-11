@@ -34,6 +34,11 @@
             </p>
             </ion-card-content>
           </ion-card>
+          <ion-card *ngIf="nrOfProducts == 0">
+              <ion-card-header>
+                  <ion-card-title color="danger">Non ci sono prodotti per questa settimana</ion-card-title>
+                </ion-card-header>
+          </ion-card>
       <ion-virtual-scroll [items]="filteredGroceryItems$ | async" approxItemHeight="118px" [headerFn]="myHeaderFn">
         <ion-item-divider sticky="true" *virtualHeader="let header" color="primary">
             <ion-label>{{ header }}</ion-label>

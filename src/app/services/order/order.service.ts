@@ -2,8 +2,8 @@ import { Injectable, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/firestore';
 import { Group } from 'src/app/models';
-import { filter, map, tap, mergeMap, switchMap } from 'rxjs/operators';
-import { Observable, forkJoin, of } from 'rxjs';
+import { filter, map, tap, mergeMap, switchMap, flatMap, exhaustMap, concatAll, concatMap, take } from 'rxjs/operators';
+import { Observable, forkJoin, of, from, BehaviorSubject } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
 import { Product } from 'src/app/models/product';
 
@@ -15,7 +15,11 @@ export class OrderService {
   //userProfile$: Observable<userProfile>;
   currentWeek: string;
 
-  constructor(public authService: AuthService, private afs: AngularFirestore) {  
+  //TODO remove this temp variable
+  members: BehaviorSubject<string[]>;
+
+  constructor(public authService: AuthService, private afs: AngularFirestore) { 
+    this.members = new BehaviorSubject([]); 
     let week: any = this.getWeekNumber(new Date());
     this.currentWeek = `${week[0]}w${week[1]}`;
     this.authService.getUser().then(user => {
@@ -94,37 +98,66 @@ export class OrderService {
 
   public getMyOrder(orderWeek: string, groupId: string, familyId: string): Observable<Grocery[]>{
     return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`).valueChanges();
-    //return of([]);
+  }
+
+  mergeGrocery(acc:  Grocery[], source:  Grocery[]){
+    source.forEach(sourceItem => {
+      let destItem = acc.find(d => d.id == sourceItem.id);
+      if (destItem){
+        destItem.qty += sourceItem.qty
+      } else {
+        acc.push(sourceItem)
+      }
+    });
+  }
+
+  mergeOrder(orders: Grocery[][]): Grocery[]{
+    let final = orders[0];
+    for (let i = 1; i<orders.length;i++){
+      this.mergeGrocery(final, orders[i]);
+    }
+
+    return final;
+  }
+
+  getAllOrders(urls: string[]): Observable<Grocery[]> {
+    const urlsMap = urls.map(url => <Observable<Grocery[]>> this.afs.collection<Grocery>(url).valueChanges().pipe(take(1)));
+    urlsMap.forEach(url$ => { url$.subscribe(b => { console.log(b) }) });
+
+    return forkJoin(urlsMap).pipe(
+      map((groceries: Grocery[][]) => this.mergeOrder(groceries))
+    );
+  }
+
+  public getMembers(): Observable<string[]>{
+    return this.members;
   }
 
   public getMyGroupOrder(orderWeek: string, groupId: string): Observable<Grocery[]>{
 
-    let groupMembers$ = this.afs.collection(`/orders/${orderWeek}/groups/${groupId}/member/`).valueChanges();
-    return groupMembers$.pipe(
+    let groupOrderUrl$ = this.afs.collection(`/orders/${orderWeek}/groups/${groupId}/member/`).valueChanges().pipe(
+      tap((members: any[]) => this.members.next(members)),
       map(members => {
-        console.log(members);
-        const memberOrders$: Observable<Grocery[]>[] = [];
+        const groupOrderUrls: string[] = [];
         members.forEach((member:any) => {
-          memberOrders$.push(this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${member.id}/items`).valueChanges());
+          groupOrderUrls.push(`/orders/${orderWeek}/groups/${groupId}/member/${member.id}/items`);
         })
-        return memberOrders$;
+        return groupOrderUrls;
       }),
-      switchMap(memberOrders => memberOrders[0])
-      /*mergeMap((memberOrders: Observable<Grocery[]>[]) => 
-        forkJoin(memberOrders).pipe(
-          map((items: Grocery[][]) => {
-            let all = items[0]
-            if (items.length > 0) {
-              all = all.concat(items[1])
-            }
-            return all;
-          }),
-        ))*/
-        
+      switchMap(urls => {
+        return this.getAllOrders(urls);
+      })
       );
 
+      return groupOrderUrl$;
   }
   
+  getUrlsObservable(urls: string[]): Observable<Grocery[]>[] {
+    return urls.map(url => {
+      return this.afs.collection<Grocery>(url).valueChanges();
+    });
+  }
+
   public updateMyOrder(orderWeek: string, groupId: string, familyId: string, product: Product, qty: number){
     return this.afs.doc<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/${product.id}`)
                     .set({
