@@ -20,7 +20,6 @@
 </ion-header>
 
 <ion-content>
-    <ion-list>
         <ion-card class="group-card">
             <ion-card-header>
               <ion-card-subtitle>{{orderWeek}} - {{nrOfProducts}}</ion-card-subtitle>
@@ -39,7 +38,7 @@
                   <ion-card-title color="danger">Non ci sono prodotti per questa settimana</ion-card-title>
                 </ion-card-header>
           </ion-card>
-      <ion-virtual-scroll [items]="filteredGroceryItems$ | async" approxItemHeight="118px" [headerFn]="myHeaderFn">
+      <ion-virtual-scroll [items]="filteredGroceryItems$ | async" approxItemHeight="132px" [headerFn]="myHeaderFn">
         <ion-item-divider sticky="true" *virtualHeader="let header" color="primary">
             <ion-label>{{ header }}</ion-label>
         </ion-item-divider>
@@ -47,5 +46,4 @@
             <app-grocery-item [grocery]="product" (updateQty)="updateQty(product, $event)"></app-grocery-item>
         </div>
       </ion-virtual-scroll>
-    </ion-list>
 </ion-content>

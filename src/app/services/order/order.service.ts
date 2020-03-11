@@ -104,9 +104,10 @@ export class OrderService {
     source.forEach(sourceItem => {
       let destItem = acc.find(d => d.id == sourceItem.id);
       if (destItem){
-        destItem.qty += sourceItem.qty
+        destItem.qty += sourceItem.qty;
+        destItem.price += sourceItem.price;
       } else {
-        acc.push(sourceItem)
+        acc.push(sourceItem);
       }
     });
   }
@@ -122,7 +123,6 @@ export class OrderService {
 
   getAllOrders(urls: string[]): Observable<Grocery[]> {
     const urlsMap = urls.map(url => <Observable<Grocery[]>> this.afs.collection<Grocery>(url).valueChanges().pipe(take(1)));
-    urlsMap.forEach(url$ => { url$.subscribe(b => { console.log(b) }) });
 
     return forkJoin(urlsMap).pipe(
       map((groceries: Grocery[][]) => this.mergeOrder(groceries))
