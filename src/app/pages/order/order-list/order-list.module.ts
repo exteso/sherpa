@@ -7,10 +7,13 @@ import { IonicModule } from '@ionic/angular';
 import { OrderListPageRoutingModule } from './order-list-routing.module';
 
 import { OrderListPage } from './order-list.page';
+import { SharedComponentModule } from 'src/app/components/shared-components.module';
+
 
 @NgModule({
   imports: [
     CommonModule,
+    SharedComponentModule,
     FormsModule,
     IonicModule,
     OrderListPageRoutingModule

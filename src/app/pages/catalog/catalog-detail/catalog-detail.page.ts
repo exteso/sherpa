@@ -57,7 +57,7 @@ export class CatalogDetailPage implements OnInit, OnDestroy {
 
     this.firestore.getCatalogById(this.eID).then(res => {
       this.subscription = res.valueChanges().subscribe((r: Catalog) => {
-        this.catalog = new Catalog(r.id, r.year, r.week, r.vendor, r.displayId, r.orderDeadline, r.name);
+        this.catalog = new Catalog(r.id, r.year, r.week, r.vendor, r.displayId, r.orderDate, r.deliveryDate, r.name);
 
         this.subscription2 = this.firestore.getCatalogProducts(this.eID)
           .valueChanges()
@@ -73,7 +73,7 @@ export class CatalogDetailPage implements OnInit, OnDestroy {
             Validators.required
           ])],
           displayId: [this.catalog.displayId, Validators.compose([])],
-          orderDeadline: [this.catalog.orderDeadline, Validators.compose([])],
+          orderDeadline: [this.catalog.orderDate, Validators.compose([])],
           name: [this.catalog.name, Validators.compose([])]
         });
       });

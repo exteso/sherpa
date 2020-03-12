@@ -7,15 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { NextOrderPageRoutingModule } from './next-order-routing.module';
 
 import { NextOrderPage } from './next-order.page';
-import { GroceryItemComponent } from 'src/app/components/grocery-item/grocery-item.component';
+import { SharedComponentModule } from 'src/app/components/shared-components.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
+    SharedComponentModule,
     IonicModule,
     NextOrderPageRoutingModule
   ],
-  declarations: [NextOrderPage, GroceryItemComponent]
+  declarations: [NextOrderPage]
 })
 export class NextOrderPageModule {}

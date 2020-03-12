@@ -45,9 +45,9 @@ export class OrderService {
     const yw=yearAndWeek.split('w');
     const year = parseFloat(yw[0]);
     const week = parseFloat(yw[1]);
-    let yearStart: Date = new Date(Date.UTC(year,0,1));
+    let yearStart: Date = new Date(Date.UTC(year,0,1,13));
     const deliveryDate = new Date(yearStart.getTime() + this.weeksInMillis(week));
-    const orderDate = new Date(yearStart.getTime() + this.weeksInMillis(week) -5*86400000);
+    const orderDate = new Date(yearStart.getTime() + this.weeksInMillis(week) -5*86400000 +3*3600000);
     return [orderDate, deliveryDate];
   }
 

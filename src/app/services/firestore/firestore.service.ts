@@ -210,7 +210,7 @@ export class FirestoreService {
       return year+'w'+week;
     }
 
-    createCatalog(
+    createCatalogd(
       year: string, 
       week: string
     ): Promise<void> {
@@ -221,6 +221,12 @@ export class FirestoreService {
                           week: week });
     }
   
+    createCatalog(catalog: Catalog): Promise<void> {
+      return this.afs.doc(`catalogs/${catalog.id}`)
+                     .set({...catalog});
+    }
+
+
     getCatalog(year: string, week: string): Promise<AngularFirestoreDocument<Catalog>>  {
       return new Promise(resolve => {
         const id = this.catalogId(year, week);
@@ -256,7 +262,12 @@ export class FirestoreService {
     }
 
     addProductsToCatalog(products: Product[], catalogId: string){
-      products.forEach(product => this.addProductToCatalog(product, catalogId));
+        const weekCatalogCollection = this.afs.collection<Product>(`catalogs/${catalogId}/products/`);
+        let promises: Promise<any>[] = [];
+        for (let i=0; i<products.length; i++){
+          promises.push(weekCatalogCollection.add({...products[i]}));
+        }
+        return Promise.all(promises);
     }
 
     addProductToCatalog(product: Product, catalogId: string){

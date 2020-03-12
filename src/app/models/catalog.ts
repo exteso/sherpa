@@ -5,7 +5,8 @@ export class Catalog {
         public week?: string,
         public vendor?: string,
         public displayId?: string,
-        public orderDeadline?: any,
+        public orderDate?: string,
+        public deliveryDate?: string,
         public name?: string,
         public products?: any[],
     ) {

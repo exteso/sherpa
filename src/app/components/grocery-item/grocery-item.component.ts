@@ -9,6 +9,7 @@ import { Grocery } from 'src/app/models/grocery';
 export class GroceryItemComponent implements OnInit {
 
   @Input() grocery: Grocery;
+  @Input() readOnly: boolean = true;
   @Output() updateQty = new EventEmitter<number>();
 
   open: boolean;

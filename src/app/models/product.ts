@@ -21,5 +21,7 @@ export class Product {
         //public previousId?: number,
         //public catalogId?: number,
     ) {
+        if (!this.certification) {this.certification=''}
+        if (!this.unitText) {this.unitText='pz'}
     }
 }

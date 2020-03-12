@@ -9,12 +9,15 @@
         <p>{{ grocery.origin }}</p>
       </ion-text>
     </ion-label>
+    <ion-label slot="end" class="ion-text-end mr10"  *ngIf="!readOnly">
+      <ion-text >{{grocery.qty * grocery.price | number:'1.2-2'}} CHF</ion-text>
+    </ion-label>
     <ion-note slot="end" color="dark" class="ion-text-end grocery-item-qty">
         {{ grocery.qty }} {{ grocery.orderUnit }}
     </ion-note>
   </ion-item>
 
-  <ion-item lines="full" [ngClass]="{'ion-activated': grocery.qty > 0}">
+  <ion-item lines="full" [ngClass]="{'ion-activated': grocery.qty > 0}" *ngIf="!readOnly">
     <ion-button class="grocery-button" color="dark" slot="start" (click)="grocery.qty = 0">
         <ion-icon slot="icon-only" name="close-circle"></ion-icon>
       </ion-button>

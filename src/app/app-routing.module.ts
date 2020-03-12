@@ -28,6 +28,10 @@ const routes: Routes = [
     path: 'order-list',
     loadChildren: () => import('./pages/order/order-list/order-list.module').then( m => m.OrderListPageModule)
   },
+  {
+    path: 'catalog-create',
+    loadChildren: () => import('./pages/catalog/catalog-create/catalog-create.module').then( m => m.CatalogCreatePageModule)
+  },
   ]
 ;
 
