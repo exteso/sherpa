@@ -43,7 +43,7 @@
             <ion-label>{{ header }}</ion-label>
         </ion-item-divider>
         <div *virtualItem="let product; let itemBounds = bounds;">
-            <app-grocery-item [grocery]="product" (updateQty)="updateQty(product, $event)"></app-grocery-item>
+            <app-grocery-item [grocery]="product" [readOnly]="false" (updateQty)="updateQty(product, $event)"></app-grocery-item>
         </div>
       </ion-virtual-scroll>
 </ion-content>

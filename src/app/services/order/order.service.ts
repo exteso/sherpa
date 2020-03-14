@@ -167,9 +167,9 @@ export class OrderService {
   }
 
   getCategories(){
-    const categories = ['Proposte', 'verdure', 'frutta', 'insalate', 'erbette','panetteria','pane',
+    const categories = ['Proposte', 'PROPOSTE', 'verdure', 'frutta', 'insalate', 'erbette','panetteria','pane',
                          'pane frigo', 'uova', 'senza lattosio', 'latte + latticini', 'formaggi mucca',
-                         'formaggi capra', 'gastromia', 'congelati per consumo immediato','carne + pesce freschi',
+                         'formaggi capra', 'f.pecora', 'f.misti', 'gastromia', 'congelati per consumo immediato','carne + pesce freschi',
                          'salumeria', 'burger veg', 'tofu + seitan', 'diversi', 'pomodoro', 'pomodoro cartoni',
                          'olio', 'olio box', 'aceto', 'vino', 'bibite e succhi', 'bibite casse + box', 'sciroppi',
                          'drink diversi', 'drink cartoni', 'confetture', 'miele', 'creme + birnel', 'conserve',

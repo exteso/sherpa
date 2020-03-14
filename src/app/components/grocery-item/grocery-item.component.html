@@ -9,7 +9,7 @@
         <p>{{ grocery.origin }}</p>
       </ion-text>
     </ion-label>
-    <ion-label slot="end" class="ion-text-end mr10"  *ngIf="!readOnly">
+    <ion-label slot="end" class="ion-text-end mr10"  *ngIf="readOnly">
       <ion-text >{{grocery.qty * grocery.price | number:'1.2-2'}} CHF</ion-text>
     </ion-label>
     <ion-note slot="end" color="dark" class="ion-text-end grocery-item-qty">
