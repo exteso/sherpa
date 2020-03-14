@@ -1,7 +1,7 @@
 {
   "name": "ConProBio App",
   "short_name": "ConProBio",
-  "theme_color": "#1976d2",
+  "theme_color": "#1a7e67",
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "./",
