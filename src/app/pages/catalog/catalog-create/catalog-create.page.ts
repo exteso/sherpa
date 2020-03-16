@@ -4,6 +4,7 @@ import * as XLSX from 'xlsx';
 import { Catalog } from 'src/app/models';
 import { OrderService, FirestoreService, ToastService } from 'src/app/services';
 import { Product, Unit } from 'src/app/models/product';
+import { NavController } from '@ionic/angular';
   
 type AOA = any[][];
   
@@ -21,7 +22,7 @@ export class CatalogCreatePage implements OnInit {
     fileName: string = 'SheetJS.xlsx';
   
     constructor(private orderService: OrderService, private firestore: FirestoreService,
-      public toast: ToastService){}
+      public toast: ToastService, public navCtrl: NavController){}
 
     ngOnInit(){
       
@@ -47,16 +48,15 @@ export class CatalogCreatePage implements OnInit {
 
         this.newCatalog = this.extractCatalog(this.data);
         this.products= this.extractProducts(this.data);
-        console.log(this.data);
       };
       reader.readAsBinaryString(target.files[0]);
     }
 
     async save(){
       this.firestore.createCatalog(this.newCatalog);
-      let savedProducts = this.products.filter(p => (p.origin));
-      await this.firestore.addProductsToCatalog(savedProducts, this.newCatalog.id);
-      this.toast.showToast("Catalog "+this.newCatalog.id+ " created with "+savedProducts.length+" products");
+      await this.firestore.addProductsToCatalog(this.products, this.newCatalog.id);
+      this.toast.showToast("Catalog "+this.newCatalog.id+ " created with "+this.products.length+" products");
+      this.navCtrl.navigateRoot('/catalog-list');
     }
 
     extractCatalog(data: string[][]){
@@ -74,12 +74,13 @@ export class CatalogCreatePage implements OnInit {
       let lines = data.slice(6);
     
       let products = new Array<Product>();
-      let lastCategory = '';
+      let lastCategory = 'PLACEHOLDER';
       let i=0;
       lines.forEach((line) => {
         if (line.length == 0) return ;
         let product = this.parseProductLine(line, lastCategory, i++);
-        if (product.category != lastCategory){
+        if (!product.origin) return;
+        if (lastCategory != 'PLACEHOLDER' && product.category != lastCategory){
           i = 0;
         }
         lastCategory = product.category;

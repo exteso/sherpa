@@ -265,7 +265,10 @@ export class FirestoreService {
         const weekCatalogCollection = this.afs.collection<Product>(`catalogs/${catalogId}/products/`);
         let promises: Promise<any>[] = [];
         for (let i=0; i<products.length; i++){
-          promises.push(weekCatalogCollection.add({...products[i]}));
+          let product = products[i];
+          //TODO instead of creating a unique id, we should create a has of the product
+          const id = product.id ? product.id : this.afs.createId();
+          promises.push(weekCatalogCollection.add({...product, id}));
         }
         return Promise.all(promises);
     }

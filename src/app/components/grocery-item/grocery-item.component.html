@@ -4,10 +4,10 @@
       <ion-text color="primary">
         <h2>{{ grocery.name }}</h2>
       </ion-text>
-      <p>{{ grocery.price }} {{ grocery.currency }}/{{ grocery.priceUnit }}</p>
       <ion-text>
-        <p>{{ grocery.origin }}</p>
+        <p>{{ grocery.price }} {{ grocery.currency }}/{{ grocery.priceUnit }}</p>
       </ion-text>
+      <p>{{ grocery.origin }}</p>
     </ion-label>
     <ion-label slot="end" class="ion-text-end mr10"  *ngIf="readOnly">
       <ion-text >{{grocery.qty * grocery.price | number:'1.2-2'}} CHF</ion-text>
@@ -18,13 +18,13 @@
   </ion-item>
 
   <ion-item lines="full" [ngClass]="{'ion-activated': grocery.qty > 0}" *ngIf="!readOnly">
-    <ion-button class="grocery-button" color="dark" slot="start" (click)="grocery.qty = 0">
+    <ion-button class="grocery-button" color="dark" slot="start" (click)="grocery.qty = 0" *ngIf="grocery.qty > 0">
         <ion-icon slot="icon-only" name="close-circle"></ion-icon>
       </ion-button>
     <ion-label slot="end" class="ion-text-end mr10">
       <ion-text >{{grocery.qty * grocery.price | number:'1.2-2'}} CHF</ion-text>
     </ion-label>
-    <ion-button class="grocery-button mr10" color="danger" slot="end" (click)="removeQty()">
+    <ion-button class="grocery-button mr10" color="danger" slot="end" (click)="removeQty()" *ngIf="grocery.qty > 0">
       <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
     </ion-button>
     <ion-button class="grocery-button" color="success" slot="end" (click)="addQty()">

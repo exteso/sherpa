@@ -20,6 +20,11 @@ export class HomePage {
     {
       title: 'home.card.item2.title',
       desc: 'home.card.item2.desc',
+      url: '/manage-order/2020w12'
+    },
+    {
+      title: 'home.card.item3.title',
+      desc: 'home.card.item3.desc',
       url: '/order-to-collect'
     }
   ];
