@@ -166,22 +166,92 @@ export class OrderService {
                     });
   }
 
-  getCategories(){
-    const categories = ['Proposte', 'PROPOSTE', 'verdure', 'frutta', 'insalate', 'erbette','panetteria','pane',
-                         'pane frigo', 'uova', 'senza lattosio', 'latte + latticini', 'formaggi mucca',
-                         'formaggi capra', 'f.pecora', 'f.misti', 'gastromia', 'congelati per consumo immediato','carne + pesce freschi',
-                         'salumeria', 'burger veg', 'tofu + seitan', 'diversi', 'pomodoro', 'pomodoro cartoni',
-                         'olio', 'olio box', 'aceto', 'vino', 'bibite e succhi', 'bibite casse + box', 'sciroppi',
-                         'drink diversi', 'drink cartoni', 'confetture', 'miele', 'creme + birnel', 'conserve',
-                         'prodotti soia', 'condimenti', 'spezie', 'pasta integrale', 'pasta bianca', 'pasta bianca cartoni',
-                         'pasta farro', 'paste speciali', 'riso', 'riso cartoni', 'farine e cereali', 'farine + cereali cartoni e sacchi',
-                         'flakes + muesli', 'leguminose', 'te + tisane', 'caffé + surrogati', 'zucchero + lievito + unigel',
-                         'zucchero sacchi', 'cioccolato + cacao', 'cioccolato rotto', 'biscotti + crackers', 'frutta secca + snacks', 'frutta secca cartoni', 
-                         'diversi secchi', 'idee regalo', 'stoviglie compostabili','documenti'];
-    return categories;
+  getCategories(): { name: string, grpIdx: number }[] {
+    const categories = [
+              {'name': 'Proposte', 'grpIdx': 0},
+              {'name': 'Verdure', 'grpIdx': 0},
+              {'name': 'Insalate', 'grpIdx': 0},
+              {'name': 'erbette', 'grpIdx': 0},
+              {'name': 'frutta', 'grpIdx': 0},
+              {'name': 'panetteria', 'grpIdx': 0},
+              {'name': 'pane', 'grpIdx': 0},
+              {'name': 'pane frigo', 'grpIdx': 0},
+              {'name': 'uova', 'grpIdx':1},
+              {'name': 'senza lattosio', 'grpIdx':1},
+              {'name': 'latte + latticini', 'grpIdx':1},
+              {'name': 'formaggi mucca', 'grpIdx':1},
+              {'name': 'f.misti', 'grpIdx':1},
+              {'name': 'formaggi capra', 'grpIdx':1},
+              {'name': 'f.pecora', 'grpIdx':1},
+              {'name': 'gastromia', 'grpIdx':2},
+              {'name': 'congelati per consumo immediato', 'grpIdx':2},
+              {'name': 'carne + pesce freschi', 'grpIdx':2},
+              {'name': 'salumeria', 'grpIdx':2},
+              {'name': 'burger veg', 'grpIdx':2},
+              {'name': 'tofu + seitan', 'grpIdx':2},
+              {'name': 'diversi', 'grpIdx':2},
+              {'name': 'documenti', 'grpIdx':-1},
+              {'name': 'pomodoro ', 'grpIdx':3},
+              {'name': 'pomodoro cartoni', 'grpIdx':3},
+              {'name': 'olio', 'grpIdx':3},
+              {'name': 'olio box', 'grpIdx':3},
+              {'name': 'aceto', 'grpIdx':3},
+              {'name': 'vino', 'grpIdx':4},
+              {'name': 'bibite e succhi', 'grpIdx':4},
+              {'name': 'bibite casse + box', 'grpIdx':4},
+              {'name': 'sciroppi', 'grpIdx':4},
+              {'name': 'drink diversi', 'grpIdx':4},
+              {'name': 'drink cartoni', 'grpIdx':4},
+              {'name': 'confetture', 'grpIdx':5},
+              {'name': 'miele', 'grpIdx':5},
+              {'name': 'creme + birnel', 'grpIdx':5},
+              {'name': 'conserve', 'grpIdx':5},
+              {'name': 'prodotti soia', 'grpIdx':6},
+              {'name': 'condimenti', 'grpIdx':6},
+              {'name': 'spezie', 'grpIdx':6},
+              {'name': 'pasta integrale', 'grpIdx':7},
+              {'name': 'pasta bianca', 'grpIdx':7},
+              {'name': 'pasta bianca cartoni', 'grpIdx':7},
+              {'name': 'pasta farro', 'grpIdx':7},
+              {'name': 'paste speciali', 'grpIdx':7},
+              {'name': 'riso', 'grpIdx':7},
+              {'name': 'riso cartoni', 'grpIdx':7},
+              {'name': 'farine e cereali', 'grpIdx':7},
+              {'name': 'farine + cereali cartoni e sacchi', 'grpIdx':7},
+              {'name': 'flakes + muesli', 'grpIdx':8},
+              {'name': 'leguminose', 'grpIdx':8},
+              {'name': 'te + tisane', 'grpIdx':8},
+              {'name': 'caffé + surrogati', 'grpIdx':8},
+              {'name': 'zucchero + lievito + unigel', 'grpIdx':8},
+              {'name': 'zucchero sacchi', 'grpIdx':8},
+              {'name': 'cioccolato + cacao', 'grpIdx':8},
+              {'name': 'cioccolato rotto', 'grpIdx':8},
+              {'name': 'biscotti + crackers', 'grpIdx':8},
+              {'name': 'frutta secca + snacks', 'grpIdx':8},
+              {'name': 'diversi secchi', 'grpIdx':8},
+              {'name': 'idee regalo' , 'grpIdx':8}
+              ];
+       return categories;
   }
 
-  getCategories$(weekOrder: string): Observable<string[]>{
-    return of(this.getCategories());
+  getCategoryGroups(){
+    const catGroups = [
+      'Vegetali+Pane', // 0
+      'Uova+Latticini', // 1
+      'Carne+Gastronomia', // 2
+      "Sughi+Condimenti", // 3
+      "Bevande", // 4
+      "Confetture", // 5
+      "Spezie", // 6
+      "Pasta+Riso", // 7
+      "Altro" // 8
+    ] 
+    return catGroups;
+  }
+
+  getGroup(category: string){
+    const cat = this.getCategories().find(i => i.name.toLowerCase().trim() == category.toLowerCase().trim());
+    const grpIdx = cat.grpIdx;
+    return this.getCategoryGroups()[grpIdx];
   }
 }

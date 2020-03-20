@@ -63,15 +63,14 @@ export class NextOrderPage implements OnInit, OnDestroy {
 
     this.deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
     
-    this.sortedCategories$ = this.orderService.getCategories$(orderWeek);
     this.availableProducts$ = this.firestore.getCatalogProducts(orderWeek)
                                   .valueChanges().pipe(
                                     map(products => {
                                       return products.sort((p1, p2) => { 
                                           const categories = this.orderService.getCategories();
-                                          const c1 = categories.indexOf(p1.category.trim())
+                                          const c1 = categories.findIndex(i => i.name == p1.category.trim())
                                           if (c1 == -1) console.log("Category "+p1.category + " Not Found");
-                                          const c2 = categories.indexOf(p2.category.trim())
+                                          const c2 = categories.findIndex(i => i.name == p2.category.trim())
                                           if (c2 == -1) console.log("Category "+p2.category + " Not Found");
                                           if (c1 < c2)
                                               return -1;

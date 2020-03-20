@@ -23,12 +23,14 @@ export class CreateOrderPage implements OnInit, OnDestroy {
   groupId: string;
   nrOfProducts: number;
   deliveryDates: Date[];
+
   myGroups$: Observable<Group[]>
   currentUser: User;
   availableProducts$: Observable<Product[]>;
   familyWeekOrder$: BehaviorSubject<Grocery[]>;
   filteredGroceryItems$: Observable<Grocery[]>;
-  sortedCategories$: Observable<string[]>;
+  categoryGroups: string[];
+  visibleCategoryGroups$: BehaviorSubject<string[]>;
   initializeGroceryItems$: Observable<Grocery[]>;
   searchTerm: string = '';
   searchTerm$: BehaviorSubject<string>;
@@ -57,6 +59,7 @@ export class CreateOrderPage implements OnInit, OnDestroy {
     );
     this.searchTerm$ = new BehaviorSubject("");
     this.familyWeekOrder$ = new BehaviorSubject([]);
+    this.visibleCategoryGroups$ = new BehaviorSubject([]);
     this.myGroups$ = this.orderService.getMyGroups();
    
   }
@@ -78,15 +81,17 @@ export class CreateOrderPage implements OnInit, OnDestroy {
 
     this.deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
     
-    this.sortedCategories$ = this.orderService.getCategories$(orderWeek);
+    this.categoryGroups = this.orderService.getCategoryGroups();
+    this.visibleCategoryGroups$.next([this.categoryGroups[0]]);
+
     this.availableProducts$ = this.firestore.getCatalogProducts(orderWeek)
                                   .valueChanges().pipe(
                                     map(products => {
                                       const categories = this.orderService.getCategories();
                                       return products.sort((p1, p2) => { 
-                                          const c1 = categories.indexOf(p1.category.trim())
+                                          const c1 = categories.findIndex(i => i.name.toLowerCase().trim() == p1.category.toLowerCase().trim())
                                           if (c1 == -1) console.log("Category "+p1.category + " Not Found");
-                                          const c2 = categories.indexOf(p2.category.trim())
+                                          const c2 = categories.findIndex(i => i.name.toLowerCase().trim() == p2.category.toLowerCase().trim())
                                           if (c2 == -1) console.log("Category "+p2.category + " Not Found");
                                           if (c1 < c2)
                                               return -1;
@@ -123,12 +128,22 @@ export class CreateOrderPage implements OnInit, OnDestroy {
             qty = item.qty;
           }
           return {...p, qty} });
-      }));
+      }));  
 
-    this.filteredGroceryItems$ = combineLatest([this.initializeGroceryItems$, this.searchTerm$]).pipe(
-      map(([items, searchQuery]) => {
+    this.filteredGroceryItems$ = combineLatest([this.initializeGroceryItems$, this.searchTerm$, this.visibleCategoryGroups$]).pipe(
+      map(([items, searchQuery, visCatGroups]) => {
+
         // here we imperatively implement the filtering logic
-        if (!searchQuery) { return items; }
+        if (!searchQuery) { 
+          
+          return items.filter(item => {
+            if (item.category && visCatGroups.includes(this.orderService.getGroup(item.category))) {
+                  return true;
+            }
+            return false;
+          });
+        
+        }
         const q = searchQuery.toLowerCase();
         return items.filter(item => {
           if (item.name && item.name.toLowerCase().includes(q) ||
@@ -157,5 +172,10 @@ export class CreateOrderPage implements OnInit, OnDestroy {
 
   updateQty(product: Product, qty: number){
     this.orderService.updateMyOrder(this.orderWeek, this.groupId, this.familyId, product, qty);
+  }
+
+  segmentChanged(ev: any) {
+    console.log('Segment changed', ev);
+    this.visibleCategoryGroups$.next([ev.detail.value]);
   }
 }
