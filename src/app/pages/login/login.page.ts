@@ -183,7 +183,6 @@ export class LoginPage implements OnInit {
             'Roncaccio',
             res.additionalUserInfo.profile.last_name,
             res.user.photoURL,
-            '@' + res.additionalUserInfo.profile.last_name.toLowerCase() + res.additionalUserInfo.profile.id.substring(0, 4),
             '',
 
             true
@@ -225,7 +224,6 @@ export class LoginPage implements OnInit {
             'Roncaccio',
             res.additionalUserInfo.profile.family_name,
             res.user.photoURL,
-            '@' + res.additionalUserInfo.profile.family_name.toLowerCase() + res.additionalUserInfo.profile.id.substring(0, 4),
             '',
             true
           );

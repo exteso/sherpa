@@ -249,10 +249,10 @@ export class OrderService {
     const catGroups = [
       'Vegetali+Pane', // 0
       'Uova+Latticini', // 1
-      'Carne+Gastronomia', // 2
-      "Sughi+Condimenti", // 3
+      'Carne+Gastron', // 2
+      "Sughi+Condim", // 3
       "Bevande", // 4
-      "Confetture", // 5
+      "Confettur", // 5
       "Spezie", // 6
       "Pasta+Riso", // 7
       "Altro" // 8

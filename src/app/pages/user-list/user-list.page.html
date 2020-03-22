@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-menu-button color="tertiary"></ion-menu-button>
     </ion-buttons>
     <ion-title>{{ 'userlist.title' | translate }}</ion-title>
   </ion-toolbar>
@@ -21,7 +21,7 @@
             <ion-text color="primary"><strong>{{ user?.firstName }} {{ user?.lastName }}</strong></ion-text>
           </h2>
           <h3>
-            <ion-text color="primary">{{ user?.username }}</ion-text>
+            <ion-text color="primary">{{ user?.email }}</ion-text>
           </h3>
         </ion-label>
       </ion-item>

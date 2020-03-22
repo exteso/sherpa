@@ -62,19 +62,6 @@ export class FirestoreService {
     return this.afs.collection('users', ref => ref.orderBy('firstName'));
   }
 
-  // Get userData of a user given the username. Return the userData promise.
-  public getUserByUsername(username: string): Promise<User> {
-    return new Promise(resolve => {
-      this.afs.collection('users', ref => ref.where('username', '==', username)).valueChanges().pipe(take(1)).subscribe((res: User[]) => {
-        if (res.length > 0) {
-          resolve(res[0]);
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
-
   public getUserByUID(uid: string): Promise<User> {
     return new Promise(resolve => {
       this.afs.collection('users', ref => ref.where('userId', '==', uid)).valueChanges().pipe(take(1)).subscribe((res: User[]) => {

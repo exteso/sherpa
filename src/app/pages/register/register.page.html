@@ -31,7 +31,7 @@
 
       <ion-item lines="none" class="ion-no-padding animated fadeInUp">
         <ion-label position="floating">
-          <ion-icon name="lock" item-start></ion-icon>
+          <ion-icon name="lock-closed" item-start></ion-icon>
           {{ 'auth.form.password' | translate }}
         </ion-label>
         <ion-input color="secondary" type="password" formControlName="password"></ion-input>
@@ -47,7 +47,7 @@
 
       <ion-item lines="none" class="ion-no-padding animated fadeInUp">
         <ion-label position="floating">
-          <ion-icon name="lock" item-start></ion-icon>
+          <ion-icon name="lock-closed" item-start></ion-icon>
           {{ 'auth.form.confirm' | translate }}
         </ion-label>
         <ion-input color="secondary" type="password" formControlName="confirmPassword"></ion-input>
@@ -63,11 +63,12 @@
             {{ 'auth.form.error.password.minlength' | translate }}
           </ion-text>
         </p>
-        <!-- <p class="text08 msg" *ngIf="f.password.value !== f.confirmPassword.value">
-          <ion-text color="danger">{{ 'auth.form.error.mismatch' | translate }}</ion-text>
-        </p> -->
       </div>
-      <!-- {{ f.password.value }} - {{ f.confirmPassword.value }} -->
+      <div *ngIf="!f.confirmPassword.errors && hasError">
+        <p class="ion-no-margin text08 msg" *ngIf="f.password.value !== f.confirmPassword.value">
+          <ion-text color="light">{{ 'auth.form.error.mismatch' | translate }}</ion-text>
+        </p>
+      </div>
     </form>
 
     <div class="ion-margin-top">
@@ -76,7 +77,7 @@
         <ion-icon name="log-in"></ion-icon>
         {{ 'auth.button.register' | translate }}
       </ion-button>
-
+<!--
       <p class="ion-text-center">
         <ion-text color="light">
           {{ 'auth.register.text' | translate }}
@@ -90,19 +91,19 @@
               <ion-icon slot="icon-only" name="logo-facebook"></ion-icon>
             </ion-button>
           </ion-col>
-          <!-- <ion-col size="4">
+           <ion-col size="4">
             <ion-button color="twitter" shape="round" expand="full">
               <ion-icon slot="icon-only" name="logo-twitter"></ion-icon>
             </ion-button>
-          </ion-col> -->
-          <!-- <ion-col size="6">
+          </ion-col>
+          <ion-col size="6">
             <ion-button color="google" shape="round" expand="full" (click)="registerWithGoogle()">
               <ion-icon slot="icon-only" name="logo-googleplus"></ion-icon>
             </ion-button>
-          </ion-col> -->
+          </ion-col> 
         </ion-row>
       </ion-grid>
-
+-->
     </div>
 
     <!-- Other links -->

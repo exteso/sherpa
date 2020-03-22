@@ -6,7 +6,7 @@
   </ion-toolbar>
 </ion-header>
 
-<div class="ion-padding ion-text-center bg-secondary">
+<!--div class="ion-padding ion-text-center bg-secondary">
   <ion-img [src]="photo" class="photo"></ion-img>
   <input type="file" (change)="setPhotoByWeb($event)" class="uploadweb" #photoInput />
   
@@ -18,7 +18,7 @@
     <ion-icon slot="start" name="photos" color="light"></ion-icon> 
     <ion-text color="light">{{ 'auth.form.addphoto' | translate }}</ion-text>
   </ion-button>
-</div>
+</div-->
 
 <ion-content class="ion-padding animated fadeIn login auth-page">
   
@@ -44,7 +44,7 @@
           <ion-icon name="list" item-start></ion-icon>
           {{ 'auth.form.lastName' | translate }}
         </ion-label>
-        <ion-input color="secondary" type="text" formControlName="lastName"></ion-input>
+        <ion-input color="secondary" type="text" formControlName="lastName" (ionBlur)="lastNameChanged($event)"></ion-input>
       </ion-item>
       <p class="text08 msg" *ngIf="f.lastName.errors && hasError">
         <ion-text color="danger" *ngIf="f.lastName.errors.required">
@@ -91,22 +91,6 @@
         </ion-text>
         <ion-text color="danger" *ngIf="f.email.errors.email"> 
           {{ 'auth.form.error.email.isvalid' | translate }}
-        </ion-text>
-      </p>
-
-      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
-        <ion-label position="floating">
-          <ion-icon name="person" item-start></ion-icon>
-          {{ 'auth.form.username' | translate }}
-        </ion-label>
-        <ion-input color="secondary" type="text" formControlName="username" (input)="onInput($event.target.value)"></ion-input>
-      </ion-item>
-      <p class="text08 msg" *ngIf="f.username.errors && hasError">
-        <ion-text color="danger" *ngIf="f.username.errors.required">
-          {{ 'auth.form.error.username' | translate }}
-        </ion-text>
-        <ion-text color="danger" *ngIf="!uniqueUsername && f.username.valid && hasError"> 
-          {{ 'auth.form.error.exists' | translate }}
         </ion-text>
       </p>
 

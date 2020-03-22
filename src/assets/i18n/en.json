@@ -35,9 +35,6 @@
   "auth.form.error.firstName": "Please enter your first name",
   "auth.form.lastName": "Last Name",
   "auth.form.error.lastName": "Please enter your last name",
-  "auth.form.username": "Username",
-  "auth.form.error.username": "Username must only contain letters and numbers and should be 4-20 characters",
-  "auth.form.error.exists": "This username isn't available",
   "auth.form.email": "Email",
   "auth.form.error.email": "Email is Required",
   "auth.form.error.email.isvalid": "Email must be a valid email address",
@@ -107,7 +104,7 @@
 
   "userlist.title": "User list",
   "userlist.user": "User",
-  "userlist.search": "Search for name or username",
+  "userlist.search": "Search for name or email",
 
   "geofirestore.title": "Geo Firestore",
   "geofirestore.showuser": "Show User",

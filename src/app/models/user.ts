@@ -8,7 +8,6 @@ export class User {
     public groupId: string,
     public familyId: string,
     public photo: string,
-    public username: string,
     public pushToken?: string,
     public notifications?: boolean
   ) {
@@ -20,7 +19,6 @@ export class User {
       groupId: this.groupId,
       familyId: this.familyId,
       photo: this.photo,
-      username: this.username,
       pushToken: this.pushToken,
       notifications: this.notifications
     };
