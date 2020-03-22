@@ -17,7 +17,7 @@ export class User {
       email: this.email,
       firstName: this.firstName,
       lastName: this.lastName,
-      groupId: this.userId,
+      groupId: this.groupId,
       familyId: this.familyId,
       photo: this.photo,
       username: this.username,
