@@ -53,9 +53,9 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.appPages = timer(100).pipe(map(res => [
       { title: 'Home', url: '/home', icon: 'home', direct: 'root' },
-      { title: 'User List', url: '/user-list', direct: 'forward', icon: 'people' },
-      { title: 'Geo Firestore', url: '/geofire', direct: 'forward', icon: 'map' },
-      { title: 'CRUD List', url: '/crud', direct: 'forward', icon: 'list' }
+      { title: 'Lista Utenti', url: '/user-list', direct: 'forward', icon: 'people' },
+      //{ title: 'Geo Firestore', url: '/geofire', direct: 'forward', icon: 'map' },
+      { title: 'Gestione Gruppo', url: '/crud', direct: 'forward', icon: 'list' }
     ]));
   }
 

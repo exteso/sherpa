@@ -96,9 +96,9 @@
   "home.card.version": "0.5",
   "home.card.description": "Portale Consumatori ConProBio",
 
-  "home.card.item1.title": "Prossimo Ordine (veloce)",
-  "home.card.item1.desc": "Crea & modifica il tuo prossimo ordine",
-  "home.card.item2.title": "Prossimo Ordine (bello)",
+  "home.card.item1.title": "item1",
+  "home.card.item1.desc": "item1 desc",
+  "home.card.item2.title": "Prossimo Ordine",
   "home.card.item2.desc": "Crea & modifica il tuo prossimo ordine",
   "home.card.item3.title": "Ordine da ritirare",
   "home.card.item3.desc": "Gestisci l'ordine di settimana scorsa",
@@ -121,7 +121,7 @@
   "geofirestore.checkpoint.date": "CheckPoint Date",
   "geofirestore.checkpoint.geo": "Geo Location",
 
-  "crudlist.title": "CRUD List",
+  "crudlist.title": "Gestione Gruppo",
 
   "songlist.title": "Song List",
   "songlist.msg.notavailable": "No songs available!",
