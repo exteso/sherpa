@@ -97,6 +97,12 @@ export class OrderService {
   }
 
   public getMyOrder(orderWeek: string, groupId: string, familyId: string): Observable<Grocery[]>{
+    let family = this.afs.doc(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}`);
+    family.ref.get().then((documentSnapshot) => {
+      if (!documentSnapshot.exists){
+        family.set({'id': familyId});
+      }
+    });
     return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`).valueChanges();
   }
 
@@ -159,11 +165,16 @@ export class OrderService {
   }
 
   public updateMyOrder(orderWeek: string, groupId: string, familyId: string, product: Product, qty: number){
-    return this.afs.doc<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/${product.id}`)
-                    .set({
-                      ...product,
-                      qty
-                    });
+    //TODO when qty == 0 we should remove a product from the order 
+    let grocery = this.afs.doc<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/${product.id}`);
+    if (qty == 0){
+      return grocery.delete();
+    }
+
+    return grocery.set({
+                    ...product,
+                    qty
+                  });
   }
 
   getCategories(): { name: string, grpIdx: number }[] {

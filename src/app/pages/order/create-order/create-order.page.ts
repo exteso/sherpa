@@ -16,6 +16,9 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 })
 export class CreateOrderPage implements OnInit, OnDestroy {
 
+  showBasketOnly$: BehaviorSubject<boolean>;
+  categoriesAndProduct: Map<string, Set<string>>;
+  expandedCategories: boolean[] = [];
   orderWeek: string;
   prevOrderWeek: string;
   nextOrderWeek: string;
@@ -30,7 +33,8 @@ export class CreateOrderPage implements OnInit, OnDestroy {
   familyWeekOrder$: BehaviorSubject<Grocery[]>;
   filteredGroceryItems$: Observable<Grocery[]>;
   categoryGroups: string[];
-  visibleCategoryGroups$: BehaviorSubject<string[]>;
+  visibleCategoryGroup: string;
+  visibleCategoryGroup$: BehaviorSubject<string>;
   initializeGroceryItems$: Observable<Grocery[]>;
   searchTerm: string = '';
   searchTerm$: BehaviorSubject<string>;
@@ -43,6 +47,8 @@ export class CreateOrderPage implements OnInit, OnDestroy {
     private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.categoriesAndProduct = new Map<string, Set<string>>();
+    this.showBasketOnly$ = new BehaviorSubject(false);
     this.route.paramMap.subscribe(
       (params: ParamMap) => {
         let week = params.get('orderWeek');
@@ -59,7 +65,9 @@ export class CreateOrderPage implements OnInit, OnDestroy {
     );
     this.searchTerm$ = new BehaviorSubject("");
     this.familyWeekOrder$ = new BehaviorSubject([]);
-    this.visibleCategoryGroups$ = new BehaviorSubject([]);
+    this.visibleCategoryGroup = "";
+    this.visibleCategoryGroup$ = new BehaviorSubject(this.visibleCategoryGroup);
+    
     this.myGroups$ = this.orderService.getMyGroups();
    
   }
@@ -75,6 +83,8 @@ export class CreateOrderPage implements OnInit, OnDestroy {
 
   changeOrderWeek(orderWeek: string){
     this.orderWeek = orderWeek;
+    this.categoriesAndProduct = new Map<string, Set<string>>();
+    this.showBasketOnly$ = new BehaviorSubject(false);
     
     this.nrOfProducts = undefined;
     this.loading.showLoading('Loading catalog...');
@@ -82,7 +92,8 @@ export class CreateOrderPage implements OnInit, OnDestroy {
     this.deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
     
     this.categoryGroups = this.orderService.getCategoryGroups();
-    this.visibleCategoryGroups$.next([this.categoryGroups[0]]);
+    this.visibleCategoryGroup=this.categoryGroups[0];
+    this.visibleCategoryGroup$.next(this.visibleCategoryGroup);
 
     this.availableProducts$ = this.firestore.getCatalogProducts(orderWeek)
                                   .valueChanges().pipe(
@@ -112,7 +123,10 @@ export class CreateOrderPage implements OnInit, OnDestroy {
                                     }));
     if (this.groupId && this.familyId) {
       this.subscription2 = this.orderService.getMyOrder(orderWeek, this.groupId, this.familyId).subscribe(
-        myOrder => this.familyWeekOrder$.next(myOrder)
+        myOrder => {
+          this.familyWeekOrder$.next(myOrder);
+          this.initializeAllCategoryCounters(myOrder);
+        }
       );
     } else {
       this.familyWeekOrder$.next([]);
@@ -130,14 +144,14 @@ export class CreateOrderPage implements OnInit, OnDestroy {
           return {...p, qty} });
       }));  
 
-    this.filteredGroceryItems$ = combineLatest([this.initializeGroceryItems$, this.searchTerm$, this.visibleCategoryGroups$]).pipe(
-      map(([items, searchQuery, visCatGroups]) => {
-
+    this.filteredGroceryItems$ = combineLatest([this.initializeGroceryItems$, this.searchTerm$, this.visibleCategoryGroup$, this.showBasketOnly$]).pipe(
+      map(([items, searchQuery, visCatGroup, onlyBasket]) => {
+        if (onlyBasket) return items;
         // here we imperatively implement the filtering logic
         if (!searchQuery) { 
           
           return items.filter(item => {
-            if (item.category && visCatGroups.includes(this.orderService.getGroup(item.category))) {
+            if (item.category && visCatGroup == this.orderService.getGroup(item.category)) {
                   return true;
             }
             return false;
@@ -171,11 +185,79 @@ export class CreateOrderPage implements OnInit, OnDestroy {
   }
 
   updateQty(product: Product, qty: number){
+    this.refreshCategoryCounter(product, qty);
     this.orderService.updateMyOrder(this.orderWeek, this.groupId, this.familyId, product, qty);
   }
 
+  getCategoryCounter(category: string){
+    let orderedProducts = this.categoriesAndProduct.get(category);
+    if (!orderedProducts) {
+      return 0
+    }
+    return orderedProducts.size;
+  }
+
+  refreshCategoryCounter(product: Product, qty: number) {
+    let orderedProducts = this.categoriesAndProduct.get(product.category);
+    if (qty == 0) {
+      orderedProducts.delete(product.id);
+    }else if (!orderedProducts) {
+      this.categoriesAndProduct.set(product.category, new Set([product.id]));
+    } else {
+      orderedProducts.add(product.id);
+    }
+  }
+
+  isProductInBasket(product: Product){
+    let orderedProducts = this.categoriesAndProduct.get(product.category);
+    if (!orderedProducts) {
+      return false;
+    } else {
+      return orderedProducts.has(product.id);
+    }
+
+  }
+
+  initializeAllCategoryCounters(myOrder: Grocery[]){
+    myOrder.forEach(product => {
+      let orderedProducts = this.categoriesAndProduct.get(product.category);
+      if (!orderedProducts) {
+        this.categoriesAndProduct.set(product.category, new Set([product.id]));
+      } else {
+        orderedProducts.add(product.id);
+      }
+    })
+  }
+
   segmentChanged(ev: any) {
-    console.log('Segment changed', ev);
-    this.visibleCategoryGroups$.next([ev.detail.value]);
+    this.visibleCategoryGroup$.next(ev.detail.value);
+  }
+
+  toggleshowBasketOnly(){
+    this.showBasketOnly$.next(!this.showBasketOnly());
+  }
+
+  showBasketOnly(){
+    return this.showBasketOnly$.value;
+  }
+
+  hideProduct(product: Product){
+    if (this.searchTerm) return false;
+
+    if (this.showBasketOnly()) { 
+      return !this.isProductInBasket(product);
+    } 
+    return !this.expandedCategories[product.category];
+  }
+
+  showCategory(product: Product){
+    //if it is not the first product in this category don't show the category anymore
+    if (product.guiOrder != 0) return false; 
+
+    // we always show the category before the first product if we show all the products
+    if (!this.showBasketOnly()) return true;
+    
+    // if showBasketOnly we show only categories with at least 1 product 
+    return (this.getCategoryCounter(product.category) > 0);
   }
 }
