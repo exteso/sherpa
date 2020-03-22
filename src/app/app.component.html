@@ -29,6 +29,10 @@
                   {{ 'auth.button.logout' | translate }}
                 </ion-button>
               </ion-menu-toggle>
+              <ion-button size="small" *ngIf="!auth.getUserData().firstName" (click)="login()">
+                <ion-icon slot="start" name="log-in"></ion-icon>
+                Login
+              </ion-button>
             </ion-label>
           </ion-item>
 

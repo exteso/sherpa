@@ -87,6 +87,10 @@ export class AppComponent implements OnInit {
     this.navCtrl.navigateForward('/edit-profile');
   }
 
+  public login() {
+    this.navCtrl.navigateRoot('/login');
+  }
+  
   logout() {
     this.auth.logout().then(() => {
       this.storage.remove('uid');
