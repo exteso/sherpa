@@ -236,7 +236,7 @@ export class FirestoreService {
     getCatalogList(): AngularFirestoreCollection<Catalog> {
       return this.afs.collection('catalogs/', 
                                   ref =>
-                                    ref.orderBy("id", "desc").limit(3));
+                                    ref.orderBy("id", "desc").limit(4));
     }
   
     deleteCatalog(year: string, week: string): Promise<void> {
