@@ -79,11 +79,20 @@ export class CatalogCreatePage implements OnInit {
       lines.forEach((line) => {
         if (line.length == 0) return ;
         let product = this.parseProductLine(line, lastCategory, i++);
-        if (!product.origin || !product.name) return;
+        
+        if (!product.origin || !product.name) {
+          if (lastCategory == 'PLACEHOLDER' || product.category != lastCategory){
+            lastCategory = product.category;
+          }  
+          i--;
+          return;
+        }
+
         if (lastCategory != 'PLACEHOLDER' && product.category != lastCategory){
           i = 0;
         }
         lastCategory = product.category;
+
         products.push(product);
       })
       return products;
