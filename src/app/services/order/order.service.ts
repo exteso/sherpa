@@ -6,6 +6,8 @@ import { filter, map, tap, mergeMap, switchMap, flatMap, exhaustMap, concatAll, 
 import { Observable, forkJoin, of, from, BehaviorSubject } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
 import { Product } from 'src/app/models/product';
+import { FirestoreService } from '../firestore/firestore.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,7 @@ export class OrderService {
   //TODO remove this temp variable
   members: BehaviorSubject<string[]>;
 
-  constructor(public authService: AuthService, private afs: AngularFirestore) { 
+  constructor(public authService: AuthService, private afs: AngularFirestore, private catalogService: FirestoreService) { 
     this.members = new BehaviorSubject([]); 
     let week: any = this.getWeekNumber(new Date());
     this.currentWeek = `${week[0]}w${week[1]}`;
@@ -87,6 +89,31 @@ export class OrderService {
       }
       return year+'w'+weekText;
     }
+  }
+
+  getAvailableProducts(orderWeek: string): Observable<Product[]> {
+    const categories = this.getCategories();
+    const availableProducts$ = this.catalogService.getCatalogProducts(orderWeek)
+      .valueChanges().pipe(
+        map(products => {
+          return products.sort((p1, p2) => { 
+              const c1 = categories.findIndex(i => i.name.toLowerCase().trim() == p1.category.toLowerCase().trim())
+              if (c1 == -1) console.log("Category "+p1.category + " Not Found");
+              const c2 = categories.findIndex(i => i.name.toLowerCase().trim() == p2.category.toLowerCase().trim())
+              if (c2 == -1) console.log("Category "+p2.category + " Not Found");
+              if (c1 < c2)
+                  return -1;
+              if (c1 > c2)
+                  return 1;
+              //same category, we sort by guiOrder
+              if (p1.guiOrder < p2.guiOrder)
+                  return -1;
+              if (p1.guiOrder > p2.guiOrder)
+                  return 1;
+              return 0;
+          });
+        }));
+      return availableProducts$;
   }
 
   public getMyGroups(): Observable<Group[]> {

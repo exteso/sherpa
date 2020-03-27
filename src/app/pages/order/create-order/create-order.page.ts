@@ -95,27 +95,8 @@ export class CreateOrderPage implements OnInit, OnDestroy {
     this.visibleCategoryGroup=this.categoryGroups[0];
     this.visibleCategoryGroup$.next(this.visibleCategoryGroup);
 
-    this.availableProducts$ = this.firestore.getCatalogProducts(orderWeek)
-                                  .valueChanges().pipe(
-                                    map(products => {
-                                      const categories = this.orderService.getCategories();
-                                      return products.sort((p1, p2) => { 
-                                          const c1 = categories.findIndex(i => i.name.toLowerCase().trim() == p1.category.toLowerCase().trim())
-                                          if (c1 == -1) console.log("Category "+p1.category + " Not Found");
-                                          const c2 = categories.findIndex(i => i.name.toLowerCase().trim() == p2.category.toLowerCase().trim())
-                                          if (c2 == -1) console.log("Category "+p2.category + " Not Found");
-                                          if (c1 < c2)
-                                              return -1;
-                                          if (c1 > c2)
-                                              return 1;
-                                          //same category, we sort by guiOrder
-                                          if (p1.guiOrder < p2.guiOrder)
-                                              return -1;
-                                          if (p1.guiOrder > p2.guiOrder)
-                                              return 1;
-                                          return 0;
-                                      });
-                                    }),
+    this.availableProducts$ = this.orderService.getAvailableProducts(orderWeek)
+                                  .pipe(
                                     tap(products => {
                                       this.nrOfProducts = products.length;
                                       this.loading.dismiss();

@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Grocery } from 'src/app/models/grocery';
+import { DecimalPipe } from '@angular/common';
+import { Unit } from 'src/app/models/product';
 
 @Component({
   selector: 'app-grocery-item',
@@ -14,7 +16,7 @@ export class GroceryItemComponent implements OnInit {
 
   open: boolean;
 
-  constructor() { }
+  constructor(private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
     if (!this.grocery.qty) {
@@ -58,6 +60,19 @@ export class GroceryItemComponent implements OnInit {
       }
     }
     return incr;
+  }
+
+  getPrice(){
+    if (this.grocery.qty == 0) {
+      return "";
+    }
+
+    if (this.grocery.orderUnit == Unit.PZ && (this.grocery.priceUnit == Unit.KG || this.grocery.priceUnit == Unit.GR)) {
+      return "da pesare";
+    }
+    let price = this.grocery.qty * this.grocery.price;
+    let priceText = this.decimalPipe.transform(price, '1.2-2')
+    return priceText + " CHF"
   }
 
 }

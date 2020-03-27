@@ -33,8 +33,15 @@
         </p>
         </ion-card-content>
       </ion-card>
-      <ion-item-group *ngFor="let item of groupWeekOrder$ | async">
-        <app-grocery-item [grocery]="item" [readOnly]="true"></app-grocery-item>
+      <ion-item-group>
+        <ng-template ngFor let-product let-i="index" let-c="0" let-isFirst="first" [ngForOf]="groupWeekOrder$ | async">
+            <ion-item-divider sticky *ngIf="showCategory(product)">
+              <a [id]="product.category"><h1>{{ product.category }}</h1></a>
+              <!--ion-badge slot="end" color="primary" class="category-title">{{getCategoryCounter(product.category)}}</ion-badge-->
+            </ion-item-divider>
+            <div [ngClass]="i%2 != 0 ? 'grocery-item-even' : 'grocery-item-odd'">
+              <app-grocery-item [grocery]="product" [readOnly]="true"></app-grocery-item>
+            </div>
+        </ng-template>
       </ion-item-group>
-
 </ion-content>

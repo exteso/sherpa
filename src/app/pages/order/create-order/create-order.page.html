@@ -55,7 +55,9 @@
                   <a [id]="product.category"><h1>{{ product.category }}</h1></a>
                   <ion-badge slot="end" color="primary" class="category-title">{{getCategoryCounter(product.category)}}</ion-badge>
                 </ion-item-divider>
-                <app-grocery-item *ngIf="!hideProduct(product)" [grocery]="product" [readOnly]="showBasketOnly()" (updateQty)="updateQty(product, $event)"></app-grocery-item>
+                <div [ngClass]="i%2 != 0 ? 'grocery-item-even' : 'grocery-item-odd'">
+                  <app-grocery-item *ngIf="!hideProduct(product)" [grocery]="product" [readOnly]="showBasketOnly()" (updateQty)="updateQty(product, $event)"></app-grocery-item>
+                </div>
             </ng-template>
           </ion-item-group>
       </ion-list>

@@ -37,10 +37,12 @@ import { environment } from '../environments/environment';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { SelectUsersPageModule } from './pages/modal/select-users/select-users.module';
-import { AddProductsPage } from './pages/modal/add-products/add-products';
 import { AddProductsPageModule } from './pages/modal/add-products/add-products.module';
-import { GroceryItemComponent } from './components/grocery-item/grocery-item.component';
+import { registerLocaleData, DecimalPipe } from '@angular/common';
+import localeIt from '@angular/common/locales/it';
 
+// the second parameter 'fr-FR' is optional
+registerLocaleData(localeIt);
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -82,6 +84,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
+    DecimalPipe,
     Camera,
     Device,
     Geolocation,
