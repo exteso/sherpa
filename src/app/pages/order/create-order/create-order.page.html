@@ -51,12 +51,17 @@
       <ion-list>
           <ion-item-group>
             <ng-template ngFor let-product let-i="index" let-c="0" let-isFirst="first" [ngForOf]="filteredGroceryItems$ | async">
-                <ion-item-divider sticky *ngIf="showCategory(product)" (click)="expandedCategories[product.category] = !expandedCategories[product.category]">
-                  <a [id]="product.category"><h1>{{ product.category }}</h1></a>
-                  <ion-badge slot="end" color="primary" class="category-title">{{getCategoryCounter(product.category)}}</ion-badge>
+                <ion-item-divider sticky *ngIf="showCategory(product)" 
+                                  class="ion-padding-end"
+                                  color="primary"
+                                  (click)="expandedCategories[product.category] = !expandedCategories[product.category]">
+                  <h1>{{ product.category }}</h1><a [id]="product.category">.</a>
+                  <ion-badge slot="end" color="tertiary" class="category-title">{{getCategoryCounter(product.category)}}</ion-badge>
+                  <ion-icon slot="end" name="chevron-down" *ngIf="!expandedCategories[product.category]"></ion-icon>
+                  <ion-icon slot="end" name="chevron-up" *ngIf="expandedCategories[product.category]"></ion-icon>
                 </ion-item-divider>
-                <div [ngClass]="i%2 != 0 ? 'grocery-item-even' : 'grocery-item-odd'">
-                  <app-grocery-item *ngIf="!hideProduct(product)" [grocery]="product" [readOnly]="showBasketOnly()" (updateQty)="updateQty(product, $event)"></app-grocery-item>
+                <div *ngIf="!hideProduct(product)" class="grocery-item" [ngClass]="!showBasketOnly() && i%2 != 0 ? 'grocery-item-even' : 'grocery-item-odd'">
+                  <app-grocery-item  [grocery]="product" [readOnly]="showBasketOnly()" (updateQty)="updateQty(product, $event)"></app-grocery-item>
                 </div>
             </ng-template>
           </ion-item-group>

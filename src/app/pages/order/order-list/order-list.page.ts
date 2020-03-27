@@ -20,6 +20,7 @@ export class OrderListPage implements OnInit, OnDestroy {
   groupWeekOrder$: Observable<Grocery[]>;
   groupOrder: Grocery[];
   subscription: Subscription;
+  productsByCategory: Map<string, Set<string>>;
   
   constructor(private orderService: OrderService, public authService: AuthService, 
     public loading: LoadingService, public toast: ToastService, private route: ActivatedRoute) { }
@@ -55,7 +56,7 @@ export class OrderListPage implements OnInit, OnDestroy {
 
     const myGroupWeekOrder$ = this.orderService.getMyGroupOrder(orderWeek, this.groupId)
                 .pipe(
-                  //tap(groupOrder => {this.initializeAllCategoryCounters(myOrder);})
+                  tap(groupOrder => {this.productsByCategory = this.getAllCategoriesWithCounters(groupOrder);})
                 );
 
     const availableProducts$ = this.orderService.getAvailableProducts(orderWeek);
@@ -95,4 +96,24 @@ export class OrderListPage implements OnInit, OnDestroy {
     //return (this.getCategoryCounter(product.category) > 0);
   }
 
+  getAllCategoriesWithCounters(myOrder: Grocery[]){
+    const catAndProd = new Map<string, Set<string>>();
+    myOrder.forEach(product => {
+      let orderedProducts = catAndProd.get(product.category);
+      if (!orderedProducts) {
+        catAndProd.set(product.category, new Set([product.id]));
+      } else {
+        orderedProducts.add(product.id);
+      }
+    })
+    return catAndProd;
+  }
+
+  getCategoryCount(category: string){
+    let orderedProducts = this.productsByCategory.get(category);
+    if (!orderedProducts) {
+      return 0
+    }
+    return orderedProducts.size;
+  }
 }

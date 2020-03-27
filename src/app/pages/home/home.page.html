@@ -34,13 +34,13 @@
       </ion-card-header>
 
       <ion-card-content class="ion-no-padding">
-        <ion-list inset="false" class="bg-tertiary">
+        <ion-list inset="false">
 
-          <ion-item *ngFor="let item of items" color="secondary" routerDirection="forward" [routerLink]="item.url">
-            <ion-icon name="flame" color="light" slot="start"></ion-icon>
+          <ion-item *ngFor="let item of items" routerDirection="forward" [routerLink]="item.url">
+            <ion-icon color="primary" name="flame" slot="start"></ion-icon>
             <ion-label>
               <h2>
-                <ion-text color="light">
+                <ion-text>
                   <strong>{{ item.title | translate }}</strong>
                 </ion-text>
               </h2>

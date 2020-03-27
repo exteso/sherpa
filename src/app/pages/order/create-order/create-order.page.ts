@@ -83,7 +83,6 @@ export class CreateOrderPage implements OnInit, OnDestroy {
 
   changeOrderWeek(orderWeek: string){
     this.orderWeek = orderWeek;
-    this.categoriesAndProduct = new Map<string, Set<string>>();
     this.showBasketOnly$ = new BehaviorSubject(false);
     
     this.nrOfProducts = undefined;
@@ -106,7 +105,7 @@ export class CreateOrderPage implements OnInit, OnDestroy {
       this.subscription2 = this.orderService.getMyOrder(orderWeek, this.groupId, this.familyId).subscribe(
         myOrder => {
           this.familyWeekOrder$.next(myOrder);
-          this.initializeAllCategoryCounters(myOrder);
+          this.categoriesAndProduct = this.getAllCategoryCounters(myOrder);
         }
       );
     } else {
@@ -199,15 +198,17 @@ export class CreateOrderPage implements OnInit, OnDestroy {
 
   }
 
-  initializeAllCategoryCounters(myOrder: Grocery[]){
+  getAllCategoryCounters(myOrder: Grocery[]){
+    const catAndProd = new Map<string, Set<string>>();
     myOrder.forEach(product => {
-      let orderedProducts = this.categoriesAndProduct.get(product.category);
+      let orderedProducts = catAndProd.get(product.category);
       if (!orderedProducts) {
-        this.categoriesAndProduct.set(product.category, new Set([product.id]));
+        catAndProd.set(product.category, new Set([product.id]));
       } else {
         orderedProducts.add(product.id);
       }
     })
+    return catAndProd;
   }
 
   segmentChanged(ev: any) {
