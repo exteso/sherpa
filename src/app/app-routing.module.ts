@@ -23,7 +23,6 @@ const routes: Routes = [
   { path: 'loader', loadChildren: () => import('./pages/loader/loader/loader.module').then(m => m.LoaderPageModule) },
   { path: 'catalog-list', loadChildren: () => import('./pages/catalog/catalog-list/catalog-list.module').then( m => m.CatalogListPageModule) },
   { path: 'catalog-detail/:id', loadChildren: () => import('./pages/catalog/catalog-detail/catalog-detail.module').then(m => m.CatalogDetailPageModule), canActivate: [AuthGuard] },
-  { path: 'next-order', loadChildren: () => import('./pages/order/next-order/next-order.module').then( m => m.NextOrderPageModule) },
   { path: 'manage-order/:orderWeek', loadChildren: () => import('./pages/order/create-order/create-order.module').then( m => m.CreateOrderPageModule) },
   {
     path: 'order-list',
