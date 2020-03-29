@@ -5,6 +5,7 @@ import { Grocery } from 'src/app/models/grocery';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { tap, map } from 'rxjs/operators';
 import { Product } from 'src/app/models/product';
+import { Order } from 'src/app/models/order';
 
 @Component({
   selector: 'app-order-list',
@@ -62,8 +63,8 @@ export class OrderListPage implements OnInit, OnDestroy {
     const availableProducts$ = this.orderService.getAvailableProducts(orderWeek);
    
     this.groupWeekOrder$ = combineLatest([availableProducts$, myGroupWeekOrder$]).pipe(
-      map(([products, orderedItems]) => {
-        products = products.filter(p => (orderedItems.findIndex(i => i.id == p.id) >= 0));
+      map(([products, order]) => {
+        products = products.filter(p => (order.getItems().findIndex(i => i.id == p.id) >= 0));
         let previousCategory = '';
         return products.map(p => {
           if (p.category != previousCategory) {
@@ -71,7 +72,7 @@ export class OrderListPage implements OnInit, OnDestroy {
             previousCategory = p.category;
           } 
           let qty = 0;
-          let item = orderedItems.find(i => i.id == p.id)
+          let item = order.getItems().find(i => i.id == p.id)
           if (item && item.qty > 0){
             qty = item.qty;
           }
@@ -96,9 +97,9 @@ export class OrderListPage implements OnInit, OnDestroy {
     //return (this.getCategoryCounter(product.category) > 0);
   }
 
-  getAllCategoriesWithCounters(myOrder: Grocery[]){
+  getAllCategoriesWithCounters(myOrder: Order){
     const catAndProd = new Map<string, Set<string>>();
-    myOrder.forEach(product => {
+    myOrder.getItems().forEach(product => {
       let orderedProducts = catAndProd.get(product.category);
       if (!orderedProducts) {
         catAndProd.set(product.category, new Set([product.id]));
@@ -116,4 +117,6 @@ export class OrderListPage implements OnInit, OnDestroy {
     }
     return orderedProducts.size;
   }
+
+
 }

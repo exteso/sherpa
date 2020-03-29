@@ -7,6 +7,7 @@ import { Observable, forkJoin, of, from, BehaviorSubject } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
 import { Product } from 'src/app/models/product';
 import { FirestoreService } from '../firestore/firestore.service';
+import { Order } from 'src/app/models/order';
 
 
 @Injectable({
@@ -18,10 +19,12 @@ export class OrderService {
   currentWeek: string;
 
   //TODO remove this temp variable
-  members: BehaviorSubject<string[]>;
+  members$: BehaviorSubject<string[]>;
+  ordersByMember: Map<string, Order>;
 
   constructor(public authService: AuthService, private afs: AngularFirestore, private catalogService: FirestoreService) { 
-    this.members = new BehaviorSubject([]); 
+    this.members$ = new BehaviorSubject([]); 
+    this.ordersByMember = new Map();
     let week: any = this.getWeekNumber(new Date());
     this.currentWeek = `${week[0]}w${week[1]}`;
     this.authService.getUser().then(user => {
@@ -123,71 +126,82 @@ export class OrderService {
 
   }
 
-  public getMyOrder(orderWeek: string, groupId: string, familyId: string): Observable<Grocery[]>{
+  public getMyOrder(orderWeek: string, groupId: string, familyId: string): Observable<Order>{
     let family = this.afs.doc(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}`);
     family.ref.get().then((documentSnapshot) => {
       if (!documentSnapshot.exists){
         family.set({'id': familyId});
       }
     });
-    return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`).valueChanges();
+    return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`).valueChanges()
+                    .pipe(
+                      map(items => this.createOrder(orderWeek, groupId, familyId, items))
+                    );
   }
 
-  mergeGrocery(acc:  Grocery[], source:  Grocery[]){
-    source.forEach(sourceItem => {
-      let destItem = acc.find(d => d.id == sourceItem.id);
+  private createOrder(orderWeek: string, groupId: string, familyId: string, items: Grocery[], index?: number): Order {
+    const order = new Order(orderWeek, groupId, familyId);
+    order.setItemsAndCalculateTotal(items);
+    return order;
+  }
+
+  mergeGrocery(acc:  Order, source:  Order){
+    source.getItems().forEach(sourceItem => {
+      let destItem = acc.getItems().find(d => d.id == sourceItem.id);
       if (destItem){
         destItem.qty += sourceItem.qty;
         destItem.price += sourceItem.price;
       } else {
-        acc.push(sourceItem);
+        acc.getItems().push(sourceItem);
       }
     });
   }
 
-  mergeOrder(orders: Grocery[][]): Grocery[]{
+  mergeOrder(orders: Order[]): Order{
     let final = orders[0];
+    this.ordersByMember.set(orders[0].familyId, orders[0])
     for (let i = 1; i<orders.length;i++){
+      this.ordersByMember.set(orders[i].familyId, orders[i]);
       this.mergeGrocery(final, orders[i]);
     }
 
     return final;
   }
 
-  getAllOrders(urls: string[]): Observable<Grocery[]> {
-    const urlsMap = urls.map(url => <Observable<Grocery[]>> this.afs.collection<Grocery>(url).valueChanges().pipe(take(1)));
+  getAllOrders(members: string[]): Observable<Order> {
+    //const urlsMap = urls.map(url => <Observable<Grocery[]>> this.afs.collection<Grocery>(url).valueChanges().pipe(take(1)));
 
-    return forkJoin(urlsMap).pipe(
-      map((groceries: Grocery[][]) => this.mergeOrder(groceries))
+    return forkJoin(this.getUrlsObservable(members)).pipe(
+      map((order: Order[]) => this.mergeOrder(order))
     );
   }
 
   public getMembers(): Observable<string[]>{
-    return this.members;
+    return this.members$;
   }
 
-  public getMyGroupOrder(orderWeek: string, groupId: string): Observable<Grocery[]>{
+  public getMyGroupOrder(orderWeek: string, groupId: string): Observable<Order>{
 
     let groupOrderUrl$ = this.afs.collection(`/orders/${orderWeek}/groups/${groupId}/member/`).valueChanges().pipe(
-      tap((members: any[]) => this.members.next(members)),
+      tap((members: any[]) => this.members$.next(members)),
       map(members => {
-        const groupOrderUrls: string[] = [];
-        members.forEach((member:any) => {
-          groupOrderUrls.push(`/orders/${orderWeek}/groups/${groupId}/member/${member.id}/items`);
-        })
-        return groupOrderUrls;
+        return members.map(m => {return { ...m, orderWeek, groupId}})
       }),
-      switchMap(urls => {
-        return this.getAllOrders(urls);
+      switchMap(members => {
+        return this.getAllOrders(members);
       })
       );
 
       return groupOrderUrl$;
   }
   
-  getUrlsObservable(urls: string[]): Observable<Grocery[]>[] {
-    return urls.map(url => {
-      return this.afs.collection<Grocery>(url).valueChanges();
+  getUrlsObservable(members: any[]): Observable<Order>[] {
+    return members.map(m => {
+      return this.afs.collection<Grocery>(`/orders/${m.orderWeek}/groups/${m.groupId}/member/${m.id}/items`).valueChanges()
+                      .pipe(
+                        take(1),
+                        map(items => this.createOrder(m.orderWeek, m.groupId, m.id, items))
+                      );
     });
   }
 
@@ -200,7 +214,8 @@ export class OrderService {
 
     return grocery.set({
                     ...product,
-                    qty
+                    qty,
+                    familyId
                   });
   }
 
@@ -289,7 +304,11 @@ export class OrderService {
 
   getGroup(category: string){
     const cat = this.getCategories().find(i => i.name.toLowerCase().trim() == category.toLowerCase().trim());
-    const grpIdx = cat.grpIdx;
-    return this.getCategoryGroups()[grpIdx];
+    if (!cat || !cat.grpIdx) {
+      return this.getCategoryGroups()[0];
+    } else {
+      const grpIdx = cat.grpIdx;
+      return this.getCategoryGroups()[grpIdx];
+    }
   }
 }

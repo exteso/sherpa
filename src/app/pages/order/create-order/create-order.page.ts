@@ -8,6 +8,8 @@ import { combineLatest } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
 import { map, withLatestFrom, tap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Order } from 'src/app/models/order';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-create-order',
@@ -30,7 +32,7 @@ export class CreateOrderPage implements OnInit, OnDestroy {
   myGroups$: Observable<Group[]>
   currentUser: User;
   availableProducts$: Observable<Product[]>;
-  familyWeekOrder$: BehaviorSubject<Grocery[]>;
+  familyWeekOrder$: BehaviorSubject<Order>;
   filteredGroceryItems$: Observable<Grocery[]>;
   categoryGroups: string[];
   visibleCategoryGroup: string;
@@ -44,7 +46,7 @@ export class CreateOrderPage implements OnInit, OnDestroy {
   constructor(private firestore: FirestoreService, private orderService: OrderService, 
     public authService: AuthService, public translate: TranslateProvider, 
     public loading: LoadingService, public toast: ToastService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute, private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
     this.categoriesAndProduct = new Map<string, Set<string>>();
@@ -64,7 +66,7 @@ export class CreateOrderPage implements OnInit, OnDestroy {
       }
     );
     this.searchTerm$ = new BehaviorSubject("");
-    this.familyWeekOrder$ = new BehaviorSubject([]);
+    this.familyWeekOrder$ = new BehaviorSubject(Order.EMPTY);
     this.visibleCategoryGroup = "";
     this.visibleCategoryGroup$ = new BehaviorSubject(this.visibleCategoryGroup);
     
@@ -81,6 +83,7 @@ export class CreateOrderPage implements OnInit, OnDestroy {
     }
   }
 
+  //TODO pass groupId and familyId as method parameter
   changeOrderWeek(orderWeek: string){
     this.orderWeek = orderWeek;
     this.showBasketOnly$ = new BehaviorSubject(false);
@@ -109,15 +112,15 @@ export class CreateOrderPage implements OnInit, OnDestroy {
         }
       );
     } else {
-      this.familyWeekOrder$.next([]);
+      this.familyWeekOrder$.next(Order.EMPTY);
     }
     this.initializeGroceryItems$ = combineLatest([this.availableProducts$, this.familyWeekOrder$]).pipe(
     //this.initializeGroceryItems$ = this.availableProducts$.pipe(
     //  withLatestFrom(this.familyWeekOrder$),
-      map(([products, orderedItems]) => {
+      map(([products, order]) => {
         return products.map(p => { 
           let qty = 0;
-          let item = orderedItems.find(i => i.id == p.id)
+          let item = order.getItems().find(i => i.id == p.id)
           if (item && item.qty > 0){
             qty = item.qty;
           }
@@ -198,9 +201,9 @@ export class CreateOrderPage implements OnInit, OnDestroy {
 
   }
 
-  getAllCategoryCounters(myOrder: Grocery[]){
+  getAllCategoryCounters(myOrder: Order){
     const catAndProd = new Map<string, Set<string>>();
-    myOrder.forEach(product => {
+    myOrder.getItems().forEach(product => {
       let orderedProducts = catAndProd.get(product.category);
       if (!orderedProducts) {
         catAndProd.set(product.category, new Set([product.id]));
@@ -241,5 +244,13 @@ export class CreateOrderPage implements OnInit, OnDestroy {
     
     // if showBasketOnly we show only categories with at least 1 product 
     return (this.getCategoryCounter(product.category) > 0);
+  }
+
+  getPrice(): Observable<string> {
+    return this.familyWeekOrder$.pipe(
+      map(order => {
+        let priceText = this.decimalPipe.transform(order.orderTotal, '1.2-2');
+        return priceText + " CHF";
+      }));
   }
 }

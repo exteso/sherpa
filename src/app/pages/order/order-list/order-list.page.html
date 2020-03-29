@@ -27,10 +27,14 @@
         </ion-card-header>
       
         <ion-card-content>
-          <p *ngIf="deliveryDates">
-          L'ordine viene chiuso {{deliveryDates[0] | date:'fullDate'}} alle 12:00.
-          La consegna verrà effettuata {{deliveryDates[1] | date:'fullDate'}} alle 14:00
-        </p>
+            <p *ngIf="deliveryDates">
+              L'ordine viene chiuso {{deliveryDates[0] | date:'fullDate'}} alle 12:00.
+              La consegna verrà effettuata {{deliveryDates[1] | date:'fullDate'}} alle 14:00
+            </p>
+          <ul>
+            <li *ngFor="let member of families">{{member.id}} - xx.xx CHF</li>
+          </ul>
+          
         </ion-card-content>
       </ion-card>
       <ion-item-group>
