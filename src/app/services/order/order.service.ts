@@ -139,6 +139,10 @@ export class OrderService {
                     );
   }
 
+  getOrderByMember(familyId: string): Order {
+    return this.ordersByMember.get(familyId);
+  }
+
   private createOrder(orderWeek: string, groupId: string, familyId: string, items: Grocery[], index?: number): Order {
     const order = new Order(orderWeek, groupId, familyId);
     order.setItemsAndCalculateTotal(items);

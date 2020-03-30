@@ -6,6 +6,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { tap, map } from 'rxjs/operators';
 import { Product } from 'src/app/models/product';
 import { Order } from 'src/app/models/order';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-order-list',
@@ -24,7 +25,8 @@ export class OrderListPage implements OnInit, OnDestroy {
   productsByCategory: Map<string, Set<string>>;
   
   constructor(private orderService: OrderService, public authService: AuthService, 
-    public loading: LoadingService, public toast: ToastService, private route: ActivatedRoute) { }
+    public loading: LoadingService, public toast: ToastService, 
+    private route: ActivatedRoute, private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
 
@@ -95,6 +97,12 @@ export class OrderListPage implements OnInit, OnDestroy {
     return true;
     //we show only categories with at least 1 product 
     //return (this.getCategoryCounter(product.category) > 0);
+  }
+
+  getOrderPrice(groupId: string, familyId: string){
+    const order = this.orderService.getOrderByMember(familyId);
+    let priceText = this.decimalPipe.transform(order.orderTotal, '1.2-2');
+    return priceText + " CHF";
   }
 
   getAllCategoriesWithCounters(myOrder: Order){
