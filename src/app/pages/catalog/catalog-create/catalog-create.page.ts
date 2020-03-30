@@ -78,21 +78,24 @@ export class CatalogCreatePage implements OnInit {
       let i=0;
       lines.forEach((line) => {
         if (line.length == 0) return ;
-        let product = this.parseProductLine(line, lastCategory, i++);
+        
+        let product = this.parseProductLine(line, lastCategory, i);
         
         if (!product.origin || !product.name) {
           if (lastCategory == 'PLACEHOLDER' || product.category != lastCategory){
             lastCategory = product.category;
-          }  
-          i--;
+          }
           return;
         }
 
         if (lastCategory != 'PLACEHOLDER' && product.category != lastCategory){
-          i = 0;
+          product.guiOrder = 0;
+          i = 1;
+        } else {
+          i++;
         }
         lastCategory = product.category;
-
+        
         products.push(product);
       })
       return products;
@@ -109,7 +112,9 @@ export class CatalogCreatePage implements OnInit {
       */
 
       let cat: string = values[0];
-      if (!cat) { cat = lastCategory;}
+      if (!cat) { 
+        cat = lastCategory;
+      }
       cat = cat.trim();
       const unit: string = values[5];
       let orderUnit: Unit = Unit.PZ;
