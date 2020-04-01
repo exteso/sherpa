@@ -7,6 +7,7 @@ import { tap, map } from 'rxjs/operators';
 import { Product } from 'src/app/models/product';
 import { Order } from 'src/app/models/order';
 import { DecimalPipe } from '@angular/common';
+import { ExcelService } from 'src/app/services/excel/excel.service';
 
 @Component({
   selector: 'app-order-list',
@@ -26,7 +27,8 @@ export class OrderListPage implements OnInit, OnDestroy {
   
   constructor(private orderService: OrderService, public authService: AuthService, 
     public loading: LoadingService, public toast: ToastService, 
-    private route: ActivatedRoute, private decimalPipe: DecimalPipe) { }
+    private route: ActivatedRoute, private decimalPipe: DecimalPipe,
+    private excelService: ExcelService) { }
 
   ngOnInit() {
 
@@ -101,6 +103,9 @@ export class OrderListPage implements OnInit, OnDestroy {
 
   getOrderPrice(groupId: string, familyId: string){
     const order = this.orderService.getOrderByMember(familyId);
+    if (!order) {
+      return "? CHF"
+    }
     let priceText = this.decimalPipe.transform(order.orderTotal, '1.2-2');
     return priceText + " CHF";
   }
@@ -126,5 +131,72 @@ export class OrderListPage implements OnInit, OnDestroy {
     return orderedProducts.size;
   }
 
+  printOrder(){
+    let items = [];
 
+    this.families.forEach((family: any) => {
+      let items0 = this.getOrderedItems(family.id);
+      items = items.concat(...items0);
+    })
+
+    const categories = this.orderService.getCategories();
+    
+    items = items.sort((p1, p2) => { 
+      const c1 = categories.findIndex(i => i.name.toLowerCase().trim() == p1.category.toLowerCase().trim())
+      if (c1 == -1) console.log("Category "+p1.category + " Not Found");
+      const c2 = categories.findIndex(i => i.name.toLowerCase().trim() == p2.category.toLowerCase().trim())
+      if (c2 == -1) console.log("Category "+p2.category + " Not Found");
+      if (c1 < c2)
+          return -1;
+      if (c1 > c2)
+          return 1;
+      //same category, we sort by guiOrder
+      if (p1.guiOrder < p2.guiOrder)
+          return -1;
+      if (p1.guiOrder > p2.guiOrder)
+          return 1;
+      return 0;
+    });
+
+    items = this.groupSameItems(items);
+
+    this.excelService.exportAsExcelFile(items, this.orderWeek, this.groupId);
+  }
+
+  private getOrderedItems(familyId: string){
+    let order = this.orderService.getOrderByMember(familyId);
+    let items: Grocery[] = order.getItems().map(i => {return {...i, familyId}});
+    return items;
+  }
+
+  private groupSameItems(items: Grocery[]): Grocery[] {
+    let grouped: Grocery[] = [];
+    let lastItem: Grocery;
+    items.forEach(i => {
+      let it;
+      if (lastItem && i.id == lastItem.id) {
+        grouped.pop();
+        it = {...lastItem };
+      } else {
+       it = {...i };
+      }
+      it[i.familyId] = i.qty+'/';
+      delete it['familyId'];
+
+      grouped.push(it);
+      lastItem = it;
+    });
+    return grouped.map(i => { 
+                        let it = { ...i, unit: i.unitText };
+                        delete it['id'];
+                        delete it['familyId'];
+                        delete it['currency'];
+                        delete it['guiOrder'];
+                        delete it['orderUnit'];
+                        delete it['priceUnit'];
+                        delete it['qty'];
+                        delete it['unitText'];
+                        return it;
+                      });
+  }
 }

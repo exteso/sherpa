@@ -27,6 +27,7 @@
         </ion-card-header>
       
         <ion-card-content>
+            <ion-button color="primary" (click)="printOrder()">Stampa formulario ritiro</ion-button>
             <p *ngIf="deliveryDates">
               L'ordine viene chiuso {{deliveryDates[0] | date:'fullDate'}} alle 12:00.
               La consegna verrà effettuata {{deliveryDates[1] | date:'fullDate'}} alle 14:00

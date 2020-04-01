@@ -133,13 +133,20 @@ export class OrderService {
         family.set({'id': familyId});
       }
     });
-    return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`).valueChanges()
+      
+      
+    return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`,
+                                        ref => ref.orderBy('category')
+                                                  .orderBy('guiOrder')).valueChanges()
                     .pipe(
                       map(items => this.createOrder(orderWeek, groupId, familyId, items))
                     );
   }
 
-  getOrderByMember(familyId: string): Order {
+  getOrderByMember(familyId: any): Order {
+    if (familyId.id) {
+      return this.ordersByMember.get(familyId.id);  
+    }
     return this.ordersByMember.get(familyId);
   }
 
@@ -156,15 +163,14 @@ export class OrderService {
         destItem.qty += sourceItem.qty;
         destItem.price += sourceItem.price;
       } else {
-        acc.getItems().push(sourceItem);
+        acc.getItems().push({...sourceItem});
       }
     });
   }
 
-  mergeOrder(orders: Order[]): Order{
-    let final = orders[0];
-    this.ordersByMember.set(orders[0].familyId, orders[0])
-    for (let i = 1; i<orders.length;i++){
+  mergeOrders(orders: Order[]): Order{
+    let final = new Order(orders[0].orderWeek, orders[0].groupId, 'GroupOrder');
+    for (let i = 0; i<orders.length;i++){
       this.ordersByMember.set(orders[i].familyId, orders[i]);
       this.mergeGrocery(final, orders[i]);
     }
@@ -176,11 +182,11 @@ export class OrderService {
     //const urlsMap = urls.map(url => <Observable<Grocery[]>> this.afs.collection<Grocery>(url).valueChanges().pipe(take(1)));
 
     return forkJoin(this.getUrlsObservable(members)).pipe(
-      map((order: Order[]) => this.mergeOrder(order))
+      map((orders: Order[]) => this.mergeOrders(orders))
     );
   }
 
-  public getMembers(): Observable<string[]>{
+  public getMembers(): Observable<any[]>{
     return this.members$;
   }
 
@@ -201,7 +207,9 @@ export class OrderService {
   
   getUrlsObservable(members: any[]): Observable<Order>[] {
     return members.map(m => {
-      return this.afs.collection<Grocery>(`/orders/${m.orderWeek}/groups/${m.groupId}/member/${m.id}/items`).valueChanges()
+      return this.afs.collection<Grocery>(`/orders/${m.orderWeek}/groups/${m.groupId}/member/${m.id}/items`,
+                                  ref => ref.orderBy('category')
+                                            .orderBy('guiOrder')).valueChanges()
                       .pipe(
                         take(1),
                         map(items => this.createOrder(m.orderWeek, m.groupId, m.id, items))
