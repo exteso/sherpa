@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="tertiary"></ion-menu-button>
+      <ion-button (click)="previousWeek()" slot="start">
+        <ion-icon slot="icon-only"  name="arrow-back-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Raccolta {{orderWeek}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="nextWeek()" >
+        <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
+      </ion-button>
+      <ion-button color="tertiary">
+          <ion-icon slot="icon-only" color="danger" name="send"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-card class="group-card" *ngIf="groupId">
+      <ion-card-header>
+        <ion-card-subtitle>{{orderWeek}}</ion-card-subtitle>
+        <ion-card-title>{{groupId}} - {{familyId}}</ion-card-title>
+      </ion-card-header>
+    
+      <ion-card-content>
+        
+        
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="group-card" *ngFor="let item of myWeekOrder$ | async">
+        <ion-fab vertical="top" horizontal="end">
+            <ion-fab-button color="danger">
+                <ion-icon name="close"></ion-icon>
+            </ion-fab-button>  
+            <ion-fab-button>
+              <ion-icon name="checkmark"></ion-icon>
+            </ion-fab-button>
+          </ion-fab>
+      <ion-card-header>
+        <ion-card-subtitle>{{item.category}} {{item.origin}}</ion-card-subtitle>
+        <ion-card-title>{{item.name}}</ion-card-title>
+      </ion-card-header>
+    
+      <ion-card-content>
+        
+        <ion-label>
+          <h1>{{item.qty}} {{item.orderUnit}}</h1>
+          <h3>{{item.price}} CHF/{{item.priceUnit}}</h3>
+        </ion-label>
+      </ion-card-content>
+    </ion-card>
+    
+</ion-content>

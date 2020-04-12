@@ -32,6 +32,10 @@ const routes: Routes = [
     path: 'catalog-create',
     loadChildren: () => import('./pages/catalog/catalog-create/catalog-create.module').then( m => m.CatalogCreatePageModule)
   },
+  {
+    path: 'collect-order',
+    loadChildren: () => import('./pages/order/collect-order/collect-order.module').then( m => m.CollectOrderPageModule)
+  },
   ]
 ;
 
