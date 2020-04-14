@@ -9,6 +9,9 @@ export class Order {
     public id: string;
     private items: Grocery[];
     public orderTotal: number;
+    public closed: boolean;
+    public closedBy: string;
+    public closedAt: Date;
 
     constructor(public orderWeek: string,
                 public groupId: string,

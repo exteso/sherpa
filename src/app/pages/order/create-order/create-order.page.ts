@@ -29,6 +29,9 @@ export class CreateOrderPage implements OnInit, OnDestroy {
   nrOfProducts: number;
   deliveryDates: Date[];
 
+  isOrderClosed: boolean;
+  orderClosingDate: Date;
+
   myGroups$: Observable<Group[]>
   currentUser: User;
   availableProducts$: Observable<Product[]>;
@@ -107,6 +110,8 @@ export class CreateOrderPage implements OnInit, OnDestroy {
     if (this.groupId && this.familyId) {
       this.subscription2 = this.orderService.getMyOrder(orderWeek, this.groupId, this.familyId).subscribe(
         myOrder => {
+          this.isOrderClosed = myOrder.closed;
+          this.orderClosingDate = myOrder.closedAt;
           this.familyWeekOrder$.next(myOrder);
           this.categoriesAndProduct = this.getAllCategoryCounters(myOrder);
         }
@@ -172,6 +177,10 @@ export class CreateOrderPage implements OnInit, OnDestroy {
     this.orderService.updateMyOrder(this.orderWeek, this.groupId, this.familyId, product, qty);
   }
 
+  isReadOnly(){
+    return this.showBasketOnly() || this.isOrderClosed;
+  }
+  
   getCategoryCounter(category: string){
     let orderedProducts = this.categoriesAndProduct.get(category);
     if (!orderedProducts) {

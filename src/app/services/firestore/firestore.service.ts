@@ -197,16 +197,6 @@ export class FirestoreService {
       return year+'w'+week;
     }
 
-    createCatalogd(
-      year: string, 
-      week: string
-    ): Promise<void> {
-      const id = this.catalogId(year, week);
-      return this.afs.doc(`catalogs/${id}`)
-                     .set({id: id,
-                          year: year,
-                          week: week });
-    }
   
     createCatalog(catalog: Catalog): Promise<void> {
       return this.afs.doc(`catalogs/${catalog.id}`)

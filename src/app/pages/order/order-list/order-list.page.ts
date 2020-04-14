@@ -8,6 +8,7 @@ import { Product } from 'src/app/models/product';
 import { Order } from 'src/app/models/order';
 import { DecimalPipe } from '@angular/common';
 import { ExcelService } from 'src/app/services/excel/excel.service';
+import { User } from 'src/app/models/user';
 
 @Component({
   selector: 'app-order-list',
@@ -16,6 +17,8 @@ import { ExcelService } from 'src/app/services/excel/excel.service';
 })
 export class OrderListPage implements OnInit, OnDestroy {
 
+  isOrderClosed: boolean;
+  currentUser: User;
   orderWeek: string;
   families: string[];
   groupId: string;
@@ -39,6 +42,7 @@ export class OrderListPage implements OnInit, OnDestroy {
         if (!week) { week= OrderService.weekAfter(this.orderService.getCurrentWeek())}
         this.subscription = this.authService.getUser$().subscribe(user => {
           this.groupId = user.groupId;
+          this.currentUser = user;
           this.changeOrderWeek(week);
         })
         
@@ -61,7 +65,10 @@ export class OrderListPage implements OnInit, OnDestroy {
 
     const myGroupWeekOrder$ = this.orderService.getMyGroupOrder(orderWeek, this.groupId)
                 .pipe(
-                  tap(groupOrder => {this.productsByCategory = this.getAllCategoriesWithCounters(groupOrder);})
+                  tap(groupOrder => {
+                                      this.productsByCategory = this.getAllCategoriesWithCounters(groupOrder);
+                                      this.isOrderClosed = groupOrder.closed;
+                                    })
                 );
 
     const availableProducts$ = this.orderService.getAvailableProducts(orderWeek);
@@ -129,6 +136,11 @@ export class OrderListPage implements OnInit, OnDestroy {
       return 0
     }
     return orderedProducts.size;
+  }
+
+  send(){
+    let famIds = this.families.map((f:any) => f.id);
+    this.orderService.closeOrder(this.orderWeek, this.groupId, famIds, this.currentUser.email);
   }
 
   printOrder(){

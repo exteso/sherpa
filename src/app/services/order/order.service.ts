@@ -126,21 +126,47 @@ export class OrderService {
 
   }
 
+  public closeOrder(orderWeek: string, groupId: string, families: string[], user: string){
+    let group = this.afs.doc(`/orders/${orderWeek}/groups/${groupId}`);
+    group.ref.get().then((documentSnapshot) => {
+      group.set({'closed': true,
+                 'closedBy': user,
+                 'closedAt': Date.now()});
+    });
+    families.forEach(familyId => {
+      let family = this.afs.doc(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}`);
+      family.ref.get().then((documentSnapshot) => {
+        family.update({'id': familyId,
+                      'closed': true,
+                      'closedBy': user,
+                      'closedAt': Date.now()});
+      });
+    })
+    console.log("Order closed: "+orderWeek+ ", "+ groupId);  
+  }
+
   public getMyOrder(orderWeek: string, groupId: string, familyId: string): Observable<Order>{
-    let family = this.afs.doc(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}`);
+    let family = this.afs.doc<Order>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}`);
+    
     family.ref.get().then((documentSnapshot) => {
       if (!documentSnapshot.exists){
-        family.set({'id': familyId});
+        family.update({'id': familyId,
+                    'groupId': groupId,
+                    'orderWeek': orderWeek,
+                    'familyId': familyId});
       }
     });
       
-      
-    return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`,
+    return family.valueChanges().pipe(
+        flatMap(order => {
+            return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`,
                                         ref => ref.orderBy('category')
                                                   .orderBy('guiOrder')).valueChanges()
-                    .pipe(
-                      map(items => this.createOrder(orderWeek, groupId, familyId, items))
-                    );
+                            .pipe(
+                              map(items => this.createOrder(orderWeek, groupId, familyId, items, order.closed, order.closedBy, order.closedAt)),
+                            )
+        }));
+
   }
 
   getOrderByMember(familyId: any): Order {
@@ -150,8 +176,11 @@ export class OrderService {
     return this.ordersByMember.get(familyId);
   }
 
-  private createOrder(orderWeek: string, groupId: string, familyId: string, items: Grocery[], index?: number): Order {
+  private createOrder(orderWeek: string, groupId: string, familyId: string, items: Grocery[], isClosed: boolean, closedBy?: string, closedAt?: Date, index?: number): Order {
     const order = new Order(orderWeek, groupId, familyId);
+    order.closed = isClosed;
+    order.closedBy = closedBy;
+    order.closedAt = closedAt;
     order.setItemsAndCalculateTotal(items);
     return order;
   }
@@ -212,7 +241,7 @@ export class OrderService {
                                             .orderBy('guiOrder')).valueChanges()
                       .pipe(
                         take(1),
-                        map(items => this.createOrder(m.orderWeek, m.groupId, m.id, items))
+                        map(items => this.createOrder(m.orderWeek, m.groupId, m.id, items, false))
                       );
     });
   }

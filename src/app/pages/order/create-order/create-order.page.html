@@ -45,16 +45,22 @@
         </ion-label>
       </ion-item>
       <ion-item  *ngIf="deliveryDates">
-          <ion-label>
+          <ion-label *ngIf="!isOrderClosed">
             <p>Data chiusura ordine</p>
-            <ion-text color="primary">
-              <h2>{{deliveryDates[0] | date:'fullDate'}} alle 21:00</h2>
+            <ion-text color="primary" >
+              <h2>{{deliveryDates[0] | date:'dd.MM.yy'}} alle 21:00</h2>
+            </ion-text>
+          </ion-label>
+          <ion-label *ngIf="isOrderClosed">
+            <p>Ordine chiuso il</p>
+            <ion-text color="danger">
+              <h2>{{orderClosingDate | date:'dd.MM.yy hh:mm'}}</h2>
             </ion-text>
           </ion-label>
           <ion-label>
             <p>Data consegna</p>
             <ion-text color="primary">
-              <h2>{{deliveryDates[1] | date:'fullDate'}} alle 14:00</h2>
+              <h2>{{deliveryDates[1] | date:'dd.MM.yy'}} alle 14:00</h2>
             </ion-text>
           </ion-label>
         </ion-item>
@@ -92,7 +98,7 @@
                   <ion-icon slot="end" name="chevron-up" *ngIf="expandedCategories[product.category]"></ion-icon>
                 </ion-item-divider>
                 <div *ngIf="!hideProduct(product)" class="grocery-item" [ngClass]="!showBasketOnly() && i%2 != 0 ? 'grocery-item-even' : 'grocery-item-odd'">
-                  <app-grocery-item  [grocery]="product" [readOnly]="showBasketOnly()" (updateQty)="updateQty(product, $event)"></app-grocery-item>
+                  <app-grocery-item  [grocery]="product" [readOnly]="isReadOnly()" (updateQty)="updateQty(product, $event)"></app-grocery-item>
                 </div>
             </ng-template>
           </ion-item-group>
