@@ -68,7 +68,7 @@ export class CollectOrderPage implements OnInit {
    
     this.myWeekOrder$ = combineLatest([availableProducts$, weekOrder$]).pipe(
       map(([products, order]) => {
-        products = products.filter(p => (order.getItems().findIndex(i => i.id == p.id) >= 0));
+        products = products.filter(p => (order.items.findIndex(i => i.id == p.id) >= 0));
         let previousCategory = '';
         return products.map(p => {
           if (p.category != previousCategory) {
@@ -76,7 +76,7 @@ export class CollectOrderPage implements OnInit {
             previousCategory = p.category;
           } 
           let qty = 0;
-          let item = order.getItems().find(i => i.id == p.id)
+          let item = order.items.find(i => i.id == p.id)
           if (item && item.qty > 0){
             qty = item.qty;
           }
@@ -112,7 +112,7 @@ export class CollectOrderPage implements OnInit {
 
   getAllCategoriesWithCounters(myOrder: Order){
     const catAndProd = new Map<string, Set<string>>();
-    myOrder.getItems().forEach(product => {
+    myOrder.items.forEach(product => {
       let orderedProducts = catAndProd.get(product.category);
       if (!orderedProducts) {
         catAndProd.set(product.category, new Set([product.id]));

@@ -125,7 +125,7 @@ export class CreateOrderPage implements OnInit, OnDestroy {
       map(([products, order]) => {
         return products.map(p => { 
           let qty = 0;
-          let item = order.getItems().find(i => i.id == p.id)
+          let item = order.items.find(i => i.id == p.id)
           if (item && item.qty > 0){
             qty = item.qty;
           }
@@ -212,7 +212,7 @@ export class CreateOrderPage implements OnInit, OnDestroy {
 
   getAllCategoryCounters(myOrder: Order){
     const catAndProd = new Map<string, Set<string>>();
-    myOrder.getItems().forEach(product => {
+    myOrder.items.forEach(product => {
       let orderedProducts = catAndProd.get(product.category);
       if (!orderedProducts) {
         catAndProd.set(product.category, new Set([product.id]));

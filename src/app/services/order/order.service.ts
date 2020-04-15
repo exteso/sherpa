@@ -150,14 +150,13 @@ export class OrderService {
     
     family.ref.get().then((documentSnapshot) => {
       if (!documentSnapshot.exists){
-        family.update({'id': familyId,
-                    'groupId': groupId,
-                    'orderWeek': orderWeek,
-                    'familyId': familyId});
+        let order = new Order(orderWeek, groupId, familyId);
+        family.set(Object.assign({}, order));
       }
     });
       
     return family.valueChanges().pipe(
+        filter(order => !!order),
         flatMap(order => {
             return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`,
                                         ref => ref.orderBy('category')
@@ -181,18 +180,18 @@ export class OrderService {
     order.closed = isClosed;
     order.closedBy = closedBy;
     order.closedAt = closedAt;
-    order.setItemsAndCalculateTotal(items);
+    order.items = items;
     return order;
   }
 
   mergeGrocery(acc:  Order, source:  Order){
-    source.getItems().forEach(sourceItem => {
-      let destItem = acc.getItems().find(d => d.id == sourceItem.id);
+    source.items.forEach(sourceItem => {
+      let destItem = acc.items.find(d => d.id == sourceItem.id);
       if (destItem){
         destItem.qty += sourceItem.qty;
         destItem.price += sourceItem.price;
       } else {
-        acc.getItems().push({...sourceItem});
+        acc.items.push({...sourceItem});
       }
     });
   }

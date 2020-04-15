@@ -7,26 +7,25 @@ export class Order {
     static EMPTY = new Order('','','');
 
     public id: string;
-    private items: Grocery[];
+    private _items: Grocery[];
     public orderTotal: number;
     public closed: boolean;
-    public closedBy: string;
-    public closedAt: Date;
+    public closedBy?: string;
+    public closedAt?: Date;
 
     constructor(public orderWeek: string,
                 public groupId: string,
                 public familyId: string
     ) {
         this.id = orderWeek;
-        this.items = [];
+        this._items = [];
     }
 
-    getItems(){
-        return this.items;
+    get items(): Grocery[] {
+        return this._items;
     }
-
-    setItemsAndCalculateTotal(items: Grocery[]){
-        this.items = items;
+    set items(value: Grocery[]) {
+        this._items = value;
         this.orderTotal = this.items.reduce((acc: number, item) => acc + Grocery.price(item), 0)
     }
 

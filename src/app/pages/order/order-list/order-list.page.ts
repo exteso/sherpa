@@ -75,7 +75,7 @@ export class OrderListPage implements OnInit, OnDestroy {
    
     this.groupWeekOrder$ = combineLatest([availableProducts$, myGroupWeekOrder$]).pipe(
       map(([products, order]) => {
-        products = products.filter(p => (order.getItems().findIndex(i => i.id == p.id) >= 0));
+        products = products.filter(p => (order.items.findIndex(i => i.id == p.id) >= 0));
         let previousCategory = '';
         return products.map(p => {
           if (p.category != previousCategory) {
@@ -83,7 +83,7 @@ export class OrderListPage implements OnInit, OnDestroy {
             previousCategory = p.category;
           } 
           let qty = 0;
-          let item = order.getItems().find(i => i.id == p.id)
+          let item = order.items.find(i => i.id == p.id)
           if (item && item.qty > 0){
             qty = item.qty;
           }
@@ -119,7 +119,7 @@ export class OrderListPage implements OnInit, OnDestroy {
 
   getAllCategoriesWithCounters(myOrder: Order){
     const catAndProd = new Map<string, Set<string>>();
-    myOrder.getItems().forEach(product => {
+    myOrder.items.forEach(product => {
       let orderedProducts = catAndProd.get(product.category);
       if (!orderedProducts) {
         catAndProd.set(product.category, new Set([product.id]));
@@ -177,7 +177,7 @@ export class OrderListPage implements OnInit, OnDestroy {
 
   private getOrderedItems(familyId: string){
     let order = this.orderService.getOrderByMember(familyId);
-    let items: Grocery[] = order.getItems().map(i => {return {...i, familyId}});
+    let items: Grocery[] = order.items.map(i => {return {...i, familyId}});
     return items;
   }
 
