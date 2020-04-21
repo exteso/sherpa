@@ -8,6 +8,9 @@ import { ExcelService } from 'src/app/services/excel/excel.service';
 import { tap, map } from 'rxjs/operators';
 import { Product } from 'src/app/models/product';
 import { Order } from 'src/app/models/order';
+import { ModalController } from '@ionic/angular';
+import { CorrectRealQuantityPage } from '../../modal/correct-real-quantity/correct-real-quantity.page';
+import { CollectItemAction } from 'src/app/models/actions/CollectItemAction';
 
 @Component({
   selector: 'app-collect-order',
@@ -28,7 +31,7 @@ export class CollectOrderPage implements OnInit {
   constructor(private orderService: OrderService, public authService: AuthService, 
     public loading: LoadingService, public toast: ToastService, 
     private route: ActivatedRoute, private decimalPipe: DecimalPipe,
-    private excelService: ExcelService) { }
+    private excelService: ExcelService, public modalController: ModalController) { }
 
   ngOnInit() {
 
@@ -36,7 +39,7 @@ export class CollectOrderPage implements OnInit {
     this.route.paramMap.subscribe(
       (params: ParamMap) => {
         let week = params.get('orderWeek');
-        if (!week) { week= OrderService.weekAfter(this.orderService.getCurrentWeek())}
+        if (!week) { week= this.orderService.getCurrentWeek()}
         this.subscription = this.authService.getUser$().subscribe(user => {
           this.groupId = user.groupId;
           this.familyId = user.familyId;
@@ -77,10 +80,10 @@ export class CollectOrderPage implements OnInit {
           } 
           let qty = 0;
           let item = order.items.find(i => i.id == p.id)
-          if (item && item.qty > 0){
-            qty = item.qty;
+          if (item && item.realQty > 0){
+            return {...p, qty: item.qty, realQty: item.realQty} 
           }
-          return {...p, qty} });
+          return {...p, qty: item.qty} });
         })); 
   }
 
@@ -109,6 +112,37 @@ export class CollectOrderPage implements OnInit {
     let priceText = this.decimalPipe.transform(order.orderTotal, '1.2-2');
     return priceText + " CHF";
   }
+
+  setRealQtyAsOrdered(item: Grocery) {
+    console.log(item);
+    this.orderService.pickUp(this.orderWeek, this.groupId, this.familyId, item.id, {realQty: item.qty, notTaken: false});
+  }
+
+  async changeRealQty(item: Grocery) {
+    
+      const modal = await this.modalController.create({
+        component: CorrectRealQuantityPage,
+        componentProps: { 
+          orderWeek: this.orderWeek, 
+          groupId: this.groupId, 
+          familyId: this.familyId,
+          item: item
+        }
+      });
+      modal.onDidDismiss().then(data => {
+        let collectAction: CollectItemAction = data.data;
+        if (collectAction ){
+          this.orderService.pickUp(this.orderWeek, this.groupId, this.familyId, item.id, collectAction);
+        }
+  
+      });
+      return await modal.present();
+      
+    }
+
+    showCard(item: Grocery): boolean{
+      return !item.notTaken && !(item.realQty >= 0)
+    }
 
   getAllCategoriesWithCounters(myOrder: Order){
     const catAndProd = new Map<string, Set<string>>();

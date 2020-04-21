@@ -54,7 +54,7 @@
           <ion-label *ngIf="isOrderClosed">
             <p>Ordine chiuso il</p>
             <ion-text color="danger">
-              <h3>{{orderClosingDate | date:'EE, dd.MM.yy hh:mm'}}</h3>
+              <h3>{{orderClosingDate | date:'EE, dd.MM.yy @HH:mm'}}</h3>
             </ion-text>
           </ion-label>
           <ion-label>

@@ -27,17 +27,23 @@
       </ion-card-header>
     
       <ion-card-content>
-        
+        <ion-label>
+          <p>Data consegna</p>
+          <ion-text color="primary">
+            <h3>{{deliveryDates[1] | date:'EE, dd.MM.yy'}} alle 14:00</h3>
+          </ion-text>
+        </ion-label>
         
       </ion-card-content>
     </ion-card>
 
-    <ion-card class="group-card" *ngFor="let item of myWeekOrder$ | async">
+    <ion-card class="group-card" *ngFor="let item of myWeekOrder$ | async" >
+      <div *ngIf="showCard(item)">
         <ion-fab vertical="top" horizontal="end">
-            <ion-fab-button color="danger">
+            <ion-fab-button color="danger" (click)="changeRealQty(item)">
                 <ion-icon name="close"></ion-icon>
             </ion-fab-button>  
-            <ion-fab-button>
+            <ion-fab-button (click)="setRealQtyAsOrdered(item)" *ngIf="item.orderUnit == item.priceUnit">
               <ion-icon name="checkmark"></ion-icon>
             </ion-fab-button>
           </ion-fab>
@@ -53,6 +59,7 @@
           <h3>{{item.price}} CHF/{{item.priceUnit}}</h3>
         </ion-label>
       </ion-card-content>
+    </div>
     </ion-card>
     
 </ion-content>

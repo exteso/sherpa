@@ -5,6 +5,9 @@ export class Grocery extends Product {
   isFavorite?: boolean;
   familyId?: string;
   groupId?: string;
+  realQty?: number;
+  notTaken?: boolean;
+  comment?: string;
 
   static price(g: Grocery) {
     if (g.orderUnit == Unit.PZ && (g.priceUnit == Unit.KG || g.priceUnit == Unit.GR))

@@ -208,6 +208,9 @@ export class OrderListPage implements OnInit, OnDestroy {
                         delete it['priceUnit'];
                         delete it['qty'];
                         delete it['unitText'];
+                        delete it['realQty'];
+                        delete it['notTaken'];
+                        delete it['dismissed'];
                         return it;
                       });
   }

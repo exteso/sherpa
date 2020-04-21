@@ -8,6 +8,7 @@ import { Grocery } from 'src/app/models/grocery';
 import { Product } from 'src/app/models/product';
 import { FirestoreService } from '../firestore/firestore.service';
 import { Order } from 'src/app/models/order';
+import { CollectItemAction } from 'src/app/models/actions/CollectItemAction';
 
 
 @Injectable({
@@ -143,6 +144,11 @@ export class OrderService {
       });
     })
     console.log("Order closed: "+orderWeek+ ", "+ groupId);  
+  }
+
+  pickUp(orderWeek: string, groupId: string, familyId: string, itemId: string, collectAction: CollectItemAction) {
+    let item = this.afs.doc<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/${itemId}`);
+    item.update(collectAction)
   }
 
   public getMyOrder(orderWeek: string, groupId: string, familyId: string): Observable<Order>{

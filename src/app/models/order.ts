@@ -17,7 +17,7 @@ export class Order {
                 public groupId: string,
                 public familyId: string
     ) {
-        this.id = orderWeek;
+        this.id = familyId;
         this._items = [];
     }
 

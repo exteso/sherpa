@@ -27,7 +27,17 @@ export class ExcelService {
       { width: 5 },
       { width: 40 },
       { width: 5 },
-      { width: 5 }
+      { width: 5 },
+      { width: 10 },
+      { width: 10 },
+      { width: 10 },
+      { width: 10 },
+      { width: 10 },
+      { width: 10 },
+      { width: 10 },
+      { width: 10 },
+      { width: 10 },
+      { width: 10 }
     ]
     
     worksheet['A1'].v = 'CONPROBIO';

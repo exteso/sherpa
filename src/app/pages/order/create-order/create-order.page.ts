@@ -57,7 +57,7 @@ export class CreateOrderPage implements OnInit, OnDestroy {
     this.route.paramMap.subscribe(
       (params: ParamMap) => {
         let week = params.get('orderWeek');
-        if (!week) { week= this.orderService.getCurrentWeek()}
+        if (!week) { week= OrderService.weekAfter(this.orderService.getCurrentWeek())}
         this.nextOrderWeek = OrderService.weekAfter(week);
         this.prevOrderWeek = OrderService.weekBefore(week);
         this.subscription = this.authService.getUser$().subscribe(user => {

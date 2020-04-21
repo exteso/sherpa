@@ -90,7 +90,7 @@
   "home.title": "Home",
   "home.card.titlea": "ConPro",
   "home.card.titleb": "Bio",
-  "home.card.version": "0.5",
+  "home.card.version": "0.8",
   "home.card.description": "Portale Consumatori ConProBio",
 
   "home.card.item1.title": "item1",
@@ -98,7 +98,7 @@
   "home.card.item2.title": "Prossimo Ordine",
   "home.card.item2.desc": "Crea & modifica il tuo prossimo ordine",
   "home.card.item3.title": "Ordine da ritirare",
-  "home.card.item3.desc": "Gestisci l'ordine di settimana scorsa",
+  "home.card.item3.desc": "Compila il foglio per il ritiro",
 
   "home.send.disabled": "This function is disabled!",
   "home.send.message": "Message...",

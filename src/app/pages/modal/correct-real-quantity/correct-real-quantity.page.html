@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-title>Note ritiro merce</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-card class="group-card" *ngIf="groupId">
+        <ion-card-header>
+          <ion-card-subtitle>{{orderWeek}} - {{groupId}} - {{familyId}}</ion-card-subtitle>
+          <ion-card-title>{{item.name}}</ion-card-title>
+        </ion-card-header>
+      
+        <ion-card-content>
+          <ion-label>
+              <p>Quantità ordinata</p>
+              <ion-text color="primary">
+                <h3>{{item.qty}} {{item.orderUnit}}</h3>
+              </ion-text>
+            </ion-label>
+          
+        </ion-card-content>
+      </ion-card>
+  <ion-item>
+      <ion-label position="floating">Quantità reale ritirata ({{item.priceUnit}})</ion-label>
+      <ion-input type="number" [(ngModel)]="realQty" required=true></ion-input>
+    </ion-item>
+    <ion-item>
+        <ion-label>Non ho ritirato la merce</ion-label>
+        <ion-toggle [(ngModel)]="notTaken"></ion-toggle>
+      </ion-item>
+    <ion-item>
+        <ion-label position="floating">Commento</ion-label>
+        <ion-input type="text" [(ngModel)]="comment"></ion-input>
+      </ion-item>
+    <ion-item>
+      <ion-button color="danger" slot="start" (click)="dismiss()">Annulla</ion-button>
+      <ion-button color="success" slot="end" (click)="submit()">Conferma</ion-button>
+    </ion-item>
+</ion-content>
