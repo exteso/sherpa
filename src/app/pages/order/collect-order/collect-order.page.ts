@@ -27,6 +27,7 @@ export class CollectOrderPage implements OnInit {
   groupOrder: Grocery[];
   subscription: Subscription;
   productsByCategory: Map<string, Set<string>>;
+  public showDone: boolean;
   
   constructor(private orderService: OrderService, public authService: AuthService, 
     public loading: LoadingService, public toast: ToastService, 
@@ -141,7 +142,7 @@ export class CollectOrderPage implements OnInit {
     }
 
     showCard(item: Grocery): boolean{
-      return !item.notTaken && !(item.realQty >= 0)
+      return this.showDone || (!item.notTaken && !(item.realQty >= 0))
     }
 
   getAllCategoriesWithCounters(myOrder: Order){
@@ -164,5 +165,19 @@ export class CollectOrderPage implements OnInit {
     }
     return orderedProducts.size;
   }
+  
+  toggleShowDone(){
+    this.showDone = !this.showDone;
+  }
 
+  isNotTaken(item){
+    return item.notTaken || item.realQty == 0.01;
+  }
+
+  isDefaultApprovalEnabled(item){
+    if (item.realQty > 0.1) return false;
+    if (this.isNotTaken(item)) return false;
+
+    return item.orderUnit == item.priceUnit;
+  }
 }

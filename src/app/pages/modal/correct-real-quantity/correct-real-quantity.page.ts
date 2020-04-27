@@ -18,7 +18,9 @@ export class CorrectRealQuantityPage implements OnInit {
   comment: string;
   notTaken: boolean;
 
-  constructor(public modalCtrl: ModalController) { }
+  constructor(public modalCtrl: ModalController) { 
+    this.notTaken = false;
+  }
 
   ngOnInit() {
   }

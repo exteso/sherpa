@@ -12,54 +12,65 @@
         <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
       </ion-button>
       <ion-button color="tertiary">
-          <ion-icon slot="icon-only" color="danger" name="send"></ion-icon>
+          <ion-icon slot="icon-only" color="danger" name=""></ion-icon>
+        </ion-button>
+        <ion-button color="tertiary" (click)="toggleShowDone()">
+          <ion-icon slot="icon-only" color="gray" *ngIf="!showDone" name="checkmark-done-outline"></ion-icon>
+          <ion-icon slot="icon-only" color="danger" *ngIf="showDone" name="checkmark-done-outline"></ion-icon>
         </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-card class="group-card" *ngIf="groupId" color="primary">
+    <ion-card-header>
+      <ion-card-subtitle>{{orderWeek}}</ion-card-subtitle>
+      <ion-card-title>{{groupId}} - {{familyId}}</ion-card-title>
+    </ion-card-header>
+  
+    <ion-card-content>
+      <ion-label>
+        <p>Data consegna</p>
+        <ion-text>
+          <h3>{{deliveryDates[1] | date:'EE, dd.MM.yy'}} alle 14:00</h3>
+        </ion-text>
+      </ion-label>
+      
+    </ion-card-content>
+  </ion-card>
 
-  <ion-card class="group-card" *ngIf="groupId">
-      <ion-card-header>
-        <ion-card-subtitle>{{orderWeek}}</ion-card-subtitle>
-        <ion-card-title>{{groupId}} - {{familyId}}</ion-card-title>
-      </ion-card-header>
-    
-      <ion-card-content>
-        <ion-label>
-          <p>Data consegna</p>
-          <ion-text color="primary">
-            <h3>{{deliveryDates[1] | date:'EE, dd.MM.yy'}} alle 14:00</h3>
-          </ion-text>
-        </ion-label>
-        
-      </ion-card-content>
-    </ion-card>
-
-    <ion-card class="group-card" *ngFor="let item of myWeekOrder$ | async" >
-      <div *ngIf="showCard(item)">
-        <ion-fab vertical="top" horizontal="end">
-            <ion-fab-button color="danger" (click)="changeRealQty(item)">
-                <ion-icon name="close"></ion-icon>
-            </ion-fab-button>  
-            <ion-fab-button (click)="setRealQtyAsOrdered(item)" *ngIf="item.orderUnit == item.priceUnit">
-              <ion-icon name="checkmark"></ion-icon>
-            </ion-fab-button>
-          </ion-fab>
+  <ng-template ngFor let-item let-i="index" let-c="0" let-isFirst="first" [ngForOf]="myWeekOrder$ | async">
+    <ion-card class="group-card" *ngIf="showCard(item)">
+      <ion-fab vertical="top" horizontal="end">
+        <ion-fab-button color="danger" (click)="changeRealQty(item)">
+            <ion-icon name="close"></ion-icon>
+        </ion-fab-button>  
+        <ion-fab-button (click)="setRealQtyAsOrdered(item)" *ngIf="isDefaultApprovalEnabled(item)">
+          <ion-icon name="checkmark"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
       <ion-card-header>
         <ion-card-subtitle>{{item.category}} {{item.origin}}</ion-card-subtitle>
         <ion-card-title>{{item.name}}</ion-card-title>
       </ion-card-header>
-    
+  
       <ion-card-content>
-        
-        <ion-label>
-          <h1>{{item.qty}} {{item.orderUnit}}</h1>
-          <h3>{{item.price}} CHF/{{item.priceUnit}}</h3>
-        </ion-label>
+        <ion-item>
+          <ion-label>
+            <h1>{{item.qty}} {{item.orderUnit}}</h1>
+            <h3>{{item.price}} CHF/{{item.priceUnit}}</h3>
+          </ion-label>
+          <ion-chip *ngIf="item.realQty > 0.1" color="primary">
+            <ion-icon name="basket"></ion-icon>
+            <ion-label>{{item.realQty}} {{item.priceUnit}}</ion-label>
+          </ion-chip>
+          <ion-chip *ngIf="isNotTaken(item)" color="danger">
+              <ion-icon name="close"></ion-icon>
+              <ion-label>Non ritirato</ion-label>
+            </ion-chip>
+        </ion-item> 
       </ion-card-content>
-    </div>
     </ion-card>
-    
+  </ng-template>
 </ion-content>
