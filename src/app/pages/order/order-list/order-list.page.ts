@@ -189,6 +189,7 @@ export class OrderListPage implements OnInit, OnDestroy {
       if (lastItem && i.id == lastItem.id) {
         grouped.pop();
         it = {...lastItem };
+        it['qty'] = lastItem.qty + i.qty; 
       } else {
        it = {...i };
       }
@@ -206,7 +207,7 @@ export class OrderListPage implements OnInit, OnDestroy {
                         delete it['guiOrder'];
                         delete it['orderUnit'];
                         delete it['priceUnit'];
-                        delete it['qty'];
+                        //delete it['qty'];
                         delete it['unitText'];
                         delete it['realQty'];
                         delete it['notTaken'];
