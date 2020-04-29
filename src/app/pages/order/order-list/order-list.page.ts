@@ -117,6 +117,13 @@ export class OrderListPage implements OnInit, OnDestroy {
     return priceText + " CHF";
   }
 
+
+  hasCollected(familyId: string) {
+    const order = this.orderService.getOrderByMember(familyId);
+    return order.collected;
+  }
+
+
   getAllCategoriesWithCounters(myOrder: Order){
     const catAndProd = new Map<string, Set<string>>();
     myOrder.items.forEach(product => {

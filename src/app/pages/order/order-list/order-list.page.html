@@ -33,7 +33,7 @@
               La consegna verrà effettuata {{deliveryDates[1] | date:'fullDate'}} alle 14:00
             </p>
           <ul>
-            <li *ngFor="let member of families">{{ member.id }} - {{ getOrderPrice(groupId, member.id) }}</li>
+            <li *ngFor="let family of families">{{ family.id }} - {{ getOrderPrice(groupId, family.id) }}<span *ngIf="hasCollected(family.id)"> - Ritirato</span></li>
           </ul>
           
         </ion-card-content>

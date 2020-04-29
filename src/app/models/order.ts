@@ -12,6 +12,7 @@ export class Order {
     public closed: boolean;
     public closedBy?: string;
     public closedAt?: Date;
+    public collected: boolean;
 
     constructor(public orderWeek: string,
                 public groupId: string,
@@ -27,6 +28,6 @@ export class Order {
     set items(value: Grocery[]) {
         this._items = value;
         this.orderTotal = this.items.reduce((acc: number, item) => acc + Grocery.price(item), 0)
+        this.collected = (this._items && this.items[0] && !!this.items[0].realQty)
     }
-
 }
