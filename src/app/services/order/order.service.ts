@@ -202,13 +202,17 @@ export class OrderService {
     });
   }
 
+  storeOrders(orders: Order[]){
+    for (let i = 0; i<orders.length;i++){
+      this.ordersByMember.set(orders[i].familyId, orders[i]);
+    }
+  }
+
   mergeOrders(orders: Order[]): Order{
     let final = new Order(orders[0].orderWeek, orders[0].groupId, 'GroupOrder');
     for (let i = 0; i<orders.length;i++){
-      this.ordersByMember.set(orders[i].familyId, orders[i]);
       this.mergeGrocery(final, orders[i]);
     }
-
     return final;
   }
 
@@ -216,6 +220,7 @@ export class OrderService {
     //const urlsMap = urls.map(url => <Observable<Grocery[]>> this.afs.collection<Grocery>(url).valueChanges().pipe(take(1)));
 
     return forkJoin(this.getUrlsObservable(members)).pipe(
+      tap((orders: Order[]) => this.storeOrders(orders)),
       map((orders: Order[]) => this.mergeOrders(orders))
     );
   }

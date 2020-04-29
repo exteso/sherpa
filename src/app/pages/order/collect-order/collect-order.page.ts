@@ -6,7 +6,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { ExcelService } from 'src/app/services/excel/excel.service';
 import { tap, map } from 'rxjs/operators';
-import { Product } from 'src/app/models/product';
+import { Product, Unit } from 'src/app/models/product';
 import { Order } from 'src/app/models/order';
 import { ModalController } from '@ionic/angular';
 import { CorrectRealQuantityPage } from '../../modal/correct-real-quantity/correct-real-quantity.page';
@@ -82,7 +82,7 @@ export class CollectOrderPage implements OnInit {
           let qty = 0;
           let item = order.items.find(i => i.id == p.id)
           if (item && item.realQty > 0){
-            return {...p, qty: item.qty, realQty: item.realQty} 
+            return {...p, qty: item.qty, realQty: item.realQty, comment: item.comment, notTaken: item.notTaken} 
           }
           return {...p, qty: item.qty} });
         })); 
@@ -179,5 +179,11 @@ export class CollectOrderPage implements OnInit {
     if (this.isNotTaken(item)) return false;
 
     return item.orderUnit == item.priceUnit;
+  }
+
+  getPrice(grocery){
+    let price = Grocery.price(grocery);
+    let priceText = this.decimalPipe.transform(price, '1.2-2')
+    return priceText + " CHF"
   }
 }

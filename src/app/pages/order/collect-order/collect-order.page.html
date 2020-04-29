@@ -44,7 +44,7 @@
     <ion-card class="group-card" *ngIf="showCard(item)">
       <ion-fab vertical="top" horizontal="end">
         <ion-fab-button color="danger" (click)="changeRealQty(item)">
-            <ion-icon name="close"></ion-icon>
+          <ion-icon name="create-outline"></ion-icon>
         </ion-fab-button>  
         <ion-fab-button (click)="setRealQtyAsOrdered(item)" *ngIf="isDefaultApprovalEnabled(item)">
           <ion-icon name="checkmark"></ion-icon>
@@ -61,6 +61,10 @@
             <h1>{{item.qty}} {{item.orderUnit}}</h1>
             <h3>{{item.price}} CHF/{{item.priceUnit}}</h3>
           </ion-label>
+          <ion-chip *ngIf="item.realQty > 0.1" color="danger">
+            <ion-icon name="cash-outline"></ion-icon>
+            <ion-label>{{getPrice(item)}}</ion-label>
+          </ion-chip>
           <ion-chip *ngIf="item.realQty > 0.1" color="primary">
             <ion-icon name="basket"></ion-icon>
             <ion-label>{{item.realQty}} {{item.priceUnit}}</ion-label>
@@ -70,6 +74,12 @@
               <ion-label>Non ritirato</ion-label>
             </ion-chip>
         </ion-item> 
+        <ion-item *ngIf="item.comment">
+          <ion-chip color="danger">
+            <ion-icon name="text"></ion-icon>
+            <ion-label>{{item.comment}}</ion-label>
+          </ion-chip>
+        </ion-item>
       </ion-card-content>
     </ion-card>
   </ng-template>
