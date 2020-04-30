@@ -195,7 +195,10 @@ export class OrderService {
       let destItem = acc.items.find(d => d.id == sourceItem.id);
       if (destItem){
         destItem.qty += sourceItem.qty;
-        destItem.price += sourceItem.price;
+        //destItem.price += sourceItem.price;
+        if (!sourceItem.notTaken) {
+          destItem.realQty += sourceItem.realQty;
+        }
       } else {
         acc.items.push({...sourceItem});
       }

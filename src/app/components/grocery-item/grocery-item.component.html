@@ -9,6 +9,9 @@
       </ion-text>
       <p>{{ grocery.origin }}</p>
     </ion-label>
+    <ion-note *ngIf="grocery.realQty > 0.1" slot="end" color="danger" class="ion-text-end grocery-item-qty">
+      {{ grocery.realQty }} {{ grocery.priceUnit }}
+    </ion-note>
     <ion-note slot="end" color="dark" class="ion-text-end grocery-item-qty">
         {{ grocery.qty }} {{ grocery.orderUnit }}
     </ion-note>

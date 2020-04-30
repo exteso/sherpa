@@ -86,6 +86,9 @@ export class OrderListPage implements OnInit, OnDestroy {
           let item = order.items.find(i => i.id == p.id)
           if (item && item.qty > 0){
             qty = item.qty;
+            if (item.realQty > 0) {
+              return {...p, qty, realQty: item.realQty};
+            }
           }
           return {...p, qty} });
         }));  
@@ -197,6 +200,9 @@ export class OrderListPage implements OnInit, OnDestroy {
         grouped.pop();
         it = {...lastItem };
         it['qty'] = lastItem.qty + i.qty; 
+        if (i.realQty > 0.1) {
+          it['realQty'] = lastItem.realQty + i.realQty; 
+        }
       } else {
        it = {...i };
       }
@@ -214,7 +220,6 @@ export class OrderListPage implements OnInit, OnDestroy {
                         delete it['guiOrder'];
                         delete it['orderUnit'];
                         delete it['priceUnit'];
-                        //delete it['qty'];
                         delete it['unitText'];
                         delete it['realQty'];
                         delete it['notTaken'];
