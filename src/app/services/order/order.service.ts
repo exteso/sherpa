@@ -1,9 +1,9 @@
 import { Injectable, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { Group } from 'src/app/models';
-import { filter, map, tap, mergeMap, switchMap, flatMap, exhaustMap, concatAll, concatMap, take } from 'rxjs/operators';
-import { Observable, forkJoin, of, from, BehaviorSubject } from 'rxjs';
+import { filter, map, tap, switchMap, flatMap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
 import { Product } from 'src/app/models/product';
 import { FirestoreService } from '../firestore/firestore.service';
@@ -205,13 +205,14 @@ export class OrderService {
     });
   }
 
-  storeOrders(orders: Order[]){
+  private storeOrders(orders: Order[]){
+    this.ordersByMember.clear();
     for (let i = 0; i<orders.length;i++){
       this.ordersByMember.set(orders[i].familyId, orders[i]);
     }
   }
 
-  mergeOrders(orders: Order[]): Order{
+  private mergeOrders(orders: Order[]): Order{
     let final = new Order(orders[0].orderWeek, orders[0].groupId, 'GroupOrder');
     for (let i = 0; i<orders.length;i++){
       this.mergeGrocery(final, orders[i]);
@@ -219,10 +220,10 @@ export class OrderService {
     return final;
   }
 
-  getAllOrders(members: string[]): Observable<Order> {
+  private getAllOrders(members: string[]): Observable<Order> {
     //const urlsMap = urls.map(url => <Observable<Grocery[]>> this.afs.collection<Grocery>(url).valueChanges().pipe(take(1)));
 
-    return forkJoin(this.getUrlsObservable(members)).pipe(
+    return combineLatest(this.getUrlsObservable(members)).pipe(
       tap((orders: Order[]) => this.storeOrders(orders)),
       map((orders: Order[]) => this.mergeOrders(orders))
     );
@@ -247,13 +248,12 @@ export class OrderService {
       return groupOrderUrl$;
   }
   
-  getUrlsObservable(members: any[]): Observable<Order>[] {
+  private getUrlsObservable(members: any[]): Observable<Order>[] {
     return members.map(m => {
       return this.afs.collection<Grocery>(`/orders/${m.orderWeek}/groups/${m.groupId}/member/${m.id}/items`,
                                   ref => ref.orderBy('category')
                                             .orderBy('guiOrder')).valueChanges()
                       .pipe(
-                        take(1),
                         map(items => this.createOrder(m.orderWeek, m.groupId, m.id, items, false))
                       );
     });
