@@ -19,7 +19,7 @@ export class ExcelService {
       { A: "", B: "", C: "", D: "Gruppo" }
     ], { skipHeader: true});
     
-    XLSX.utils.sheet_add_json(worksheet, json, { header: ["category", "origin", "certification", "name", "qty", "price", "unit"], origin: "A4"});
+    XLSX.utils.sheet_add_json(worksheet, json, { header: ["category", "origin", "certification", "name", "qty", "unit", "price"], origin: "A4"});
     //worksheet.set_landscape();
     worksheet['!cols'] = [
       { width: 10 },
