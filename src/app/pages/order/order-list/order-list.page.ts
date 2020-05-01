@@ -18,6 +18,7 @@ import { User } from 'src/app/models/user';
 export class OrderListPage implements OnInit, OnDestroy {
 
   isOrderClosed: boolean;
+  orderClosedAt: Date;
   currentUser: User;
   orderWeek: string;
   families: string[];
@@ -68,6 +69,7 @@ export class OrderListPage implements OnInit, OnDestroy {
                   tap(groupOrder => {
                                       this.productsByCategory = this.getAllCategoriesWithCounters(groupOrder);
                                       this.isOrderClosed = groupOrder.closed;
+                                      this.orderClosedAt = groupOrder.closedAt;
                                     })
                 );
 

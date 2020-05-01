@@ -214,6 +214,13 @@ export class OrderService {
 
   private mergeOrders(orders: Order[]): Order{
     let final = new Order(orders[0].orderWeek, orders[0].groupId, 'GroupOrder');
+
+    if (orders.length > 0) {
+      final.closed = orders[0].closed;
+      final.closedAt = orders[0].closedAt;
+      final.closedBy = orders[0].closedBy;
+    }
+
     for (let i = 0; i<orders.length;i++){
       this.mergeGrocery(final, orders[i]);
     }
@@ -254,7 +261,7 @@ export class OrderService {
                                   ref => ref.orderBy('category')
                                             .orderBy('guiOrder')).valueChanges()
                       .pipe(
-                        map(items => this.createOrder(m.orderWeek, m.groupId, m.id, items, false))
+                        map(items => this.createOrder(m.orderWeek, m.groupId, m.id, items, m.closed, m.closedBy, m.closedAt))
                       );
     });
   }

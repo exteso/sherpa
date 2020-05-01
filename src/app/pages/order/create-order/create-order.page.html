@@ -48,7 +48,7 @@
           <ion-label *ngIf="!isOrderClosed">
             <p>Data chiusura ordine</p>
             <ion-text color="primary" >
-              <h3>{{deliveryDates[0] | date:'EE, dd.MM.yy'}} alle 21:00</h3>
+              <h3>{{deliveryDates[0] | date:'EE, dd.MM.yy @HH:mm'}}</h3>
             </ion-text>
           </ion-label>
           <ion-label *ngIf="isOrderClosed">
@@ -60,7 +60,7 @@
           <ion-label>
             <p>Data consegna</p>
             <ion-text color="primary">
-              <h3>{{deliveryDates[1] | date:'EE, dd.MM.yy'}} alle 14:00</h3>
+              <h3>{{deliveryDates[1] | date:'EE, dd.MM.yy @HH:mm'}}</h3>
             </ion-text>
           </ion-label>
         </ion-item>

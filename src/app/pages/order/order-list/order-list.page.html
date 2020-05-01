@@ -11,9 +11,9 @@
         <ion-button (click)="nextWeek()" >
           <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
         </ion-button>
-        <ion-button color="tertiary" (click)="send()">
-            <ion-icon slot="icon-only" color="danger" name="send"></ion-icon>
-          </ion-button>
+        <ion-button color="tertiary" (click)="send()" *ngIf="!isOrderClosed">
+          <ion-icon slot="icon-only" color="danger" name="send"></ion-icon>
+        </ion-button>
       </ion-buttons>
     </ion-toolbar>
 </ion-header>
@@ -28,9 +28,12 @@
       
         <ion-card-content>
             <ion-button color="primary" (click)="printOrder()">Stampa formulario ritiro</ion-button>
-            <p *ngIf="deliveryDates">
+            <p *ngIf="deliveryDates && !isOrderClosed">
               L'ordine viene chiuso {{deliveryDates[0] | date:'fullDate'}} alle 12:00.
               La consegna verrà effettuata {{deliveryDates[1] | date:'fullDate'}} alle 14:00
+            </p>
+            <p *ngIf="isOrderClosed" color="danger">
+              Ordine chiuso {{orderClosedAt | date:'EE, dd.MM.yy @HH:mm'}}.
             </p>
           <ul>
             <li *ngFor="let family of families">{{ family.id }} - {{ getOrderPrice(groupId, family.id) }}<span *ngIf="hasCollected(family.id)"> - Ritirato</span></li>
