@@ -224,7 +224,7 @@ export class FirestoreService {
     }
 
     getCatalogList(): AngularFirestoreCollection<Catalog> {
-      return this.afs.collection('catalogs/', 
+      return this.afs.collection('catalogs', 
                                   ref =>
                                     ref.orderBy("id", "desc").limit(4));
     }
@@ -237,7 +237,12 @@ export class FirestoreService {
     deleteCatalogById(id: string): Promise<void> {
       return this.afs.doc(`catalogs/${id}`).delete();
     }
-
+    
+    editProductInCatalog(product: Product, catalogId: string){
+      const productRef = this.afs.doc<Product>(`catalogs/${catalogId}/products/${product.id}`);
+      productRef.set(product);
+    }
+ 
     addProductsToCatalog(products: Product[], catalogId: string){
         const weekCatalogCollection = this.afs.collection<Product>(`catalogs/${catalogId}/products/`);
         let promises: Promise<any>[] = [];

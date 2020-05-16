@@ -14,12 +14,13 @@ service cloud.firestore {
                 allow write: if ((request.auth.uid != null) && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.groupId == groupId))
             }
         }
-        match /catalogs {
+        match /catalogs/{orderWeek} {
             allow read
-            match /{orderWeek}/{document=**} {
-                allow read
-                allow write: if ((request.auth.uid != null) && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin))
-            }
+            allow write: if ((request.auth.uid != null) && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin))
+        }
+        match /catalogs/{orderWeek}/{document=**} {
+            allow read
+            allow write: if ((request.auth.uid != null) && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin))
         }
     }
 }
