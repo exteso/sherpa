@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Grocery } from 'src/app/models/grocery';
 import { ModalController } from '@ionic/angular';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-correct-real-quantity',
@@ -18,11 +19,14 @@ export class CorrectRealQuantityPage implements OnInit {
   comment: string;
   notTaken: boolean;
 
-  constructor(public modalCtrl: ModalController) { 
+  constructor(public modalCtrl: ModalController, private decimalPipe: DecimalPipe) { 
     this.notTaken = false;
   }
 
   ngOnInit() {
+    this.realQty = this.item.realQty;
+    this.comment = this.item.comment;
+    this.notTaken = this.item.notTaken;
   }
 
   submit(){
@@ -44,5 +48,15 @@ export class CorrectRealQuantityPage implements OnInit {
     this.modalCtrl.dismiss({
       'dismissed': true
     });
+  }
+
+  getRealPrice(){
+    if (this.realQty == 0) {
+      return "";
+    }
+
+    let price = this.realQty * this.item.price;
+    let priceText = this.decimalPipe.transform(price, '1.2-2')
+    return priceText + " CHF"
   }
 }

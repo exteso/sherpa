@@ -6,18 +6,15 @@
         <ion-icon slot="icon-only"  name="arrow-back-circle"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Raccolta {{orderWeek}}</ion-title>
+    <ion-title>Ritiro {{orderWeek}}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="nextWeek()" >
         <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
       </ion-button>
-      <ion-button color="tertiary">
-          <ion-icon slot="icon-only" color="danger" name=""></ion-icon>
-        </ion-button>
-        <ion-button color="tertiary" (click)="toggleShowDone()">
-          <ion-icon slot="icon-only" color="gray" *ngIf="!showDone" name="checkmark-done-outline"></ion-icon>
-          <ion-icon slot="icon-only" color="danger" *ngIf="showDone" name="checkmark-done-outline"></ion-icon>
-        </ion-button>
+      <ion-button color="tertiary" (click)="toggleShowDone()">
+        <ion-icon slot="icon-only" color="danger" *ngIf="!showDone" name="expand-outline"></ion-icon>
+        <ion-icon slot="icon-only" color="success" *ngIf="showDone" name="contract-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -59,7 +56,7 @@
         <ion-item>
           <ion-label>
             <h1>{{item.qty}} {{item.orderUnit}}</h1>
-            <h3>{{item.price}} CHF/{{item.priceUnit}}</h3>
+            <h3>{{item.price | number:'1.2-2'}} CHF/{{item.priceUnit}}</h3>
           </ion-label>
           <ion-chip *ngIf="item.realQty > 0.1" color="danger">
             <ion-icon name="cash-outline"></ion-icon>
