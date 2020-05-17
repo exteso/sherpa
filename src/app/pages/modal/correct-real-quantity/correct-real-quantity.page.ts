@@ -20,13 +20,17 @@ export class CorrectRealQuantityPage implements OnInit {
   notTaken: boolean;
 
   constructor(public modalCtrl: ModalController, private decimalPipe: DecimalPipe) { 
-    this.notTaken = false;
+    
   }
 
   ngOnInit() {
     this.realQty = this.item.realQty;
     this.comment = this.item.comment;
-    this.notTaken = this.item.notTaken;
+    if (this.item.notTaken) {
+      this.notTaken = this.item.notTaken;
+    } else {
+      this.notTaken = false;
+    }
   }
 
   submit(){

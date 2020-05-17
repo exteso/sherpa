@@ -15,6 +15,7 @@ import { CollectItemAction } from 'src/app/models/actions/CollectItemAction';
   providedIn: 'root'
 })
 export class OrderService {
+
   userEmail: string;
   //userProfile$: Observable<userProfile>;
   currentWeek: string;
@@ -149,6 +150,10 @@ export class OrderService {
   pickUp(orderWeek: string, groupId: string, familyId: string, itemId: string, collectAction: CollectItemAction) {
     let item = this.afs.doc<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/${itemId}`);
     item.update(collectAction)
+  }
+
+  addProducts(orderWeek: string, groupId: string, familyId: string, productsToAdd: Product[]) {
+    productsToAdd.forEach(p => this.updateMyOrder(orderWeek, groupId, familyId, p, 0.01));
   }
 
   public getMyOrder(orderWeek: string, groupId: string, familyId: string): Observable<Order>{

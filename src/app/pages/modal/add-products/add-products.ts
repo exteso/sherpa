@@ -21,48 +21,31 @@ import { map } from 'rxjs/operators';
   templateUrl: './add-products.page.html',
   styleUrls: ['./add-products.page.scss'],
 })
-export class AddProductsPage implements OnInit, OnDestroy  {
+export class AddProductsPage implements OnInit {
     searchTerm: string;
     searchTerm$: BehaviorSubject<string>;
-    //products: Product[];
-    products$: Observable<Product[]>;
+    products: Product[];
     filteredProducts$: Observable<Product[]>;
-    filteredProducts: Product[];
     selectedProducts: Product[];
-    userId: string;
   
     public loadImg = 'assets/img/profile.png';
-    private subscription: Subscription;
   
     @ViewChild(IonVirtualScroll, { static: true }) virtualScroll: IonVirtualScroll;
   
     constructor(
       public translate: TranslateProvider,
       public modalCtrl: ModalController,
-      public storage: Storage,
-      private alertCtrl: AlertController,
-      private firestore: FirestoreService,
-      private network: NetworkService,
-      private loading: LoadingService,
-      private toast: ToastService,
-      private notification: NotificationService
+      public storage: Storage
     ) {
       this.selectedProducts = [];
     }
   
     ngOnInit() {
-      //this.loading.showLoading('Loading products...');
-  
-      this.storage.get('uid').then(uid => {
-        this.userId = uid;
-      });
-
-      // Get the list of products on Firestore.
-      this.products$ = this.firestore.getProducts().valueChanges();
-      
       this.searchTerm$ = new BehaviorSubject(this.searchTerm);
 
-      this.filteredProducts$ = combineLatest([this.products$, this.searchTerm$]).pipe(
+      let products$ = new BehaviorSubject(this.products);
+
+      this.filteredProducts$ = combineLatest([products$, this.searchTerm$]).pipe(
         map(([products, searchQuery]) => {
           // here we imperatively implement the filtering logic
           if (!searchQuery) { return products; }
@@ -77,27 +60,12 @@ export class AddProductsPage implements OnInit, OnDestroy  {
           });
         }));
 
-        this.subscription = this.filteredProducts$.subscribe(products => this.filteredProducts = products)
     }
   
     search(searchValue) {
       this.searchTerm$.next(searchValue);
     }
 
-    selectAll(value){
-      if (value) {
-        this.filteredProducts.forEach(p => this.selectProduct(p));
-      } else {
-        this.selectedProducts = [];
-      }
-    }
-
-    ngOnDestroy() {
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-      }
-    }
-  
     header(record, recordIndex, records) {
       if (recordIndex % 20 === 0) {
         return 'Header ' + recordIndex;

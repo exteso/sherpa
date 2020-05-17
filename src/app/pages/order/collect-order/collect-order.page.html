@@ -27,13 +27,15 @@
     </ion-card-header>
   
     <ion-card-content>
+      <ion-item lines="none">
       <ion-label>
         <p>Data consegna</p>
         <ion-text>
           <h3>{{deliveryDates[1] | date:'EE, dd.MM.yy'}} alle 14:00</h3>
         </ion-text>
       </ion-label>
-      
+      <ion-button  color="secondary" slot="end" (click)="addNotOrderedProduct()">Aggiungi Prodotti</ion-button>
+    </ion-item>
     </ion-card-content>
   </ion-card>
 

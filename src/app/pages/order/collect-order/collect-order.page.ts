@@ -11,6 +11,7 @@ import { Order } from 'src/app/models/order';
 import { ModalController } from '@ionic/angular';
 import { CorrectRealQuantityPage } from '../../modal/correct-real-quantity/correct-real-quantity.page';
 import { CollectItemAction } from 'src/app/models/actions/CollectItemAction';
+import { AddProductsPage } from '../../modal/add-products/add-products';
 
 @Component({
   selector: 'app-collect-order',
@@ -24,8 +25,10 @@ export class CollectOrderPage implements OnInit {
   groupId: string;
   deliveryDates: Date[];
   myWeekOrder$: Observable<Grocery[]>;
+  notOrderedProducts: Product[];
   groupOrder: Grocery[];
   subscription: Subscription;
+  subscription2: Subscription;
   productsByCategory: Map<string, Set<string>>;
   public showDone: boolean;
   
@@ -55,6 +58,9 @@ export class CollectOrderPage implements OnInit {
   ngOnDestroy(){
     if (this.subscription) {
       this.subscription.unsubscribe()
+    }
+    if (this.subscription2) {
+      this.subscription2.unsubscribe()
     }
   }
 
@@ -86,6 +92,14 @@ export class CollectOrderPage implements OnInit {
           }
           return {...p, qty: item.qty} });
         })); 
+
+     let notOrderedProducts$ = combineLatest([availableProducts$, weekOrder$]).pipe(
+      map(([products, order]) => {
+        let notOrderedProducts = products.filter(p => (order.items.findIndex(i => i.id == p.id) < 0));
+        return notOrderedProducts;
+      })); 
+      
+     this.subscription2 = notOrderedProducts$.subscribe(products => this.notOrderedProducts = products) 
   }
 
   nextWeek(){
@@ -119,31 +133,48 @@ export class CollectOrderPage implements OnInit {
     this.orderService.pickUp(this.orderWeek, this.groupId, this.familyId, item.id, {realQty: item.qty, notTaken: false});
   }
 
-  async changeRealQty(item: Grocery) {
-    
-      const modal = await this.modalController.create({
-        component: CorrectRealQuantityPage,
-        componentProps: { 
-          orderWeek: this.orderWeek, 
-          groupId: this.groupId, 
-          familyId: this.familyId,
-          item: item
-        }
-      });
-      modal.onDidDismiss().then(data => {
-        let collectAction: CollectItemAction = data.data;
-        if (collectAction ){
-          this.orderService.pickUp(this.orderWeek, this.groupId, this.familyId, item.id, collectAction);
-        }
-  
-      });
-      return await modal.present();
-      
-    }
+  async changeRealQty(item: Grocery) { 
+    const modal = await this.modalController.create({
+      component: CorrectRealQuantityPage,
+      componentProps: { 
+        orderWeek: this.orderWeek, 
+        groupId: this.groupId, 
+        familyId: this.familyId,
+        item: item
+      }
+    });
+    modal.onDidDismiss().then(data => {
+      let collectAction: CollectItemAction = data.data;
+      if (collectAction ){
+        this.orderService.pickUp(this.orderWeek, this.groupId, this.familyId, item.id, collectAction);
+      }
 
-    showCard(item: Grocery): boolean{
-      return this.showDone || (!item.notTaken && !(item.realQty >= 0))
-    }
+    });
+    return await modal.present();
+    
+  }
+
+  async addNotOrderedProduct() { 
+    const modal = await this.modalController.create({
+      component: AddProductsPage,
+      componentProps: { 
+        products: this.notOrderedProducts
+      }
+    });
+    modal.onDidDismiss().then(data => {
+      let productsToAdd: Product[] = data.data;
+      if (productsToAdd ){
+        this.orderService.addProducts(this.orderWeek, this.groupId, this.familyId, productsToAdd);
+      }
+
+    });
+    return await modal.present();
+    
+  }
+
+  showCard(item: Grocery): boolean{
+    return this.showDone || (!item.notTaken && !(item.realQty >= 0))
+  }
 
   getAllCategoriesWithCounters(myOrder: Order){
     const catAndProd = new Map<string, Set<string>>();
