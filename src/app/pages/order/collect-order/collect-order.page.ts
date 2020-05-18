@@ -31,6 +31,9 @@ export class CollectOrderPage implements OnInit {
   subscription2: Subscription;
   productsByCategory: Map<string, Set<string>>;
   public showDone: boolean;
+  public productFilter: string;
+  public alreadyCollected: number;
+  public toCollect: number;
   
   constructor(private orderService: OrderService, public authService: AuthService, 
     public loading: LoadingService, public toast: ToastService, 
@@ -65,6 +68,7 @@ export class CollectOrderPage implements OnInit {
   }
 
   changeOrderWeek(orderWeek: string){
+    this.productFilter = 'onlyToCollect';
     this.orderWeek = orderWeek;
     this.loading.showLoading('Loading order...');
     this.deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
@@ -78,6 +82,8 @@ export class CollectOrderPage implements OnInit {
    
     this.myWeekOrder$ = combineLatest([availableProducts$, weekOrder$]).pipe(
       map(([products, order]) => {
+        this.toCollect = 0;
+        this.alreadyCollected = 0;
         products = products.filter(p => (order.items.findIndex(i => i.id == p.id) >= 0));
         let previousCategory = '';
         return products.map(p => {
@@ -88,8 +94,10 @@ export class CollectOrderPage implements OnInit {
           let qty = 0;
           let item = order.items.find(i => i.id == p.id)
           if (item && item.realQty > 0){
+            this.alreadyCollected++;
             return {...p, qty: item.qty, realQty: item.realQty, comment: item.comment, notTaken: item.notTaken} 
           }
+          this.toCollect++;
           return {...p, qty: item.qty} });
         })); 
 
@@ -173,7 +181,9 @@ export class CollectOrderPage implements OnInit {
   }
 
   showCard(item: Grocery): boolean{
-    return this.showDone || (!item.notTaken && !(item.realQty >= 0))
+    if (this.productFilter == 'onlyCollected' && item.realQty >= 0) return true;
+    if (this.productFilter == 'onlyToCollect' && (!item.notTaken && !(item.realQty >= 0))) return true;
+    return false;
   }
 
   getAllCategoriesWithCounters(myOrder: Order){
@@ -199,6 +209,9 @@ export class CollectOrderPage implements OnInit {
   
   toggleShowDone(){
     this.showDone = !this.showDone;
+  }
+  segmentChanged(filter){
+    this.productFilter = filter;
   }
 
   isNotTaken(item){
