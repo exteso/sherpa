@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Grocery } from 'src/app/models/grocery';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { DecimalPipe } from '@angular/common';
 
 @Component({
@@ -19,7 +19,9 @@ export class CorrectRealQuantityPage implements OnInit {
   comment: string;
   notTaken: boolean;
 
-  constructor(public modalCtrl: ModalController, private decimalPipe: DecimalPipe) { 
+  constructor(public modalCtrl: ModalController, 
+              private decimalPipe: DecimalPipe,
+              public toastController: ToastController) { 
     
   }
 
@@ -33,10 +35,24 @@ export class CorrectRealQuantityPage implements OnInit {
     }
   }
 
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: 'Inserisci il peso o il prezzo',
+      color: 'danger',
+      duration: 4000
+    });
+    toast.present();
+  }
+
   submit(){
     let realQty= this.realQty;
     if (this.notTaken){
       realQty = 0.01;
+    } else {
+      if (!(realQty >0)){
+        this.presentToast()
+        return;
+      }
     }
     let response = {notTaken: this.notTaken,
                     realQty: realQty };
@@ -66,7 +82,7 @@ export class CorrectRealQuantityPage implements OnInit {
 
   onChangeRealPrice(realPrice: number){
     let calcQty = realPrice / this.item.price;
-    this.realQty = this.formatNumber(calcQty, 4);
+    this.realQty = parseFloat(this.formatNumber(calcQty, 4));
   }
 
   onChangeRealQty(qty: number|string){
