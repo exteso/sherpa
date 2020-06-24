@@ -22,22 +22,19 @@ const routes: Routes = [
   { path: 'show-user', loadChildren: () => import('./pages/modal/show-user/show-user.module').then(m => m.ShowUserPageModule) },
   { path: 'loader', loadChildren: () => import('./pages/loader/loader/loader.module').then(m => m.LoaderPageModule) },
 
-  { path: 'catalog-list', loadChildren: () => import('./pages/catalog/catalog-list/catalog-list.module').then( m => m.CatalogListPageModule) },
+  { path: 'catalog-list', loadChildren: () => import('./pages/catalog/catalog-list/catalog-list.module').then( m => m.CatalogListPageModule), canActivate: [AuthGuard] },
   { path: 'catalog-detail/:id', loadChildren: () => import('./pages/catalog/catalog-detail/catalog-detail.module').then(m => m.CatalogDetailPageModule), canActivate: [AuthGuard] },
-  { path: 'catalog-create', loadChildren: () => import('./pages/catalog/catalog-create/catalog-create.module').then( m => m.CatalogCreatePageModule) },
+  { path: 'catalog-create', loadChildren: () => import('./pages/catalog/catalog-create/catalog-create.module').then( m => m.CatalogCreatePageModule), canActivate: [AuthGuard] },
 
-  { path: 'manage-order/:orderWeek', loadChildren: () => import('./pages/order/create-order/create-order.module').then( m => m.CreateOrderPageModule) },
-  { path: 'manage-order', loadChildren: () => import('./pages/order/create-order/create-order.module').then( m => m.CreateOrderPageModule) },
+  { path: 'manage-order/:orderWeek', loadChildren: () => import('./pages/order/create-order/create-order.module').then( m => m.CreateOrderPageModule), canActivate: [AuthGuard] },
+  { path: 'manage-order', loadChildren: () => import('./pages/order/create-order/create-order.module').then( m => m.CreateOrderPageModule), canActivate: [AuthGuard] },
   
-  { path: 'order-list/:orderWeek', loadChildren: () => import('./pages/order/order-list/order-list.module').then( m => m.OrderListPageModule) },
-  { path: 'order-list', loadChildren: () => import('./pages/order/order-list/order-list.module').then( m => m.OrderListPageModule) },
+  { path: 'order-list/:orderWeek', loadChildren: () => import('./pages/order/order-list/order-list.module').then( m => m.OrderListPageModule), canActivate: [AuthGuard] },
+  { path: 'order-list', loadChildren: () => import('./pages/order/order-list/order-list.module').then( m => m.OrderListPageModule), canActivate: [AuthGuard] },
   
-  { path: 'collect-order/:orderWeek', loadChildren: () => import('./pages/order/collect-order/collect-order.module').then( m => m.CollectOrderPageModule) },
-  { path: 'collect-order', loadChildren: () => import('./pages/order/collect-order/collect-order.module').then( m => m.CollectOrderPageModule) },
-  {
-    path: 'correct-real-quantity',
-    loadChildren: () => import('./pages/modal/correct-real-quantity/correct-real-quantity.module').then( m => m.CorrectRealQuantityPageModule)
-  },
+  { path: 'collect-order/:orderWeek', loadChildren: () => import('./pages/order/collect-order/collect-order.module').then( m => m.CollectOrderPageModule), canActivate: [AuthGuard] },
+  { path: 'collect-order', loadChildren: () => import('./pages/order/collect-order/collect-order.module').then( m => m.CollectOrderPageModule), canActivate: [AuthGuard] },
+  { path: 'correct-real-quantity', loadChildren: () => import('./pages/modal/correct-real-quantity/correct-real-quantity.module').then( m => m.CorrectRealQuantityPageModule), canActivate: [AuthGuard] }
   ]
 ;
 
