@@ -75,4 +75,26 @@ export class GroceryItemComponent implements OnInit {
     return priceText + " CHF"
   }
 
+  getRealPrice(){
+    if (!this.grocery.realQty || this.grocery.realQty <= 0.1) {
+      return "";
+    }
+
+    let price = this.grocery.realQty * this.grocery.price;
+    let priceText = this.decimalPipe.transform(price, '1.2-2')
+    return priceText + " CHF"
+  }
+
+  hasBeenCollected(){
+    if (!this.grocery.realQty || this.grocery.realQty <= 0.1) {
+      return false;
+    }
+    return true;
+  }
+
+  areOrderedAndCollectedEquals(){
+    if (this.grocery.qty === this.grocery.realQty)
+      return true;
+    return false;
+  }
 }

@@ -128,6 +128,9 @@ export class CreateOrderPage implements OnInit, OnDestroy {
           let item = order.items.find(i => i.id == p.id)
           if (item && item.qty > 0){
             qty = item.qty;
+            if (item.realQty > 0) {
+              return {...p, qty, realQty: item.realQty};
+            }
           }
           return {...p, qty} });
       }));  

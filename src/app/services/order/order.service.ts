@@ -201,8 +201,14 @@ export class OrderService {
       if (destItem){
         destItem.qty += sourceItem.qty;
         //destItem.price += sourceItem.price;
-        if (!sourceItem.notTaken) {
-          destItem.realQty += sourceItem.realQty;
+        if (sourceItem.notTaken !== undefined && sourceItem.notTaken === false) {
+          if (sourceItem.realQty && sourceItem.realQty > 0.1) {
+            if (destItem.realQty && destItem.realQty > 0.1) {
+              destItem.realQty += sourceItem.realQty;
+            }else{
+              destItem.realQty = sourceItem.realQty;
+            }
+          }
         }
       } else {
         acc.items.push({...sourceItem});
