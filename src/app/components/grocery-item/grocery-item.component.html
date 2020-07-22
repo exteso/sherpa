@@ -1,0 +1,49 @@
+
+  <ion-item class="grocery-item" lines="none">
+    <ion-label class="ion-text-wrap grocery-item-title">
+      <ion-text color="primary">
+        <h2>{{ grocery.name }}</h2>
+      </ion-text>
+      <ion-text>
+        <p>{{ grocery.price }} {{ grocery.currency }}/{{ grocery.priceUnit }}</p>
+      </ion-text>
+      <p>{{ grocery.origin }}</p>
+    </ion-label>
+    
+    <ion-label slot="end" class="ion-text-end mr10" *ngIf="hasBeenCollected()">
+      <ion-icon size="large" name="alert" color="danger" *ngIf="!areOrderedAndCollectedEquals()"></ion-icon>
+      <ion-icon size="large" name="checkmark" color="success" *ngIf="areOrderedAndCollectedEquals()"></ion-icon>
+      <ion-text >{{ getRealPrice() }}</ion-text>
+    </ion-label>
+    <div slot="end"  *ngIf="hasBeenCollected()">
+      <ion-label slot="end" class="ion-text-end mr10" *ngIf="!areOrderedAndCollectedEquals()">
+        <ion-text color="danger" > {{ grocery.qty }} {{ grocery.orderUnit }}</ion-text>
+      </ion-label>
+      <ion-note slot="end" color="dark" class="ion-text-end grocery-item-qty">
+        {{ grocery.realQty  | number:'1.0-4'}} {{ grocery.priceUnit }}
+      </ion-note>
+    </div>
+    <ion-label slot="end" class="ion-text-end mr10" *ngIf="readOnly && !hasBeenCollected()">
+      <ion-text >{{ getPrice() }}</ion-text>
+    </ion-label>
+    <ion-note slot="end" color="dark" class="ion-text-end grocery-item-qty" *ngIf="!hasBeenCollected()">
+        {{ grocery.qty }} {{ grocery.orderUnit }}
+    </ion-note>
+
+  </ion-item>
+
+  <ion-item class="grocery-item" lines="full" *ngIf="!readOnly">
+    <ion-button class="grocery-button" color="dark" slot="start" (click)="grocery.qty = 0" *ngIf="grocery.qty > 0">
+        <ion-icon slot="icon-only" name="trash"></ion-icon>
+      </ion-button>
+    <ion-label slot="end" class="ion-text-end mr10">
+      <ion-text >{{ getPrice() }}</ion-text>
+    </ion-label>
+    <ion-button class="grocery-button mr10" color="danger" slot="end" (click)="removeQty()" *ngIf="grocery.qty > 0">
+      <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
+    </ion-button>
+    <ion-button class="grocery-button" color="success" slot="end" (click)="addQty()">
+        <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+      </ion-button>
+</ion-item>
+

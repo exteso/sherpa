@@ -143,7 +143,6 @@ export class UserListPage implements OnInit, OnDestroy  {
         await alert.present();
       } else {
         // User has disabled push notifications.
-        // console.log('errrooo');
         this.toast.showToast(this.translate.get('home.send.disabled'));
       }
     }

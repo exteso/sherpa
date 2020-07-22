@@ -16,7 +16,6 @@ import { Group } from '../../../models';
 
 export class GroupListPage implements OnInit {
   public groupList: Observable<Group[]>;
-  public userId;
 
   constructor(
     public storage: Storage,

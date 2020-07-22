@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import {
   AngularFirestore,
   AngularFirestoreDocument,
-  AngularFirestoreCollection
+  AngularFirestoreCollection,
+  AngularFirestoreCollectionGroup
 } from '@angular/fire/firestore';
 
 // import { Observable } from 'rxjs';
@@ -12,11 +13,13 @@ import { take } from 'rxjs/operators';
 
 import { User, GeoMap, Group } from '../../models';
 import { WeekDay } from '@angular/common';
+import { Catalog } from 'src/app/models/catalog';
+import { Product } from 'src/app/models/product';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class FirestoreService {
   fsRef: any;
   // geoFirestore: any;
@@ -37,6 +40,10 @@ export class FirestoreService {
     });
   }
 
+  public getUser(userId: string): Observable<User> {
+    return this.afs.doc<User>(`users/${userId}`).valueChanges();
+  }
+
   // Check if the object exists on Firestore. Returns a boolean promise with true/false.
   public exists(path: string): Promise<boolean> {
     return new Promise(resolve => {
@@ -53,19 +60,6 @@ export class FirestoreService {
   // Get all users on Firestore ordered by their firstNames.
   public getUsers(): AngularFirestoreCollection<User> {
     return this.afs.collection('users', ref => ref.orderBy('firstName'));
-  }
-
-  // Get userData of a user given the username. Return the userData promise.
-  public getUserByUsername(username: string): Promise<User> {
-    return new Promise(resolve => {
-      this.afs.collection('users', ref => ref.where('username', '==', username)).valueChanges().pipe(take(1)).subscribe((res: User[]) => {
-        if (res.length > 0) {
-          resolve(res[0]);
-        } else {
-          resolve();
-        }
-      });
-    });
   }
 
   public getUserByUID(uid: string): Promise<User> {
@@ -137,52 +131,6 @@ export class FirestoreService {
   /* CRUD */
   /////////////////
 
- 
-  // Event //
-  createEvent(
-    eventName: string,
-    eventDescription: string,
-    eventLocation: string,
-    eventDate: string,
-    userId: string
-  ): Promise<void> {
-    const id = this.afs.createId();
-
-    return this.afs.doc(`eventList/${id}`).set({
-      id,
-      eventName,
-      eventDescription,
-      eventLocation,
-      eventDate,
-      userId
-    });
-  }
-
-  getEventList(userId: string): AngularFirestoreCollection<Event> {
-    return this.afs.collection('eventList', ref => ref.where('userId', '==', userId));
-  }
-
-  deleteEvent(eventId: string): Promise<void> {
-    return this.afs.doc(`eventList/${eventId}`).delete();
-  }
-
-  updateEvent(
-    eventId: string,
-    eventName: string,
-    eventDescription: string,
-    eventLocation: string,
-    eventDate: number
-    ): Promise<void> {
-    return this.afs.doc(`eventList/${eventId}`).update({
-      eventName,
-      eventDescription,
-      eventLocation,
-      eventDate
-    });
-  }
-  ////
-
-
     // Group //
     createGroup(
       groupName: string,
@@ -209,8 +157,8 @@ export class FirestoreService {
       return this.afs.collection('groups', ref => ref.where('userId', '==', userId));
     }
   
-    deleteGroup(eventId: string): Promise<void> {
-      return this.afs.doc(`groups/${eventId}`).delete();
+    deleteGroup(groupId: string): Promise<void> {
+      return this.afs.doc(`groups/${groupId}`).delete();
     }
   
     updateGroup(
@@ -227,5 +175,109 @@ export class FirestoreService {
         contactEmail
       });
     }
+
+    getGroupMembers(groupId: string): AngularFirestoreCollection<User>  {
+      return this.afs.collection(`groups/${groupId}/members`);
+    }
+
+    addMemberToGroup(user: User, groupId: string){
+      return this.afs.doc(`groups/${groupId}/members/${user.email}`)
+                     .set({
+                       ...user
+                     });
+    }
+
+    removeMemberFromGroup(user: User, groupId: string){
+      return this.afs.doc(`groups/${groupId}/members/${user.email}`).delete();
+    }
     ////
+
+    // Catalog //
+    private catalogId(year: string, week: string){
+      return year+'w'+week;
+    }
+
+  
+    createCatalog(catalog: Catalog): Promise<void> {
+      return this.afs.doc(`catalogs/${catalog.id}`)
+                     .set({...catalog});
+    }
+
+
+    getCatalog(year: string, week: string): Promise<AngularFirestoreDocument<Catalog>>  {
+      return new Promise(resolve => {
+        const id = this.catalogId(year, week);
+        this.getCatalogById(id);
+      });
+    }
+
+    getCatalogById(catalogId: string): Promise<AngularFirestoreDocument<Catalog>>  {
+      return new Promise(resolve => {
+        resolve(this.afs.doc(`catalogs/${catalogId}`));
+      });
+    }
+
+    getCatalogProducts(catalogId: string): AngularFirestoreCollection<Product> {
+      return this.afs.collection(`catalogs/${catalogId}/products`, 
+                                  ref => ref.orderBy('category')
+                                            .orderBy('guiOrder'))
+    }
+
+    getCatalogList(): AngularFirestoreCollection<Catalog> {
+      return this.afs.collection('catalogs', 
+                                  ref =>
+                                    ref.orderBy("id", "desc").limit(4));
+    }
+  
+    deleteCatalog(year: string, week: string): Promise<void> {
+      const id = this.catalogId(year, week);
+      return this.deleteCatalogById(id);
+    }
+
+    deleteCatalogById(id: string): Promise<void> {
+      return this.afs.doc(`catalogs/${id}`).delete();
+    }
+    
+    editProductInCatalog(product: Product, catalogId: string){
+      const productRef = this.afs.doc<Product>(`catalogs/${catalogId}/products/${product.id}`);
+      productRef.set(product);
+    }
+ 
+    addProductsToCatalog(products: Product[], catalogId: string){
+        const weekCatalogCollection = this.afs.collection<Product>(`catalogs/${catalogId}/products/`);
+        let promises: Promise<any>[] = [];
+        for (let i=0; i<products.length; i++){
+          let product = products[i];
+          //TODO instead of creating a unique id, we should create a has of the product
+          const id = product.id ? product.id : this.afs.createId();
+          promises.push(weekCatalogCollection.doc(id).set({...product, id}));
+        }
+        return Promise.all(promises);
+    }
+
+    addProductToCatalog(product: Product, catalogId: string){
+      const id = product.id ? product.id : this.afs.createId();
+      return this.afs.doc(`catalogs/${catalogId}/products/${id}`)
+                     .set({
+                       ...product,
+                       id
+                     });
+    }
+
+    removeProductFromCatalog(productId: string, catalogId: string){
+      return this.afs.doc(`catalogs/${catalogId}/products/${productId}`).delete();
+    }
+    ////
+
+    getProducts(): AngularFirestoreCollection<Product> {
+
+      // Get all the products, no matter how deeply nested
+      return this.afs.collection<Product>(
+        `/products/2018/weeks/07/items`,
+        ref => ref.orderBy('category')
+                  .orderBy('guiOrder')
+      );
+      
+    }
+
 }

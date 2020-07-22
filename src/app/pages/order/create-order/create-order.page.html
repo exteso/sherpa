@@ -1,0 +1,106 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="tertiary"></ion-menu-button>
+      <ion-button [routerLink]="['/manage-order', prevOrderWeek]" slot="start">
+        <ion-icon slot="icon-only"  name="arrow-back-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{orderWeek}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [routerLink]="['/manage-order', nextOrderWeek]" >
+        <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
+      </ion-button>
+      <ion-button color="tertiary" (click)="toggleshowBasketOnly()">
+        <ion-icon slot="icon-only" *ngIf="!showBasketOnly()" name="cart-outline"></ion-icon>
+        <ion-icon slot="icon-only" *ngIf="showBasketOnly()" name="cart"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-searchbar color="dark" debounce="400" [(ngModel)]="searchTerm" (ionChange)="search($event.detail.value)" [placeholder]="translate.get('productlist.search')" focus cancelButtonText="Custom Cancel" animated></ion-searchbar>
+  <ion-segment *ngIf="!searchTerm && !showBasketOnly()" scrollable [(ngModel)]="visibleCategoryGroup" (ionChange)="segmentChanged($event)">
+      <ion-segment-button [value]="group" *ngFor="let group of categoryGroups">
+        <ion-label> <span *ngIf="group.indexOf('+')>0">
+                      {{group.split('+')[0]}}<br/>{{group.split('+')[1]}}  
+                    </span>
+                    <span *ngIf="group.indexOf('+') == -1"> {{group}}</span></ion-label>
+      </ion-segment-button>
+    </ion-segment>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+      <ion-item>
+        <ion-label>
+          <p>Settimana</p>
+          <ion-text color="primary">
+            <h3>{{orderWeek}}</h3>
+          </ion-text>
+        </ion-label>
+        <ion-label>
+          <p>Gruppo e Famiglia</p>
+          <ion-text color="primary">
+            <h3>{{groupId}} - {{familyId}}</h3>
+          </ion-text>
+        </ion-label>
+      </ion-item>
+      <ion-item  *ngIf="deliveryDates">
+          <ion-label *ngIf="!isOrderClosed">
+            <p>Data chiusura ordine</p>
+            <ion-text color="primary" >
+              <h3>{{deliveryDates[0] | date:'EE, dd.MM.yy @HH:mm'}}</h3>
+            </ion-text>
+          </ion-label>
+          <ion-label *ngIf="isOrderClosed">
+            <p>Ordine chiuso il</p>
+            <ion-text color="danger">
+              <h3>{{orderClosingDate | date:'EE, dd.MM.yy @HH:mm'}}</h3>
+            </ion-text>
+          </ion-label>
+          <ion-label>
+            <p>Data consegna</p>
+            <ion-text color="primary">
+              <h3>{{deliveryDates[1] | date:'EE, dd.MM.yy @HH:mm'}}</h3>
+            </ion-text>
+          </ion-label>
+        </ion-item>
+      <ion-item>
+        <ion-label>
+          <p>Prodotti disponibili</p>
+          <ion-text color="primary">
+            <h2>{{nrOfProducts}}</h2>
+          </ion-text>
+        </ion-label>
+        <ion-label>
+          <p>Prezzo approssimativo</p>
+          <ion-text color="danger">
+            <h2><b>{{getPrice() | async}}</b></h2>
+          </ion-text>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+    <ion-card *ngIf="nrOfProducts == 0">
+        <ion-card-header>
+            <ion-card-title color="danger">Non ci sono prodotti per questa settimana</ion-card-title>
+          </ion-card-header>
+    </ion-card> 
+          
+      <ion-list>
+          <ion-item-group>
+            <ng-template ngFor let-product let-i="index" let-c="0" let-isFirst="first" [ngForOf]="filteredGroceryItems$ | async">
+                <ion-item-divider sticky *ngIf="showCategory(product)" 
+                                  class="ion-padding-end"
+                                  color="primary"
+                                  (click)="expandedCategories[product.category] = !expandedCategories[product.category]">
+                  <h1>{{ product.category }}</h1><a [id]="product.category">.</a>
+                  <ion-badge slot="end" color="tertiary" class="category-title">{{getCategoryCounter(product.category)}}</ion-badge>
+                  <ion-icon slot="end" name="chevron-down" *ngIf="!expandedCategories[product.category]"></ion-icon>
+                  <ion-icon slot="end" name="chevron-up" *ngIf="expandedCategories[product.category]"></ion-icon>
+                </ion-item-divider>
+                <div *ngIf="!hideProduct(product)" class="grocery-item" [ngClass]="!showBasketOnly() && i%2 != 0 ? 'grocery-item-even' : 'grocery-item-odd'">
+                  <app-grocery-item  [grocery]="product" [readOnly]="isReadOnly()" (updateQty)="updateQty(product, $event)"></app-grocery-item>
+                </div>
+            </ng-template>
+          </ion-item-group>
+      </ion-list>
+</ion-content>

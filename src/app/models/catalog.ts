@@ -1,11 +1,14 @@
 export class Catalog {
     constructor(
         public id?: string,
+        public year?: string, 
+        public week?: string,
         public vendor?: string,
         public displayId?: string,
-        public orderDeadline?: any,
+        public orderDate?: string,
+        public deliveryDate?: string,
         public name?: string,
-        public items?: any[],
+        public products?: any[],
     ) {
     }
 }

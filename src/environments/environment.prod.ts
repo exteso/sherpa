@@ -43,7 +43,7 @@ export const environment = {
   // Please refer to the official Toast documentation here: https://ionicframework.com/docs/api/components/toast/ToastController/
   toast: {
     position: 'bottom',
-    duration: 2000
+    duration: 3000
   },
   // Angular Google Maps Styles Config
   agmStyles: [

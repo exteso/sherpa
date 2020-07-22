@@ -1,9 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-button routerLink="/crud">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
-      </ion-button>
+      <ion-menu-button color="tertiary"></ion-menu-button>
     </ion-buttons>
 
     <ion-title>{{ 'grouplist.title' | translate }}</ion-title>
@@ -11,7 +9,7 @@
     <ion-buttons slot="primary">
       <ion-button color="light" routerLink="/group-create">
         <ion-icon slot="start" name="add-circle"></ion-icon>
-        {{ 'grouplist.detail.buttom.add' | translate }}
+        {{ 'grouplist.detail.button.add' | translate }}
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

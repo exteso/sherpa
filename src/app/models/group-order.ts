@@ -9,13 +9,16 @@ export const enum OrderStatus {
 }
 
 export class GroupOrder {
+
+    public id: string;
+    public closed?: boolean;
+    public closedBy?: string;
+    public closedAt?: Date;
+
     constructor(
-        public id?: string,
-        public catalogId?: string,
-        public orderDeadline?: any,
-        public status?: OrderStatus,
-        public orderItems?: any[],
-        public groupId?: number,
+        public orderWeek: string,
+        public groupId: string
     ) {
+        this.id = orderWeek +"-"+groupId;
     }
 }

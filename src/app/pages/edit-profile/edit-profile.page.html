@@ -7,8 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<div class="ion-padding ion-text-center bg-secondary">
-  <!-- <ion-avatar [src]="photo" class="photo"></ion-avatar> -->
+<!--div class="ion-padding ion-text-center bg-secondary">
   <ion-avatar class="photo">
     <img [src]="photo">
   </ion-avatar>
@@ -22,7 +21,7 @@
     <ion-icon slot="start" name="photos" color="light"></ion-icon> 
     <ion-text color="light">{{ 'auth.form.editphoto' | translate }}</ion-text>
   </ion-button>
-</div>
+</div-->
 
 
 <ion-content class="ion-padding animated fadeIn login auth-page">
@@ -60,6 +59,32 @@
 
       <ion-item lines="none" class="ion-no-padding animated fadeInUp">
         <ion-label position="floating">
+          <ion-icon name="people" item-start></ion-icon>
+          {{ 'auth.form.groupId' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="text" formControlName="groupId"></ion-input>
+      </ion-item>
+      <p class="text08 msg" *ngIf="f.groupId.errors && hasError">
+        <ion-text color="danger" *ngIf="f.groupId.errors.required">
+          {{ 'auth.form.error.groupId' | translate }}
+        </ion-text>
+      </p>
+
+      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="people" item-start></ion-icon>
+          {{ 'auth.form.familyId' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="text" formControlName="familyId"></ion-input>
+      </ion-item>
+      <p class="text08 msg" *ngIf="f.familyId.errors && hasError">
+        <ion-text color="danger" *ngIf="f.familyId.errors.required">
+          {{ 'auth.form.error.familyId' | translate }}
+        </ion-text>
+      </p>
+
+      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
+        <ion-label position="floating">
           <ion-icon name="mail" item-start></ion-icon>
           {{ 'auth.form.email' | translate }}
         </ion-label>
@@ -71,22 +96,6 @@
         </ion-text>
         <ion-text color="danger" *ngIf="f.email.errors.email"> 
           {{ 'auth.form.error.email.isvalid' | translate }}
-        </ion-text>
-      </p>
-
-      <ion-item lines="none" class="ion-no-padding animated fadeInUp">
-        <ion-label position="floating">
-          <ion-icon name="person" item-start></ion-icon>
-          {{ 'auth.form.username' | translate }}
-        </ion-label>
-        <ion-input color="secondary" type="text" formControlName="username" (input)="onInput($event.target.value)"></ion-input>
-      </ion-item>
-      <p class="text08 msg" *ngIf="f.username.errors && hasError">
-        <ion-text color="danger" *ngIf="f.username.errors.required">
-          {{ 'auth.form.error.username' | translate }}
-        </ion-text>
-        <ion-text color="danger" *ngIf="!uniqueUsername && f.username.valid && hasError"> 
-          {{ 'auth.form.error.exists' | translate }}
         </ion-text>
       </p>
 

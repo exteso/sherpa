@@ -1,0 +1,94 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="tertiary"></ion-menu-button>
+      <ion-button (click)="previousWeek()" slot="start">
+        <ion-icon slot="icon-only"  name="arrow-back-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Ritiro {{orderWeek}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="nextWeek()" >
+        <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
+      </ion-button>
+      <ion-button color="tertiary" (click)="addNotOrderedProduct()">
+          <ion-icon slot="icon-only" color="danger" name="add-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card class="group-card" *ngIf="groupId" color="primary">
+    <ion-card-header>
+      <ion-card-subtitle>{{orderWeek}}</ion-card-subtitle>
+      <ion-card-title>{{groupId}} - {{familyId}}</ion-card-title>
+    </ion-card-header>
+  
+    <ion-card-content>
+      <ion-item lines="none">
+      <ion-label color="secondary">
+        <p>Data consegna</p>
+        <ion-text>
+          <h3>{{deliveryDates[1] | date:'EE, dd.MM.yy'}} alle 14:00</h3>
+        </ion-text>
+      </ion-label>
+    </ion-item>
+  </ion-card-content>
+  </ion-card>
+ 
+  <ion-segment [value]="productFilter" (ionChange)="segmentChanged($event.detail.value)">
+    <ion-segment-button value="onlyToCollect">
+      <ion-label>Da ritirare <ion-badge color="primary">{{toCollect}}</ion-badge></ion-label>
+      
+    </ion-segment-button>
+    <ion-segment-button value="onlyCollected">
+      <ion-label>Già ritirati <ion-badge color="primary">{{alreadyCollected}}</ion-badge></ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ng-template ngFor let-item let-i="index" let-c="0" let-isFirst="first" [ngForOf]="myWeekOrder$ | async">
+ 
+    <ion-card class="group-card" *ngIf="showCard(item)">
+      <ion-fab vertical="top" horizontal="end">
+        <ion-fab-button color="danger" (click)="changeRealQty(item)">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-fab-button>  
+        <ion-fab-button (click)="setRealQtyAsOrdered(item)" *ngIf="isDefaultApprovalEnabled(item)">
+          <ion-icon name="checkmark"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+      <ion-card-header>
+        <ion-card-subtitle>{{item.category}} {{item.origin}}</ion-card-subtitle>
+        <ion-card-title>{{item.name}}</ion-card-title>
+      </ion-card-header>
+  
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-label>
+            <h1>{{item.qty}} {{item.orderUnit}}</h1>
+            <h3>{{item.price | number:'1.2-2'}} CHF/{{item.priceUnit}}</h3>
+          </ion-label>
+          <ion-chip *ngIf="item.realQty > 0.1" color="danger">
+            <ion-icon name="cash-outline"></ion-icon>
+            <ion-label>{{getPrice(item)}}</ion-label>
+          </ion-chip>
+          <ion-chip *ngIf="item.realQty > 0.1" color="primary">
+            <ion-icon name="basket"></ion-icon>
+            <ion-label>{{item.realQty}} {{item.priceUnit}}</ion-label>
+          </ion-chip>
+          <ion-chip *ngIf="isNotTaken(item)" color="danger">
+              <ion-icon name="close"></ion-icon>
+              <ion-label>Non ritirato</ion-label>
+            </ion-chip>
+        </ion-item> 
+        <ion-item *ngIf="item.comment">
+          <ion-chip color="danger">
+            <ion-icon name="text"></ion-icon>
+            <ion-label>{{item.comment}}</ion-label>
+          </ion-chip>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+</ion-content>

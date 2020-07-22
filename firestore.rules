@@ -1,0 +1,26 @@
+service cloud.firestore {
+    match /databases/{database}/documents {
+        match /users {
+            allow read
+            match /{user} {
+                allow read: if request.auth.uid != null
+                allow write: if request.auth.uid == request.resource.id
+            }
+        }
+        match /orders/{orderWeek}/groups {
+            allow read
+            match /{groupId}/{document=**} {
+                allow read: if request.auth.uid != null
+                allow write: if ((request.auth.uid != null) && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.groupId == groupId))
+            }
+        }
+        match /catalogs/{orderWeek} {
+            allow read
+            allow write: if ((request.auth.uid != null) && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin))
+        }
+        match /catalogs/{orderWeek}/{document=**} {
+            allow read
+            allow write: if ((request.auth.uid != null) && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin))
+        }
+    }
+}

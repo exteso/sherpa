@@ -63,9 +63,16 @@ export class RegisterPage implements OnInit {
         Validators.required,
         Validators.minLength(6)
       ])]
+    }, { 
+      validators: this.password.bind(this)
     });
   }
 
+  password(formGroup: FormGroup) {
+    const { value: password } = formGroup.get('password');
+    const { value: confirmPassword } = formGroup.get('confirmPassword');
+    return password === confirmPassword ? null : { passwordNotMatch: true };
+  }
   // convenience getter for easy access to form fields
   get f() { return this.onRegisterForm.controls; }
 
@@ -132,8 +139,9 @@ export class RegisterPage implements OnInit {
             res.user.email,
             res.additionalUserInfo.profile.first_name,
             res.additionalUserInfo.profile.last_name,
+            'Roncaccio',
+            res.additionalUserInfo.profile.last_name,
             res.user.photoURL,
-            '@' + res.additionalUserInfo.profile.last_name.toLowerCase() + res.additionalUserInfo.profile.id.substring(0, 4),
             '',
             true
           );

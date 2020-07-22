@@ -46,17 +46,17 @@ export class WalkthroughPage implements OnInit {
 
   ngOnInit() {
     this.slideList = timer(100).pipe(map(res => [{
-      title: 'fire<strong><span class="text-tertiary ts">Ionic</span> 2</strong>',
+      title: '<span class="text-tertiary">CON</span><span class="text-secondary">PRO</span><strong><span class="text-primary">Bio</span></strong> App',
       description: this.translate.get('intro.slide1.text'),
       image: 'assets/icon/icon256.png',
     },
     {
-      title: 'fire<strong><span class="text-tertiary">Ionic</span> 2</strong>',
+      title: '<span class="text-tertiary">CON</span><span class="text-secondary">PRO</span><strong><span class="text-primary">Bio</span></strong> App',
       description: this.translate.get('intro.slide2.text'),
       image: 'assets/icon/icon256.png',
     },
     {
-      title: 'fire<strong><span class="text-tertiary">Ionic</span> 2</strong>',
+      title: '<span class="text-tertiary">CON</span><span class="text-secondary">PRO</span><strong><span class="text-primary">Bio</span></strong> App',
       description: this.translate.get('intro.slide3.text'),
       image: 'assets/icon/icon256.png',
     }]));

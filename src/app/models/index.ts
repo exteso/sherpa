@@ -2,3 +2,4 @@
 export { User } from './user';
 export { GeoMap } from './geomap';
 export { Group } from './group';
+export { Catalog } from './catalog';

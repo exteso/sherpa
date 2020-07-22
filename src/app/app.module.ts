@@ -36,7 +36,13 @@ import { IonImgLazyLoadModule } from './directives/ionimg-lazy-load.module';
 import { environment } from '../environments/environment';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { SelectUsersPageModule } from './pages/modal/select-users/select-users.module';
+import { AddProductsPageModule } from './pages/modal/add-products/add-products.module';
+import { registerLocaleData, DecimalPipe } from '@angular/common';
+import localeIt from '@angular/common/locales/it';
 
+// the second parameter 'fr-FR' is optional
+registerLocaleData(localeIt);
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -56,6 +62,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     IonicModule.forRoot(environment.config),
     AppRoutingModule,
     HttpClientModule,
+    SelectUsersPageModule,
+    AddProductsPageModule,
     ShowUserPageModule,
     IonImgLazyLoadModule,
     IonicStorageModule.forRoot({
@@ -72,9 +80,11 @@ export function HttpLoaderFactory(http: HttpClient) {
     AgmCoreModule.forRoot({
       apiKey: environment.googleMapsKey
     }),
-    ServiceWorkerModule.register('combined-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('combined-worker.js', { enabled: environment.production }),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
+    DecimalPipe,
     Camera,
     Device,
     Geolocation,

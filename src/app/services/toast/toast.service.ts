@@ -16,10 +16,18 @@ export class ToastService {
   async showToast(message: string) {
     const toast = await this.toastController.create({
       message: message,
+      color: 'secondary',
       position: 'bottom',
-      showCloseButton: true,
+      buttons: [
+        {
+          text: 'Done',
+          role: 'cancel',
+          handler: () => {
+            console.log('Toast Done clicked');
+          }
+        }
+      ],
       duration: environment.toast.duration,
-      closeButtonText: 'Done'
     });
 
     return toast.present();

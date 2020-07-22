@@ -25,7 +25,6 @@ import {
 })
 export class CreateProfilePage implements OnInit {
   public profileForm: FormGroup;
-  public uniqueUsername: boolean;
   photo = 'assets/img/profile.png';
   userId: string;
   hasError: boolean;
@@ -67,18 +66,15 @@ export class CreateProfilePage implements OnInit {
       this.profileForm.setValue({
         firstName: firstName,
         lastName: lastName,
-        username: '',
-        email: user.email
+        email: user.email,
+        groupId: 'Roncaccio',
+        familyId: lastName
       });
     }).catch(() => { });    
   }
 
   ngOnInit() {
     this.profileForm = this.formBuilder.group({
-      username: ['', Validators.compose([
-        Validators.required,
-        Validators.pattern('^[0-z.]{4,20}$')
-      ])],
       firstName: ['', Validators.compose([
         Validators.required
       ])],
@@ -88,7 +84,11 @@ export class CreateProfilePage implements OnInit {
       email: ['', Validators.compose([
         Validators.required,
         Validators.email
-      ])]
+      ])],
+      groupId: ['', Validators.compose([
+        Validators.required
+      ])],
+      familyId: ['']
     });
   }
 
@@ -112,41 +112,36 @@ export class CreateProfilePage implements OnInit {
     }
   }
 
-  onInput(username: string) {
-    // Check if the username entered on the form is still available.
-    this.uniqueUsername = true;
-    if (this.profileForm.controls.username.valid && !this.profileForm.controls.username.hasError('required')) {
-      this.firestore.getUserByUsername('@' + username.toLowerCase()).then((user: User) => {
-        if (user) {
-          this.uniqueUsername = false;
-        }
-      }).catch(() => { });
+  lastNameChanged(event){
+    if (!this.profileForm.value['familyId'] && event.target.value){
+      this.profileForm.patchValue({familyId: event.target.value});
     }
   }
 
   public createProfile(profileForm: FormGroup): void {
-    // Check if profileForm is valid and username is unique and proceed with creating the profile.
-    if (!profileForm.valid || !this.uniqueUsername) {
+    // Check if profileForm is valid and proceed with creating the profile.
+    if (!profileForm.valid) {
       this.hasError = true;
     } else {
-      if (this.uniqueUsername) {
+
         this.loading.showLoading('Creating profile...');
         // Create userData on Firestore.
         this.firestore.get('users/' + this.userId).then(ref => {
           // Formatting the first and last names to capitalized.
           const firstName = profileForm.value['firstName'].charAt(0).toUpperCase()
-          + profileForm.value['firstName'].slice(1).toLowerCase();
+                            + profileForm.value['firstName'].slice(1).toLowerCase();
 
           const lastName = profileForm.value['lastName'].charAt(0).toUpperCase()
-          + profileForm.value['lastName'].slice(1).toLowerCase();
+                           + profileForm.value['lastName'].slice(1).toLowerCase();
 
           const user = new User(
             this.userId,
             profileForm.value['email'].toLowerCase(),
             firstName,
             lastName,
+            profileForm.value['groupId'],
+            profileForm.value['familyId'],
             this.photo,
-            '@' + profileForm.value['username'].toLowerCase(),
             '',
             true
           );
@@ -162,7 +157,6 @@ export class CreateProfilePage implements OnInit {
           console.log('second e: ', e);
         });
       }
-    }
   }
 
   async setPhotoByWeb(event) {

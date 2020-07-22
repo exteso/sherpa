@@ -25,7 +25,6 @@ import {
 })
 export class EditProfilePage implements OnInit, OnDestroy {
   public eprofileForm: FormGroup;
-  public uniqueUsername: boolean;
   public hasPushToken: boolean;
   public subscription: Subscription;
   public user;
@@ -54,14 +53,16 @@ export class EditProfilePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.eprofileForm = this.formBuilder.group({
-      username: ['', Validators.compose([
-        Validators.required,
-        Validators.pattern('^[0-z.]{4,20}$')
-      ])],
       firstName: ['', Validators.compose([
         Validators.required
       ])],
       lastName: ['', Validators.compose([
+        Validators.required
+      ])],
+      groupId: ['', Validators.compose([
+        Validators.required
+      ])],
+      familyId: ['', Validators.compose([
         Validators.required
       ])],
       email: ['', Validators.compose([
@@ -92,10 +93,10 @@ export class EditProfilePage implements OnInit, OnDestroy {
           this.eprofileForm.setValue({
             firstName: user.firstName,
             lastName: user.lastName,
-            username: user.username.substring(1, user.username.length),
-            email: user.email
+            email: user.email,
+            familyId: user.familyId ? user.familyId : user.lastName,
+            groupId: user.groupId ? user.groupId : 'Roncaccio'
           });
-          this.uniqueUsername = true;
         });
 
       }).catch(() => { });
@@ -117,19 +118,6 @@ export class EditProfilePage implements OnInit, OnDestroy {
       }
     }).catch(() => { });
   }
-
-  onInput(username: string) {
-    // Check if the username entered on the form is still available.
-    this.uniqueUsername = true;
-    if (this.eprofileForm.controls.username.valid && !this.eprofileForm.controls.username.hasError('required')) {
-      this.firestore.getUserByUsername('@' + username.toLowerCase()).then((user: User) => {
-        if (user && (this.userId !== user.userId)) {
-          this.uniqueUsername = false;
-        }
-      }).catch(() => { });
-    }
-  }
-
 
   keyDownFunction(event) {
     // User pressed return on keypad, proceed with updating profile.
@@ -209,18 +197,15 @@ export class EditProfilePage implements OnInit, OnDestroy {
   }
 
   public updateProfile(): void {
-    if (!this.eprofileForm.valid || !this.uniqueUsername) {
+    if (!this.eprofileForm.valid) {
       this.hasError = true;
     } else {
-      if (this.uniqueUsername) {
         this.loading.showLoading('Updating profile...');
 
         // Delete previous user photo to preserve Firebase storage space, since it's going to be updated to this.user.photo.
         if (this.auth.getUserData().photo !== this.user.photo) {
           this.storage.delete(this.auth.getUserData().userId, this.auth.getUserData().photo);
         }
-
-        console.log(this.user.photo);
 
         // Update userData on Firestore.
         this.firestore.get('users/' + this.userId).then(ref => {
@@ -236,8 +221,9 @@ export class EditProfilePage implements OnInit, OnDestroy {
             this.eprofileForm.value['email'].toLowerCase(),
             firstName,
             lastName,
+            this.eprofileForm.value['groupId'],
+            this.eprofileForm.value['familyId'],
             this.photo,
-            '@' + this.eprofileForm.value['username'].toLowerCase(),
             '',
             this.hasPushToken
           );
@@ -247,8 +233,9 @@ export class EditProfilePage implements OnInit, OnDestroy {
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
+            groupId: user.groupId,
+            familyId: user.familyId,
             photo: this.photo,
-            username: user.username,
             notifications: this.hasPushToken
           }).then(() => {
             // Initialize pushToken to receive push notifications if the user enabled them, otherwise clear pushToken.
@@ -262,7 +249,6 @@ export class EditProfilePage implements OnInit, OnDestroy {
           }).catch(() => { });
         }).catch(() => { });
 
-      }
     }
   }
 

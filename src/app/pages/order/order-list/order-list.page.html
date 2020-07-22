@@ -1,0 +1,57 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-menu-button color="tertiary"></ion-menu-button>
+        <ion-button (click)="previousWeek()" slot="start">
+          <ion-icon slot="icon-only"  name="arrow-back-circle"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>{{orderWeek}}</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="nextWeek()" >
+          <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
+        </ion-button>
+        <ion-button color="tertiary" (click)="send()">
+          <ion-icon slot="icon-only" color="danger" name="send"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+    <ion-card class="group-card" *ngIf="groupId">
+        <ion-card-header>
+          <ion-card-subtitle>{{orderWeek}}</ion-card-subtitle>
+          <ion-card-title>{{groupId}} - {{families.length}}</ion-card-title>
+        </ion-card-header>
+      
+        <ion-card-content>
+            <ion-button color="primary" (click)="printOrder()">Stampa formulario ritiro</ion-button>
+            <p *ngIf="deliveryDates && !isOrderClosed">
+              L'ordine viene chiuso {{deliveryDates[0] | date:'EE, dd.MM.yy @HH:mm'}}.<br/>
+              La consegna verrà effettuata {{deliveryDates[1] | date:'EE, dd.MM.yy @HH:mm'}}.
+            </p>
+            <p *ngIf="isOrderClosed" color="danger">
+              Ordine chiuso {{orderClosedAt | date:'EE, dd.MM.yy @HH:mm'}}.
+            </p>
+          <ul>
+            <li *ngFor="let family of families">{{ family.id }} - {{ getOrderPrice(groupId, family.id) }}<span *ngIf="hasCollected(family.id)"> - Ritirato</span></li>
+          </ul>
+          
+        </ion-card-content>
+      </ion-card>
+      <ion-item-group>
+        <ng-template ngFor let-product let-i="index" let-c="0" let-isFirst="first" [ngForOf]="groupWeekOrder$ | async">
+          <ion-item-divider sticky *ngIf="showCategory(product)" 
+                                  class="ion-padding-end"
+                                  color="primary">
+                  <h1>{{ product.category }}</h1><a [id]="product.category">.</a>
+                  <ion-badge slot="end" color="tertiary" class="category-title">{{getCategoryCount(product.category)}}</ion-badge>
+          </ion-item-divider>  
+          <div  class="grocery-item" [ngClass]="i%2 != 0 ? 'grocery-item-even' : 'grocery-item-odd'">
+            <app-grocery-item [grocery]="product" [readOnly]="true"></app-grocery-item>
+          </div>
+        </ng-template>
+      </ion-item-group>
+</ion-content>

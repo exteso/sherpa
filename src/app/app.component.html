@@ -5,9 +5,9 @@
         <ion-toolbar *ngIf="auth.getUserData()" color="dark" class="user-profile">
 
           <ion-item lines="none" class="ion-margin-bottom">
-            <ion-avatar slot="start" class="user-avatar">
+            <!--ion-avatar slot="start" class="user-avatar">
               <img [src]="auth.getUserData().photo">
-            </ion-avatar>
+            </ion-avatar-->
             <ion-label>
               <ion-text *ngIf="auth.getUserData().firstName" color="light">
                 <h2>
@@ -21,14 +21,18 @@
               </ion-text>
               <ion-menu-toggle class="mto" auto-hide="false">
                 <ion-button size="small" (click)="goToEditProgile()">
-                  <ion-icon slot="start" name="contact"></ion-icon>
-                  <ion-text>Edit</ion-text>
+                  <ion-icon slot="start" name="person-circle"></ion-icon>
+                  <ion-text>{{ 'auth.button.edit' | translate }}</ion-text>
                 </ion-button> 
                 <ion-button size="small" (click)="logout()">
                   <ion-icon slot="start" name="log-out"></ion-icon>
                   {{ 'auth.button.logout' | translate }}
                 </ion-button>
               </ion-menu-toggle>
+              <ion-button size="small" *ngIf="!auth.getUserData().firstName" (click)="login()">
+                <ion-icon slot="start" name="log-in"></ion-icon>
+                Login
+              </ion-button>
             </ion-label>
           </ion-item>
 

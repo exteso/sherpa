@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button routerLink="/crud">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>{{ 'cataloglist.title' | translate }}</ion-title>
+
+    <ion-buttons slot="primary">
+      <ion-button color="light" routerLink="/catalog-create">
+        <ion-icon slot="start" name="add-circle"></ion-icon>
+        {{ 'cataloglist.detail.button.add' | translate }}
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card color="secondary" *ngIf="(catalogList | async)?.length === 0">
+    <ion-card-header color="dark" class="ion-margin-bottom">
+      <ion-card-title>
+        <ion-text color="light">{{ 'cataloglist.msg.notavailable' | translate }}</ion-text>
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p>Create one clicking on above plus icon.</p>
+      <!-- {{ 'cataloglist.msg.notavailable' | translate }} -->
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card color="secondary" *ngFor="let catalog of catalogList | async" tappable routerLink="/catalog-detail/{{catalog.id}}">
+    <ion-card-header color="dark">
+      <ion-card-title>
+          <ion-icon name="bookmarks" color="tertiary" class="vaicon"></ion-icon> 
+          <ion-text color="tertiary">{{ catalog.id }}</ion-text>
+      </ion-card-title>
+      <ion-card-subtitle>
+        <ion-text color="secondary">Nr of products: {{ catalog.products?.length }}</ion-text>
+      </ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content class="ion-no-padding">
+    </ion-card-content>
+  </ion-card>
+</ion-content>

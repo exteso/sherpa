@@ -33,7 +33,7 @@
 
       <ion-item lines="none" class="ion-no-padding animated fadeInUp">
         <ion-label position="floating">
-          <ion-icon name="lock" item-start></ion-icon>
+          <ion-icon name="lock-closed-outline" item-start></ion-icon>
           {{ 'auth.form.password' | translate }}
         </ion-label>
         <ion-input color="secondary" type="password" formControlName="password"></ion-input>
@@ -69,19 +69,19 @@
 
       <ion-grid class="btn-group">
         <ion-row>
-          <ion-col size="6">
+          <!-- <ion-col size="6">
             <ion-button color="facebook" shape="round" expand="full" (click)="loginWithFacebook()">
               <ion-icon slot="icon-only" name="logo-facebook"></ion-icon>
             </ion-button>
           </ion-col>
-          <!-- <ion-col size="4">
+          <ion-col size="4">
             <ion-button color="twitter" shape="round" expand="full" (click)="loginWithTwitter()">
               <ion-icon slot="icon-only" name="logo-twitter"></ion-icon>
             </ion-button>
           </ion-col> -->
-          <ion-col size="6">
+          <ion-col size="6" offset="3">
             <ion-button color="google" shape="round" expand="full" (click)="loginWithGoogle()">
-              <ion-icon slot="icon-only" name="logo-googleplus"></ion-icon>
+              <ion-icon slot="icon-only" name="logo-google"></ion-icon>
             </ion-button>
           </ion-col>
         </ion-row>

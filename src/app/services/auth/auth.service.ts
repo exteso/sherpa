@@ -8,12 +8,13 @@ import * as firebase from 'firebase/app';
 
 import { environment } from '../../../environments/environment';
 
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, of } from 'rxjs';
 
 import { FirestoreService } from '../firestore/firestore.service';
 import { TranslateProvider } from '../translate/translate.service';
 
 import { User } from '../../models';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ import { User } from '../../models';
 
 export class AuthService {
   public user: User;
+  public user$: Observable<User>;
   private fbSubscription: Subscription;
   private fsSubscription: Subscription;
 
@@ -31,15 +33,19 @@ export class AuthService {
     private googlePlus: GooglePlus,
     private firestore: FirestoreService,
     public translate: TranslateProvider
-  ) { }
-
-  // Get the userData from Firestore of the logged in user on Firebase.
-  public getUserData(): User {
-    return this.user;
+  ) { 
+    this.user$ = this.afAuth.authState.pipe(
+      switchMap((user) => {
+        if (user) {
+          return this.firestore.getUser(user.uid);
+        } else {
+          return of(null);
+        }
+      }));
   }
 
-  public setUserData(socialUser) {
-    this.user = socialUser;
+  public getUser$(): Observable<User> {
+    return this.user$;
   }
 
   public getUser(): Promise<firebase.User> {
@@ -67,6 +73,11 @@ export class AuthService {
     });
   }
 
+  // Get the userData from Firestore of the logged in user on Firebase.
+  public getUserData(): User {
+    return this.user;
+  }
+  
   // Change password of the logged in user on Firebase.
   public changePassword(password: string): Promise<any> {
     return new Promise((resolve, reject) => {

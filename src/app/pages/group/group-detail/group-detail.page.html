@@ -119,11 +119,32 @@
           <ion-button size="large" expand="full" color="primary" (click)="editGroup()">
             <!-- [disabled]="isOffline" -->
             <ion-icon name="create" slot="start"></ion-icon>
-            {{ 'grouplist.detail.buttom.edit' | translate }}
+            {{ 'grouplist.detail.button.edit' | translate }}
           </ion-button>
         </div>
       </form>
     </ion-card-content>
   </ion-card>
 
+  <ion-button (click)="presentUserModal()">{{ 'groupdetail.addmember' | translate }}</ion-button>
+
+  <ion-list class="ion-no-padding" *ngIf="group?.members">
+    <ion-item-sliding *ngFor="let user of group.members">
+      <ion-item lines="none" color="light">
+        
+        <ion-label>
+          <h2>
+            <ion-text color="primary"><strong>{{ user.email }} </strong></ion-text>
+          </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item-options>
+        <ion-item-option color="danger" tappable (click)="removeUser(user)">
+          <ion-icon slot="start" name="person"></ion-icon>
+          Remove
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
 </ion-content>
