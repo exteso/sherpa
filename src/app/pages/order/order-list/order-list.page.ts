@@ -125,7 +125,7 @@ export class OrderListPage implements OnInit, OnDestroy {
 
   hasCollected(familyId: string) {
     const order = this.orderService.getOrderByMember(familyId);
-    return order.collected;
+    return !!order && order.collected;
   }
 
 
