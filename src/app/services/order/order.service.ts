@@ -2,13 +2,14 @@ import { Injectable, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Group } from 'src/app/models';
-import { filter, map, tap, switchMap, flatMap } from 'rxjs/operators';
+import { filter, map, tap, switchMap, flatMap, first } from 'rxjs/operators';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
 import { Product } from 'src/app/models/product';
 import { FirestoreService } from '../firestore/firestore.service';
 import { Order } from 'src/app/models/order';
 import { CollectItemAction } from 'src/app/models/actions/CollectItemAction';
+import { GroupOrder } from 'src/app/models/group-order';
 
 
 @Injectable({
@@ -130,10 +131,13 @@ export class OrderService {
 
   public closeOrder(orderWeek: string, groupId: string, families: string[], user: string){
     let group = this.afs.doc(`/orders/${orderWeek}/groups/${groupId}`);
+    const now = Date.now();
     group.ref.get().then((documentSnapshot) => {
-      group.set({'closed': true,
+      
+      group.update({
+                 'closed': true,
                  'closedBy': user,
-                 'closedAt': Date.now()});
+                 'closedAt': now });
     });
     families.forEach(familyId => {
       let family = this.afs.doc(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}`);
@@ -141,7 +145,7 @@ export class OrderService {
         family.update({'id': familyId,
                       'closed': true,
                       'closedBy': user,
-                      'closedAt': Date.now()});
+                      'closedAt': now });
       });
     })
     console.log("Order closed: "+orderWeek+ ", "+ groupId);  
@@ -157,26 +161,33 @@ export class OrderService {
   }
 
   public getMyOrder(orderWeek: string, groupId: string, familyId: string): Observable<Order>{
-    let family = this.afs.doc<Order>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}`);
     
+    let group = this.afs.doc<GroupOrder>(`/orders/${orderWeek}/groups/${groupId}`);
+    group.ref.get().then((documentSnapshot) => {
+      if (!documentSnapshot.exists){
+        let gorder: any = new GroupOrder(orderWeek, groupId);
+        group.set(Object.assign({}, gorder));
+      }
+    });
+
+    let family = this.afs.doc<Order>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}`);
+  
     family.ref.get().then((documentSnapshot) => {
       if (!documentSnapshot.exists){
         let order = new Order(orderWeek, groupId, familyId);
         family.set(Object.assign({}, order));
       }
     });
-      
-    return family.valueChanges().pipe(
-        filter(order => !!order),
-        flatMap(order => {
-            return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`,
-                                        ref => ref.orderBy('category')
-                                                  .orderBy('guiOrder')).valueChanges()
-                            .pipe(
-                              map(items => this.createOrder(orderWeek, groupId, familyId, items, order.closed, order.closedBy, order.closedAt)),
-                            )
-        }));
-
+ 
+    return combineLatest(group.valueChanges(), family.valueChanges()).pipe(
+            flatMap(([go, order]) => {
+              return this.afs.collection<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/`,
+                                          ref => ref.orderBy('category')
+                                                    .orderBy('guiOrder')).valueChanges()
+                          .pipe(
+                            map(items => this.createOrder(orderWeek, groupId, familyId, items, go.closed, go.closedBy, go.closedAt)),
+                          )
+            }));
   }
 
   getOrderByMember(familyId: any): Order {
