@@ -1,5 +1,6 @@
 {
   "projects": {
-    "test": "sherpa-30d3a"
+    "test": "sherpa-30d3a",
+    "default": "sherpa-30d3a"
   }
 }
