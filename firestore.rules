@@ -8,7 +8,11 @@ service cloud.firestore {
             }
         }
         match /orders/{orderWeek}/groups {
-            allow read
+        		allow read
+            match /{groupId} {
+            	allow read: if request.auth.uid != null
+            	allow write: if ((request.auth.uid != null) && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.groupId == groupId))
+            }
             match /{groupId}/{document=**} {
                 allow read: if request.auth.uid != null
                 allow write: if ((request.auth.uid != null) && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.groupId == groupId))
