@@ -304,6 +304,7 @@ export class OrderService {
 
   getCategories(): { name: string, grpIdx: number }[] {
     const categories = [
+              {'name': 'PROMOZIONI', 'grpIdx': 0},
               {'name': 'Proposte', 'grpIdx': 0},
               {'name': 'Verdure', 'grpIdx': 0},
               {'name': 'Insalate', 'grpIdx': 0},
@@ -362,6 +363,7 @@ export class OrderService {
               {'name': 'zucchero sacchi', 'grpIdx':8},
               {'name': 'cioccolato + cacao', 'grpIdx':8},
               {'name': 'cioccolato rotto', 'grpIdx':8},
+              {'name': 'cioccolato pacco', 'grpIdx':8},
               {'name': 'biscotti + crackers', 'grpIdx':8},
               {'name': 'frutta secca + snacks', 'grpIdx':8},
               {'name': 'diversi secchi', 'grpIdx':8},
