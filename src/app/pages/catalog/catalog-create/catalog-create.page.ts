@@ -84,6 +84,7 @@ export class CatalogCreatePage implements OnInit {
         if (!product.origin || !product.name) {
           if (lastCategory == 'PLACEHOLDER' || product.category != lastCategory){
             lastCategory = product.category;
+            i = 0;
           }
           return;
         }

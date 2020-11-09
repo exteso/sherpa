@@ -288,7 +288,7 @@ export class OrderService {
     });
   }
 
-  public updateMyOrder(orderWeek: string, groupId: string, familyId: string, product: Product, qty: number){
+  public updateMyOrder(orderWeek: string, groupId: string, familyId: string, product: Product, qty: number) : Promise<void>{
     //TODO when qty == 0 we should remove a product from the order 
     let grocery = this.afs.doc<Grocery>(`/orders/${orderWeek}/groups/${groupId}/member/${familyId}/items/${product.id}`);
     if (qty == 0){
@@ -304,6 +304,7 @@ export class OrderService {
 
   getCategories(): { name: string, grpIdx: number }[] {
     const categories = [
+              {'name': 'PROMOZIONI', 'grpIdx': 0},
               {'name': 'Proposte', 'grpIdx': 0},
               {'name': 'Verdure', 'grpIdx': 0},
               {'name': 'Insalate', 'grpIdx': 0},
@@ -319,7 +320,9 @@ export class OrderService {
               {'name': 'f.misti', 'grpIdx':1},
               {'name': 'formaggi capra', 'grpIdx':1},
               {'name': 'f.pecora', 'grpIdx':1},
+              {'name': 'formaggi pecora', 'grpIdx':1},
               {'name': 'gastromia', 'grpIdx':2},
+              {'name': 'congelati', 'grpIdx':2},
               {'name': 'congelati per consumo immediato', 'grpIdx':2},
               {'name': 'carne + pesce freschi', 'grpIdx':2},
               {'name': 'salumeria', 'grpIdx':2},
@@ -362,6 +365,7 @@ export class OrderService {
               {'name': 'zucchero sacchi', 'grpIdx':8},
               {'name': 'cioccolato + cacao', 'grpIdx':8},
               {'name': 'cioccolato rotto', 'grpIdx':8},
+              {'name': 'cioccolato pacco', 'grpIdx':8},
               {'name': 'biscotti + crackers', 'grpIdx':8},
               {'name': 'frutta secca + snacks', 'grpIdx':8},
               {'name': 'diversi secchi', 'grpIdx':8},
