@@ -1,75 +1,54 @@
 import * as functions from 'firebase-functions';
 
 import * as admin from 'firebase-admin';
+import * as sherpaorder from './sherpa-order'; 
+import * as cpborder from './cpb-order';
+
 admin.initializeApp();
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-export const helloWorld = functions.https.onRequest((request, response) => {
-   functions.logger.info("Hello logs!", {structuredData: true});
-   response.send("Hello from Fede!");
+
+
+export const sendOrderPost = functions.https.onRequest(async (req:any, res:any) => {
+
+  // Check for POST request
+  if(req.method !== "POST"){
+    const username = req.body.username;
+    const password = req.body.password;
+    const group = req.body.group;
+    const orderWeek = req.body.orderWeek;
+
+    const groupOrder:any = await sherpaorder.extractOrder(group, orderWeek);
+    await cpborder.submitOrder(groupOrder, username, password);
+
+    res.json({result: `Order with ID: ${groupOrder.id} submitted.`});
+    return;
+  }
+    
+  res.status(400).send('Please send a POST request');
+  return; 
+    
+}); 
+
+export const sendOrder = functions.https.onCall(async (data, context) => {
+
+  // Authentication / user information is automatically added to the request.
+  
+  if (context.auth) {
+    //const uid = context.auth.uid;
+    const email = context.auth.token.email || null;
+
+    // Data passed from the client.
+    const username = data.username;
+    const password = data.password;
+    const group = data.group;
+    const orderWeek = data.orderWeek;
+
+    functions.logger.info(`User ${email} is sending order`);
+  
+    const groupOrder:any = await sherpaorder.extractOrder(group, orderWeek);
+    await cpborder.submitOrder(groupOrder, username, password);
+
+  } 
+  
 });
 
-// Take the text parameter passed to this HTTP endpoint and insert it into 
-// Cloud Firestore under the path /messages/:documentId/original
-export const addMessage = functions.https.onRequest(async (req, res) => {
-    // Grab the text parameter.
-    const original = req.query.text;
-    // Push the new message into Cloud Firestore using the Firebase Admin SDK.
-    const writeResult = await admin.firestore().collection('testmessages').add({original: original});
-    // Send back a message that we've succesfully written the message
 
-    const messages: any = await admin.firestore().collection('testmessages').get();
-    res.json({result: `Message with ID: ${writeResult.id} #${messages.original} added.`});
-  });
-
-
-export const sendOrder = functions.https.onRequest(async (req, res) => {
-    const group = req.query.group;
-    const orderWeek = req.query.orderWeek;
-    const order:any = await extractOrder(group, orderWeek);
-    res.json({result: `Order with ID: ${order.id} found.`});
-  }); 
-
-const extractOrder = async (groupName: any, orderWeek: any) => {
-  functions.logger.info("calling with parameters", {groupName, orderWeek});
-  const groupRef = await admin.firestore().collection('/orders/').doc(orderWeek);
-  const group: any = await groupRef.get().then((doc) => doc.data());
-  if (group.id){
-    functions.logger.info("GRUPPO CARICATO", {group, structuredData: true});
-  }else{
-    functions.logger.info("GRUPPO non trovato", {structuredData: true});
-   
-  }
-  return group;
-
-}
-
-
-/*
-  * Simple callable function that adds two numbers.
-  */
- export const simpleCallable = functions.https.onCall((data, ctx) => {
-   // This function implements addition (a + b = c)
-   const sum = data.a + data.b;
-   return {
-     c: sum,
-   };
- });
- 
- /**
-  * Firestore-triggered function which uppercases a string field of a document.
-  */
- export const firestoreUppercase = functions.firestore
-   .document("/testlowercase/{doc}")
-   .onCreate(async (doc, ctx) => {
-     const docId = doc.id;
- 
-     const docData = doc.data();
-     const lowercase = docData.text;
- 
-     const firestore = admin.firestore();
-     await firestore.collection("uppercase").doc(docId).set({
-       text: lowercase.toUpperCase(),
-     });
-   });
