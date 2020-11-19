@@ -14,10 +14,12 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@types/jsdom": "^16.2.5",
     "axios": "^0.21.0",
     "firebase-admin": "^9.2.0",
     "firebase-functions": "^3.11.0",
     "firebase-tools": "^8.16.2",
+    "jsdom": "^16.4.0",
     "qs": "^6.9.4"
   },
   "devDependencies": {
