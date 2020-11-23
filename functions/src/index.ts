@@ -3,6 +3,8 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as sherpaorder from './sherpa-order'; 
 import * as cpborder from './cpb-order';
+import axios from 'axios';
+import { JSDOM } from 'jsdom';
 
 admin.initializeApp();
 
@@ -51,4 +53,72 @@ export const sendOrder = functions.https.onCall(async (data, context) => {
   
 });
 
+function encodeForm(obj: any) {
+  return Object.keys(obj).reduce((p, c) => p + `&${encodeURIComponent(c)}=${encodeURIComponent(obj[c])}`, '')
+}
 
+function extractText(productRow: Element, ord: number) {
+  let t = productRow.querySelector('td.col_ord_' + ord);
+  return (t ? (t.textContent || "") : "").trim()
+}
+
+function extractInfoFromTables(tables: NodeListOf<Element>) {
+  let info = [];
+  for (let table of tables) {
+    const productRows = table.querySelectorAll("tr.odd,tr.even");
+    let res = [];
+    for (let productRow of productRows) {
+      if (productRow != null) {
+        res.push({
+          category: extractText(productRow, 2),
+          provenience: extractText(productRow, 3),
+          certification: extractText(productRow, 4),
+          unit: extractText(productRow, 5),
+          product: extractText(productRow, 7),
+          price: extractText(productRow, 8),
+          hiddenInputName: (productRow.querySelector('td.col_ord_6 input[type=hidden]') as HTMLInputElement).name,
+          hiddenInputValue: (productRow.querySelector('td.col_ord_6 input[type=hidden]') as HTMLInputElement).value,
+          inputQuantityName: (productRow.querySelector('td.col_ord_6 input[type=text]') as HTMLInputElement).name
+        });
+      }
+    }
+    info.push(res);
+  }
+  return info;
+}
+
+// for testing: http://localhost:5001/sherpa-30d3a/us-central1/prepareOrder?username=USERNAME&password=PASSWORD&orderId=settimana_48_r2
+
+export const prepareOrder = functions.https.onRequest(async (req, res) => {
+
+  const username = req.query['username'];
+  const password = req.query['password'];
+  const orderId = req.query['orderId'];
+
+  // first do a get to fetch the jsession
+  const loginPage = await axios.get('http://conprobio.ch/conprobio/login.action');
+  const setCookieValue = loginPage.headers['set-cookie'][0];
+  //extract cookie value
+  const jsessionId = setCookieValue.match(/^JSESSIONID=(.*);/)[1]
+  //
+
+  // do login
+  await axios.post('http://conprobio.ch/conprobio/login.action', 
+    encodeForm({'username': username, 'password': password, 'action:login': 'Invia'}),
+    { headers: {'content-type': 'application/x-www-form-urlencoded', 'Cookie': 'JSESSIONID='+jsessionId}
+  });
+  //
+
+
+  // fetch order page 
+  const orderPage = await axios.get('http://conprobio.ch/conprobio/editOrderUser.action?order='+orderId,
+    {headers: {'Cookie': 'JSESSIONID='+jsessionId}}
+  );
+  const parsedPage = new JSDOM(orderPage.data);
+  const tables = parsedPage.window.document.querySelectorAll("#editOrderUser table.t_list");
+  let info = extractInfoFromTables(tables);
+  //
+
+  res.status(200).contentType('application/json').send(info);
+  return;
+});
