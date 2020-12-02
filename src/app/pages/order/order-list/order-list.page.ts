@@ -9,6 +9,9 @@ import { Order } from 'src/app/models/order';
 import { DecimalPipe } from '@angular/common';
 import { ExcelService } from 'src/app/services/excel/excel.service';
 import { User } from 'src/app/models/user';
+import * as firebase from 'firebase';
+import { ModalController, AlertController } from '@ionic/angular';
+import { LoginModalComponent } from 'src/app/components/login-modal/login-modal.component';
 
 @Component({
   selector: 'app-order-list',
@@ -32,7 +35,9 @@ export class OrderListPage implements OnInit, OnDestroy {
   constructor(private orderService: OrderService, public authService: AuthService, 
     public loading: LoadingService, public toast: ToastService, 
     private route: ActivatedRoute, private decimalPipe: DecimalPipe,
-    private excelService: ExcelService) { }
+    private excelService: ExcelService,
+    private modalController: ModalController,
+    public alertController: AlertController) { }
 
   ngOnInit() {
 
@@ -229,4 +234,69 @@ export class OrderListPage implements OnInit, OnDestroy {
                         return it;
                       });
   }
+
+  async showLoginModal() {
+    const m = await this.modalController.create({component: LoginModalComponent});
+    m.onDidDismiss().then(data => {
+      this.prepareOrder2(data.data.username, data.data.password, data.data.orderName);
+    })
+    await m.present();
+  }
+
+  prepareOrder() {
+    this.showLoginModal();
+  }
+
+  prepareOrder2(username: string, pwd: string, orderId: string) {
+
+    this.orderService.getMyGroupOrder(this.orderWeek, this.groupId).subscribe(o => {
+      const grouped = this.groupSameItems(o.items);
+      //firebase.functions().useFunctionsEmulator("http://localhost:5001");
+      //
+      firebase.functions().httpsCallable('prepareOrder')({username:username, password: pwd, orderId: orderId}).then(r => {
+        const matched = matchOrder(grouped, r.data.info)
+        if (grouped.length > 0 && matched.unmatched.length === 0 && matched.matched.length == grouped.length) {
+          let url = `http://conprobio.ch/conprobio/editOrderUser.action?order=${orderId}&`;
+          for (let o of matched.matched) {
+            url+= `${o.product.inputQuantityName}=${(o.order.qty).toString()}&`
+          }
+          window.location.href = url;
+        } else {
+          this.alertController.create({header: 'Errore', message: 'Errore nella creazione della lista'}).then(o => {
+            o.present();
+          })
+        }
+      });
+    });
+  }
+}
+
+//remove <,> and additional spaces
+function normalizeName(name: string) {
+  return name.toUpperCase().replace(/[\s<>]*/g, '')
+}
+
+//some fuzzy logic, as sometimes the import is not 100% correct
+function matchItemNameAndPrice(itemName: string, productName: string, itemPrice: number, productPrice: string) {
+  return itemName == productName || (normalizeName(itemName) == normalizeName(productName) && itemPrice === Number(productPrice));
+}
+
+function matchOrder(order: Grocery[], products) {
+
+  let matches: {product: any, order: Grocery}[] = [];
+  let unmatched: Grocery[] = [];
+
+   for(let item of order) {
+      let matched = false;
+       for(let productCategories of products) {
+          for(let product of productCategories) {
+              if (matchItemNameAndPrice(item.name.trim(), product.product.trim(), item.price, product.price) && item.origin.trim() == product.provenience.trim() && item.certification.trim() == product.certification.trim()) {
+                matches.push({product: product, order: item}); matched = true; 
+                break;
+              }
+          }
+      }
+      if(!matched) {unmatched.push(item)}
+  }
+  return {matched: matches, unmatched: unmatched};
 }

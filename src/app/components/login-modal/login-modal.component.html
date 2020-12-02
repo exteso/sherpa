@@ -1,0 +1,28 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>Preparazione dati</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  
+  <p>Passo 1: <a href="http://conprobio.ch/conprobio/login.action" target="_blank">Login su conprobio</a></p>
+  <p>Passo 2, riempire :</p>
+
+  <form (submit)="confirmLoginAndData()">
+    <ion-item>
+      <ion-label position="stacked">Nome utente conprobio</ion-label>
+      <ion-input type="text" [(ngModel)]="username" name="username"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Password</ion-label>
+      <ion-input type="password" [(ngModel)]="password" name="password"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Nome ordine</ion-label>
+      <ion-input type="text"  [(ngModel)]="orderName" name="orderName" placeholder="settimana_50_r2"></ion-input>
+    </ion-item>
+    <p>
+      <ion-button expand="block" type="submit" [disabled]="username == null || password == null || orderName == null">Conferma</ion-button>
+    </p>
+  </form>
+</ion-content>
