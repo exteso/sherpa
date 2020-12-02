@@ -91,9 +91,27 @@ function extractInfoFromTables(tables: NodeListOf<Element>) {
 
 export const prepareOrder = functions.https.onRequest(async (req, res) => {
 
-  const username = req.query['username'];
-  const password = req.query['password'];
-  const orderId = req.query['orderId'];
+
+  /*res.setHeader("Access-Control-Allow-Origin", "http://localhost:8100");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,HEAD,PUT,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Authorization, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');*/
+
+  /*if (req.method === 'OPTIONS') {
+    res.status(204).send();
+    return;
+  }*/
+
+  let username = req.query['username'];
+  let password = req.query['password'];
+  let orderId = req.query['orderId'];
+
+
+  if (req.method === 'POST') {
+    username = req.body.data.username;
+    password = req.body.data.password;
+    orderId = req.body.data.orderId;
+  }
 
   // first do a get to fetch the jsession
   const loginPage = await axios.get('http://conprobio.ch/conprobio/login.action');
@@ -119,6 +137,6 @@ export const prepareOrder = functions.https.onRequest(async (req, res) => {
   let info = extractInfoFromTables(tables);
   //
 
-  res.status(200).contentType('application/json').send(info);
+  res.status(200).contentType('application/json').send({data: {info: info, session: jsessionId}});
   return;
 });
