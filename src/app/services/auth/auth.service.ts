@@ -81,18 +81,19 @@ export class AuthService {
   // Change password of the logged in user on Firebase.
   public changePassword(password: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.afAuth.auth.currentUser.updatePassword(password).then(res => {
-        resolve(res);
-      }).catch(err => {
-        reject(err);
+      this.afAuth.currentUser.then(user => 
+        user.updatePassword(password).then(res => {
+          resolve(res);
+        }).catch(err => {
+          reject(err);
+        }))
       });
-    });
   }
 
   // Reset password of the logged in user on Firebase.
   public resetPassword(email: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.afAuth.auth.sendPasswordResetEmail(email).then((res) => {
+      this.afAuth.sendPasswordResetEmail(email).then((res) => {
         resolve(res);
       }).catch(err => {
         reject(err);
@@ -103,7 +104,7 @@ export class AuthService {
   // Login to Firebase using email and password combination.
   public loginWithEmail(email: string, password: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.afAuth.auth.signInWithEmailAndPassword(email, password).then(res => {
+      this.afAuth.signInWithEmailAndPassword(email, password).then(res => {
         resolve(res);
       }).catch(err => {
         reject(err);
@@ -114,7 +115,7 @@ export class AuthService {
   // Register an account on Firebase with email and password combination.
   public registerWithEmail(email: string, password: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.afAuth.auth.createUserWithEmailAndPassword(email, password).then(res => {
+      this.afAuth.createUserWithEmailAndPassword(email, password).then(res => {
         console.log('1 - createUserWithEmailAndPassword res: ', res);
         resolve(res);
       }).catch(err => {
@@ -126,7 +127,7 @@ export class AuthService {
   // Log the user out from Firebase.
   public logout(): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.afAuth.auth.signOut().then(() => {
+      this.afAuth.signOut().then(() => {
         this.facebook.logout();
         this.googlePlus.logout();
         resolve();
@@ -142,7 +143,7 @@ export class AuthService {
       if (this.platform.is('cordova')) {
         this.facebook.login(['public_profile', 'email']).then((res: FacebookLoginResponse) => {
           const credential = firebase.auth.FacebookAuthProvider.credential(res.authResponse.accessToken);
-          this.afAuth.auth.signInWithCredential(credential).then(response => {
+          this.afAuth.signInWithCredential(credential).then(response => {
             // console.log(response.user);
             // resolve(response.user);
             console.log(response);
@@ -159,7 +160,7 @@ export class AuthService {
       } else {
         const fbprovider = new firebase.auth.FacebookAuthProvider();
 
-        this.afAuth.auth.signInWithPopup(fbprovider).then(res => {
+        this.afAuth.signInWithPopup(fbprovider).then(res => {
           resolve(res);
         }).catch((e) => {
           reject(e);
@@ -177,7 +178,7 @@ export class AuthService {
           'offline': true // set FALSE or remove this line before you build and release a prod version.
         }).then(res => {
           const credential = firebase.auth.GoogleAuthProvider.credential(res.idToken, res.accessToken);
-          this.afAuth.auth.signInWithCredential(credential).then(ress => {
+          this.afAuth.signInWithCredential(credential).then(ress => {
             resolve(ress);
           }).catch(err => {
             reject(err.code);
@@ -189,7 +190,7 @@ export class AuthService {
       } else {
         const gprovider = new firebase.auth.GoogleAuthProvider();
 
-        this.afAuth.auth.signInWithPopup(gprovider).then(res => {
+        this.afAuth.signInWithRedirect(gprovider).then(res => {
           resolve(res);
         }).catch((e) => {
           reject(e);

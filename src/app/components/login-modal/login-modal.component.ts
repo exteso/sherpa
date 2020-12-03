@@ -12,11 +12,16 @@ export class LoginModalComponent implements OnInit {
 
   username: string;
   password: string;
-  orderName: string = 'settimana_50_r2';
+  orderWeek: string;
+  orderNamePattern: string = 'settimana_WW_r2';
+  orderName: string;
 
   constructor(private modalController: ModalController) { }
 
   ngOnInit() {
+    if (this.orderWeek) {
+      this.orderName = this.orderNamePattern.replace('WW', this.orderWeek);
+    }
   }
 
   confirmLoginAndData() {

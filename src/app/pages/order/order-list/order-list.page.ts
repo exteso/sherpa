@@ -12,6 +12,7 @@ import { User } from 'src/app/models/user';
 import * as firebase from 'firebase';
 import { ModalController, AlertController } from '@ionic/angular';
 import { LoginModalComponent } from 'src/app/components/login-modal/login-modal.component';
+import { AngularFireFunctions } from '@angular/fire/functions';
 
 @Component({
   selector: 'app-order-list',
@@ -37,7 +38,8 @@ export class OrderListPage implements OnInit, OnDestroy {
     private route: ActivatedRoute, private decimalPipe: DecimalPipe,
     private excelService: ExcelService,
     private modalController: ModalController,
-    public alertController: AlertController) { }
+    public alertController: AlertController,
+    private fns: AngularFireFunctions) { }
 
   ngOnInit() {
 
@@ -236,7 +238,11 @@ export class OrderListPage implements OnInit, OnDestroy {
   }
 
   async showLoginModal() {
-    const m = await this.modalController.create({component: LoginModalComponent});
+    let week = this.orderWeek.split('w')[1];
+    const m = await this.modalController.create({component: LoginModalComponent,
+                                                 componentProps: { 
+                                                    orderWeek: week
+                                                }});
     m.onDidDismiss().then(data => {
       this.prepareOrder2(data.data.username, data.data.password, data.data.orderName);
     })
@@ -253,7 +259,8 @@ export class OrderListPage implements OnInit, OnDestroy {
       const grouped = this.groupSameItems(o.items);
       //firebase.functions().useFunctionsEmulator("http://localhost:5001");
       //
-      firebase.functions().httpsCallable('prepareOrder')({username:username, password: pwd, orderId: orderId}).then(r => {
+      const callable = this.fns.httpsCallable('prepareOrder');
+      callable({username:username, password: pwd, orderId: orderId}).toPromise().then(r => {
         const matched = matchOrder(grouped, r.data.info)
         if (grouped.length > 0 && matched.unmatched.length === 0 && matched.matched.length == grouped.length) {
           let url = `http://conprobio.ch/conprobio/editOrderUser.action?order=${orderId}&`;
