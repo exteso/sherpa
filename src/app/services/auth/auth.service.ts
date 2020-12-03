@@ -172,31 +172,14 @@ export class AuthService {
   // Login on Firebase using Google.
   public authWithGoogle(): Promise<any> {
     return new Promise((resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        this.googlePlus.login({
-          'webClientId': environment.googleWebClientId,
-          'offline': true // set FALSE or remove this line before you build and release a prod version.
-        }).then(res => {
-          const credential = firebase.auth.GoogleAuthProvider.credential(res.idToken, res.accessToken);
-          this.afAuth.signInWithCredential(credential).then(ress => {
-            resolve(ress);
-          }).catch(err => {
-            reject(err.code);
-          });
-        }).catch(err => {
-          // User cancelled, don't show any error.
-          reject();
-        });
-      } else {
         const gprovider = new firebase.auth.GoogleAuthProvider();
 
-        this.afAuth.signInWithRedirect(gprovider).then(res => {
+        this.afAuth.signInWithPopup(gprovider).then(res => {
           resolve(res);
         }).catch((e) => {
           reject(e);
         });
-      }
-    });
+     });
   }
 
 
