@@ -11,8 +11,11 @@
         <ion-button (click)="nextWeek()" >
           <ion-icon slot="icon-only" name="arrow-forward-circle"></ion-icon>
         </ion-button>
-        <ion-button color="tertiary" (click)="prepareOrder()" *ngIf="!isOrderClosed">
+        <ion-button color="tertiary" (click)="closeOrder()" *ngIf="!isOrderClosed">
           <ion-icon slot="icon-only" color="danger" name="send"></ion-icon>
+        </ion-button>
+        <ion-button color="tertiary" *ngIf="isOrderClosed">
+          <ion-icon slot="icon-only" color="dark" name="send"></ion-icon>
         </ion-button>
       </ion-buttons>
     </ion-toolbar>
@@ -39,7 +42,7 @@
             <li *ngFor="let family of families">{{ family.id }} - {{ getOrderPrice(groupId, family.id) }}<span *ngIf="hasCollected(family.id)"> - Ritirato</span></li>
           </ul>
 
-          <ion-button color="danger" (click)="prepareOrder()">Prepara ordine</ion-button>
+          <ion-button color="danger"  *ngIf="isOrderClosed" (click)="prepareOrder()">Prepara ordine</ion-button>
           
         </ion-card-content>
       </ion-card>

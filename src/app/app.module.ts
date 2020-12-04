@@ -101,6 +101,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     Network,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: SETTINGS, useValue: {} },
+    // during local development
+    //{ provide: ORIGIN, useValue: 'http://localhost:8100' }
     { provide: ORIGIN, useValue: 'https://sherpa.firebaseapp.com' }
   ],
   bootstrap: [AppComponent]

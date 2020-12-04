@@ -157,7 +157,7 @@ export class OrderListPage implements OnInit, OnDestroy {
     return orderedProducts.size;
   }
 
-  send(){
+  closeOrder(){
     let famIds = this.families.map((f:any) => f.id);
     this.orderService.closeOrder(this.orderWeek, this.groupId, famIds, this.currentUser.email);
   }
@@ -261,8 +261,12 @@ export class OrderListPage implements OnInit, OnDestroy {
       //
       const callable = this.fns.httpsCallable('prepareOrder');
       callable({username:username, password: pwd, orderId: orderId}).toPromise().then(r => {
-        const matched = matchOrder(grouped, r.data.info)
-        if (grouped.length > 0 && matched.unmatched.length === 0 && matched.matched.length == grouped.length) {
+        const matched = matchOrder(grouped, r.info)
+        if (matched.unmatched.length > 0) {
+          console.log(matched.unmatched);
+          alert(matched.unmatched.length +" prodotti NON sono stati ordinati: vedi console");
+        }
+        if (grouped.length > 0 && matched.matched.length > 0) {
           let url = `http://conprobio.ch/conprobio/editOrderUser.action?order=${orderId}&`;
           for (let o of matched.matched) {
             url+= `${o.product.inputQuantityName}=${(o.order.qty).toString()}&`
