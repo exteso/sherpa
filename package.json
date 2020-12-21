@@ -47,6 +47,7 @@
     "geofire": "5.0.1",
     "geofirestore": "3.3.1",
     "ionicons": "^5.0.0",
+    "luxon": "^1.25.0",
     "moment": "2.24.0",
     "ng-lazyload-image": "6.1.0",
     "rxjs": "~6.5.1",

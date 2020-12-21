@@ -1,7 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Group } from 'src/app/models';
+import { Group, Catalog } from 'src/app/models';
 import { filter, map, tap, switchMap, flatMap, first } from 'rxjs/operators';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
@@ -11,6 +11,7 @@ import { Order } from 'src/app/models/order';
 import { CollectItemAction } from 'src/app/models/actions/CollectItemAction';
 import { GroupOrder } from 'src/app/models/group-order';
 
+import { DateTime } from 'luxon';
 
 @Injectable({
   providedIn: 'root'
@@ -61,18 +62,22 @@ export class OrderService {
     return weekNo === 53;
   }
 
+  getOrderDeliveryDates$(yearAndWeek: string){
+    let catalogWeek$ = this.afs.doc<Catalog>(`/catalogs/${yearAndWeek}`).valueChanges();
+    return catalogWeek$.pipe(
+      map(catalogWeek =>  [catalogWeek.orderDate, catalogWeek.deliveryDate])
+    )
+  }
+
   getOrderDeliveryDates(yearAndWeek: string){
-    const yw=yearAndWeek.split('w');
-    const year = parseFloat(yw[0]);
-    const week = parseFloat(yw[1]);
-    let yearStart: Date = new Date(Date.UTC(year,0,1,13));
-    const deliveryDate = new Date(yearStart.getTime() + this.weeksInMillis(week));
-    const orderDate = new Date(yearStart.getTime() + this.weeksInMillis(week) -5*86400000 +3*3600000);
+    const deliveryDayOfTheWeek = 2; //Tuesday
+    const deliveryDate = DateTime.fromISO(yearAndWeek.toUpperCase()+'-'+deliveryDayOfTheWeek).set({hour: 14});
+    const orderDate = deliveryDate.minus({days: 5}).set({hour: 22});
     return [orderDate, deliveryDate];
   }
 
   weeksInMillis(week: number) {
-    return ((week -1)*7*86400000)-86400000;
+    return ((week)*7*86400000)-86400000;
   }
 
   getCurrentWeek(): string {

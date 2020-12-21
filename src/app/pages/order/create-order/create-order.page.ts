@@ -11,6 +11,8 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Order } from 'src/app/models/order';
 import { DecimalPipe } from '@angular/common';
 
+import { DateTime } from 'luxon';
+
 @Component({
   selector: 'app-create-order',
   templateUrl: './create-order.page.html',
@@ -27,7 +29,7 @@ export class CreateOrderPage implements OnInit, OnDestroy {
   familyId: string;
   groupId: string;
   nrOfProducts: number;
-  deliveryDates: Date[];
+  deliveryDates$: Observable<DateTime[]>;
 
   isOrderClosed: boolean;
   orderClosingDate: Date;
@@ -94,7 +96,7 @@ export class CreateOrderPage implements OnInit, OnDestroy {
     this.nrOfProducts = undefined;
     this.loading.showLoading('Loading catalog...');
 
-    this.deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
+    this.deliveryDates$ = this.orderService.getOrderDeliveryDates$(orderWeek);
     
     this.categoryGroups = this.orderService.getCategoryGroups();
     this.visibleCategoryGroup=this.categoryGroups[0];

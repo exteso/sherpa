@@ -29,8 +29,8 @@
       <ion-item lines="none">
       <ion-label color="secondary">
         <p>Data consegna</p>
-        <ion-text>
-          <h3>{{deliveryDates[1] | date:'EE, dd.MM.yy'}} alle 14:00</h3>
+        <ion-text *ngIf="deliveryDates$ | async as deliveryDates">
+          <h3>{{deliveryDates[1] | date:'EE, dd.MM.yy @HH:mm'}}</h3>
         </ion-text>
       </ion-label>
     </ion-item>

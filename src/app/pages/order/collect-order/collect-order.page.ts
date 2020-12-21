@@ -13,6 +13,8 @@ import { CorrectRealQuantityPage } from '../../modal/correct-real-quantity/corre
 import { CollectItemAction } from 'src/app/models/actions/CollectItemAction';
 import { AddProductsPage } from '../../modal/add-products/add-products';
 
+import { DateTime } from 'luxon';
+
 @Component({
   selector: 'app-collect-order',
   templateUrl: './collect-order.page.html',
@@ -23,7 +25,7 @@ export class CollectOrderPage implements OnInit {
   orderWeek: string;
   familyId: string;
   groupId: string;
-  deliveryDates: Date[];
+  deliveryDates$: Observable<DateTime[]>;
   myWeekOrder$: Observable<Grocery[]>;
   notOrderedProducts: Product[];
   groupOrder: Grocery[];
@@ -71,7 +73,7 @@ export class CollectOrderPage implements OnInit {
     this.productFilter = 'onlyToCollect';
     this.orderWeek = orderWeek;
     this.loading.showLoading('Loading order...');
-    this.deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
+    this.deliveryDates$ = this.orderService.getOrderDeliveryDates$(orderWeek);
 
     const weekOrder$ = this.orderService.getMyOrder(orderWeek, this.groupId, this.familyId)
                 .pipe(

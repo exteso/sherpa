@@ -7,13 +7,16 @@
 <ion-content>
   <input type="file" (change)="onFileChange($event)" multiple="false" />
   <ion-item>
-    <ion-label>ID: <ion-text>{{newCatalog?.id}}</ion-text></ion-label>
+    <ion-label position="fixed">ID:</ion-label>
+    <ion-input [(ngModel)]="newCatalog.id"></ion-input>
   </ion-item>
   <ion-item>
-    <ion-label>Order date: <ion-text>{{newCatalog?.orderDate}}</ion-text></ion-label>
+    <ion-label position="fixed">Order date:</ion-label>
+    <ion-input [(ngModel)]="newCatalog.orderDate"></ion-input>
   </ion-item>
   <ion-item>
-    <ion-label>Delivery date: <ion-text>{{newCatalog?.deliveryDate}}</ion-text></ion-label>
+    <ion-label position="fixed">Delivery date:</ion-label>
+    <ion-input [(ngModel)]="newCatalog.deliveryDate"></ion-input>
   </ion-item>
   <ion-item>
     <button (click)="save()">Create Catalog!</button>

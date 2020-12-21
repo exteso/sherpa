@@ -14,6 +14,8 @@ import { ModalController, AlertController } from '@ionic/angular';
 import { LoginModalComponent } from 'src/app/components/login-modal/login-modal.component';
 import { AngularFireFunctions } from '@angular/fire/functions';
 
+import { DateTime } from 'luxon';
+
 @Component({
   selector: 'app-order-list',
   templateUrl: './order-list.page.html',
@@ -27,7 +29,7 @@ export class OrderListPage implements OnInit, OnDestroy {
   orderWeek: string;
   families: string[];
   groupId: string;
-  deliveryDates: Date[];
+  deliveryDates$: Observable<DateTime[]>;
   groupWeekOrder$: Observable<Grocery[]>;
   groupOrder: Grocery[];
   subscription: Subscription;
@@ -69,7 +71,7 @@ export class OrderListPage implements OnInit, OnDestroy {
     this.orderWeek = orderWeek;
     this.orderService.getMembers().subscribe(members => this.families = members);
     this.loading.showLoading('Loading order...');
-    this.deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
+    this.deliveryDates$ = this.orderService.getOrderDeliveryDates$(orderWeek);
 
     const myGroupWeekOrder$ = this.orderService.getMyGroupOrder(orderWeek, this.groupId)
                 .pipe(
