@@ -49,6 +49,18 @@ export class OrderService {
     return [d.getUTCFullYear(), weekNo];
   }
 
+  static hasYear53Weeks(year: number){
+    let lastDayOfYear: any = new Date(Date.UTC(year, 11, 31));
+    // Set to nearest Thursday: current date + 4 - current day number
+    // Make Sunday's day number 7
+    lastDayOfYear.setUTCDate(lastDayOfYear.getUTCDate() + 4 - (lastDayOfYear.getUTCDay()||7));
+    // Get first day of year
+    let yearStart: any = new Date(Date.UTC(lastDayOfYear.getUTCFullYear(),0,1));
+    // Calculate full weeks to nearest Thursday
+    let weekNo = Math.ceil(( ( (lastDayOfYear - yearStart) / 86400000) + 1)/7);
+    return weekNo === 53;
+  }
+
   getOrderDeliveryDates(yearAndWeek: string){
     const yw=yearAndWeek.split('w');
     const year = parseFloat(yw[0]);
@@ -71,9 +83,11 @@ export class OrderService {
     const year = parseFloat(yearAndWeek.substring(0,4));
     let week = parseFloat(yearAndWeek.substring(5,7));
     week++;
-    if (week >52) {
+    if (week === 53 && this.hasYear53Weeks(year)) {
+      return (year)+'w53';
+    } else if (week >52) {
       return (year+1)+'w01';
-    }else{
+    } else {
       let weekText = week.toString();
       if (week<10) {
         weekText = "0"+week;
@@ -87,6 +101,9 @@ export class OrderService {
     let week = parseFloat(yearAndWeek.substring(5,7));
     week--;
     if (week <1) {
+      if (this.hasYear53Weeks(year-1)){
+        return (year-1)+'w53';
+      }
       return (year-1)+'w52';
     }else{
       let weekText = week.toString();
