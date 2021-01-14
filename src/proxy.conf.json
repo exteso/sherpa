@@ -1,0 +1,6 @@
+{
+    "/sherpa-30d3a": {
+      "target": "http://localhost:5001",
+      "secure": false
+    }
+  }

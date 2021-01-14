@@ -15,7 +15,7 @@ type AOA = any[][];
 })
 export class CatalogCreatePage implements OnInit {
     data: AOA = [[1, 2], [3, 4]];
-    newCatalog: Catalog;
+    newCatalog: Catalog = {};
     products: Product[];
 
     wopts: XLSX.WritingOptions = { bookType: 'xlsx', type: 'array' };
@@ -60,14 +60,19 @@ export class CatalogCreatePage implements OnInit {
     }
 
     extractCatalog(data: string[][]){
-      let week = data[0].findIndex(txt=> txt && txt.includes && txt.includes("settimana"));
-      let orderWeek = "2020w"+data[0][week+1];
+      let weekField = data[0].findIndex(txt=> txt && txt.includes && txt.includes("settimana"));
+      let week = data[0][weekField+1];
+      if (parseFloat(week)<10){
+        week = "0"+week;
+      }
+      // TODO remove the hardcoded year, how can we extract it from the excel sheet?
+      let orderWeek = "2021w"+week;
 
       const deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
 
       return {id: orderWeek,
-              orderDate: deliveryDates[0].toISOString(),
-              deliveryDate: deliveryDates[1].toISOString()};
+              orderDate: deliveryDates[0].toISO(),
+              deliveryDate: deliveryDates[1].toISO()};
     }
   
     extractProducts(data: string[][]): Product[]{

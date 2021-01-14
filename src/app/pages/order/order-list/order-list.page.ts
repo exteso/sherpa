@@ -9,6 +9,12 @@ import { Order } from 'src/app/models/order';
 import { DecimalPipe } from '@angular/common';
 import { ExcelService } from 'src/app/services/excel/excel.service';
 import { User } from 'src/app/models/user';
+import * as firebase from 'firebase';
+import { ModalController, AlertController } from '@ionic/angular';
+import { LoginModalComponent } from 'src/app/components/login-modal/login-modal.component';
+import { AngularFireFunctions } from '@angular/fire/functions';
+
+import { DateTime } from 'luxon';
 
 @Component({
   selector: 'app-order-list',
@@ -23,7 +29,7 @@ export class OrderListPage implements OnInit, OnDestroy {
   orderWeek: string;
   families: string[];
   groupId: string;
-  deliveryDates: Date[];
+  deliveryDates$: Observable<DateTime[]>;
   groupWeekOrder$: Observable<Grocery[]>;
   groupOrder: Grocery[];
   subscription: Subscription;
@@ -32,7 +38,10 @@ export class OrderListPage implements OnInit, OnDestroy {
   constructor(private orderService: OrderService, public authService: AuthService, 
     public loading: LoadingService, public toast: ToastService, 
     private route: ActivatedRoute, private decimalPipe: DecimalPipe,
-    private excelService: ExcelService) { }
+    private excelService: ExcelService,
+    private modalController: ModalController,
+    public alertController: AlertController,
+    private fns: AngularFireFunctions) { }
 
   ngOnInit() {
 
@@ -62,7 +71,7 @@ export class OrderListPage implements OnInit, OnDestroy {
     this.orderWeek = orderWeek;
     this.orderService.getMembers().subscribe(members => this.families = members);
     this.loading.showLoading('Loading order...');
-    this.deliveryDates = this.orderService.getOrderDeliveryDates(orderWeek);
+    this.deliveryDates$ = this.orderService.getOrderDeliveryDates$(orderWeek);
 
     const myGroupWeekOrder$ = this.orderService.getMyGroupOrder(orderWeek, this.groupId)
                 .pipe(
@@ -150,7 +159,7 @@ export class OrderListPage implements OnInit, OnDestroy {
     return orderedProducts.size;
   }
 
-  send(){
+  closeOrder(){
     let famIds = this.families.map((f:any) => f.id);
     this.orderService.closeOrder(this.orderWeek, this.groupId, famIds, this.currentUser.email);
   }
@@ -229,4 +238,78 @@ export class OrderListPage implements OnInit, OnDestroy {
                         return it;
                       });
   }
+
+  async showLoginModal() {
+    let week = this.orderWeek.split('w')[1];
+    const m = await this.modalController.create({component: LoginModalComponent,
+                                                 componentProps: { 
+                                                    orderWeek: week
+                                                }});
+    m.onDidDismiss().then(data => {
+      this.prepareOrder2(data.data.username, data.data.password, data.data.orderName);
+    })
+    await m.present();
+  }
+
+  prepareOrder() {
+    this.showLoginModal();
+  }
+
+  prepareOrder2(username: string, pwd: string, orderId: string) {
+
+    this.orderService.getMyGroupOrder(this.orderWeek, this.groupId).subscribe(o => {
+      const grouped = this.groupSameItems(o.items);
+      //firebase.functions().useFunctionsEmulator("http://localhost:5001");
+      //
+      const callable = this.fns.httpsCallable('prepareOrder');
+      callable({username:username, password: pwd, orderId: orderId}).toPromise().then(r => {
+        const matched = matchOrder(grouped, r.info)
+        if (matched.unmatched.length > 0) {
+          console.log(matched.unmatched);
+          alert(matched.unmatched.length +" prodotti NON sono stati ordinati: vedi console");
+        }
+        if (grouped.length > 0 && matched.matched.length > 0) {
+          let url = `http://conprobio.ch/conprobio/editOrderUser.action?order=${orderId}&`;
+          for (let o of matched.matched) {
+            url+= `${o.product.inputQuantityName}=${(o.order.qty).toString()}&`
+          }
+          window.location.href = url;
+        } else {
+          this.alertController.create({header: 'Errore', message: 'Errore nella creazione della lista'}).then(o => {
+            o.present();
+          })
+        }
+      });
+    });
+  }
+}
+
+//remove <,> and additional spaces
+function normalizeName(name: string) {
+  return name.toUpperCase().replace(/[\s<>]*/g, '')
+}
+
+//some fuzzy logic, as sometimes the import is not 100% correct
+function matchItemNameAndPrice(itemName: string, productName: string, itemPrice: number, productPrice: string) {
+  return itemName == productName || (normalizeName(itemName) == normalizeName(productName) && itemPrice === Number(productPrice));
+}
+
+function matchOrder(order: Grocery[], products) {
+
+  let matches: {product: any, order: Grocery}[] = [];
+  let unmatched: Grocery[] = [];
+
+   for(let item of order) {
+      let matched = false;
+       for(let productCategories of products) {
+          for(let product of productCategories) {
+              if (matchItemNameAndPrice(item.name.trim(), product.product.trim(), item.price, product.price) && item.origin.trim() == product.provenience.trim() && item.certification.trim() == product.certification.trim()) {
+                matches.push({product: product, order: item}); matched = true; 
+                break;
+              }
+          }
+      }
+      if(!matched) {unmatched.push(item)}
+  }
+  return {matched: matches, unmatched: unmatched};
 }

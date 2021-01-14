@@ -1,7 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Group } from 'src/app/models';
+import { Group, Catalog } from 'src/app/models';
 import { filter, map, tap, switchMap, flatMap, first } from 'rxjs/operators';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
@@ -11,6 +11,7 @@ import { Order } from 'src/app/models/order';
 import { CollectItemAction } from 'src/app/models/actions/CollectItemAction';
 import { GroupOrder } from 'src/app/models/group-order';
 
+import { DateTime } from 'luxon';
 
 @Injectable({
   providedIn: 'root'
@@ -45,22 +46,42 @@ export class OrderService {
     let yearStart: any = new Date(Date.UTC(d.getUTCFullYear(),0,1));
     // Calculate full weeks to nearest Thursday
     let weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+    let weekText = weekNo.toString();
+      if (weekNo<10) {
+        weekText = "0"+weekNo;
+      }
     // Return array of year and week number
-    return [d.getUTCFullYear(), weekNo];
+    return [d.getUTCFullYear(), weekText];
+  }
+
+  static hasYear53Weeks(year: number){
+    let lastDayOfYear: any = new Date(Date.UTC(year, 11, 31));
+    // Set to nearest Thursday: current date + 4 - current day number
+    // Make Sunday's day number 7
+    lastDayOfYear.setUTCDate(lastDayOfYear.getUTCDate() + 4 - (lastDayOfYear.getUTCDay()||7));
+    // Get first day of year
+    let yearStart: any = new Date(Date.UTC(lastDayOfYear.getUTCFullYear(),0,1));
+    // Calculate full weeks to nearest Thursday
+    let weekNo = Math.ceil(( ( (lastDayOfYear - yearStart) / 86400000) + 1)/7);
+    return weekNo === 53;
+  }
+
+  getOrderDeliveryDates$(yearAndWeek: string){
+    let catalogWeek$ = this.afs.doc<Catalog>(`/catalogs/${yearAndWeek}`).valueChanges();
+    return catalogWeek$.pipe(
+      map(catalogWeek =>  [catalogWeek.orderDate, catalogWeek.deliveryDate])
+    )
   }
 
   getOrderDeliveryDates(yearAndWeek: string){
-    const yw=yearAndWeek.split('w');
-    const year = parseFloat(yw[0]);
-    const week = parseFloat(yw[1]);
-    let yearStart: Date = new Date(Date.UTC(year,0,1,13));
-    const deliveryDate = new Date(yearStart.getTime() + this.weeksInMillis(week));
-    const orderDate = new Date(yearStart.getTime() + this.weeksInMillis(week) -5*86400000 +3*3600000);
+    const deliveryDayOfTheWeek = 2; //Tuesday
+    const deliveryDate = DateTime.fromISO(yearAndWeek.toUpperCase()+'-'+deliveryDayOfTheWeek).set({hour: 14});
+    const orderDate = deliveryDate.minus({days: 5}).set({hour: 22});
     return [orderDate, deliveryDate];
   }
 
   weeksInMillis(week: number) {
-    return ((week -1)*7*86400000)-86400000;
+    return ((week)*7*86400000)-86400000;
   }
 
   getCurrentWeek(): string {
@@ -71,9 +92,11 @@ export class OrderService {
     const year = parseFloat(yearAndWeek.substring(0,4));
     let week = parseFloat(yearAndWeek.substring(5,7));
     week++;
-    if (week >52) {
+    if (week === 53 && this.hasYear53Weeks(year)) {
+      return (year)+'w53';
+    } else if (week >52) {
       return (year+1)+'w01';
-    }else{
+    } else {
       let weekText = week.toString();
       if (week<10) {
         weekText = "0"+week;
@@ -87,6 +110,9 @@ export class OrderService {
     let week = parseFloat(yearAndWeek.substring(5,7));
     week--;
     if (week <1) {
+      if (this.hasYear53Weeks(year-1)){
+        return (year-1)+'w53';
+      }
       return (year-1)+'w52';
     }else{
       let weekText = week.toString();
@@ -314,9 +340,11 @@ export class OrderService {
               {'name': 'pane', 'grpIdx': 0},
               {'name': 'pane frigo', 'grpIdx': 0},
               {'name': 'uova', 'grpIdx':1},
+              {'name': 'alternative vegetali ai latticini', 'grpIdx':1},
               {'name': 'senza lattosio', 'grpIdx':1},
               {'name': 'latte + latticini', 'grpIdx':1},
               {'name': 'formaggi mucca', 'grpIdx':1},
+              {'name': 'formaggi misti', 'grpIdx':1},
               {'name': 'f.misti', 'grpIdx':1},
               {'name': 'formaggi capra', 'grpIdx':1},
               {'name': 'f.pecora', 'grpIdx':1},

@@ -2,6 +2,7 @@ import { CameraOptions } from '@ionic-native/camera/ngx';
 
 export const environment = {
   production: false,
+  emulator: true,
   config: {
     // iconMode: 'md',
     // mode: 'md'

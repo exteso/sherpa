@@ -25,10 +25,12 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AngularFireModule } from '@angular/fire';
-import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/firestore';
+import { AngularFirestoreModule, SETTINGS } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
+import { AngularFireFunctionsModule, ORIGIN } from '@angular/fire/functions';
+
 
 import { ShowUserPageModule } from './pages/modal/show-user/show-user.module';
 import { IonImgLazyLoadModule } from './directives/ionimg-lazy-load.module';
@@ -57,6 +59,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AngularFireAuthModule,
     AngularFireStorageModule,
     AngularFireMessagingModule,
+    AngularFireFunctionsModule,
     BrowserModule,
     BrowserAnimationsModule,
     IonicModule.forRoot(environment.config),
@@ -97,7 +100,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     FCM,
     Network,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: FirestoreSettingsToken, useValue: {} }
+    { provide: SETTINGS, useValue: {} },
+    // during local development
+    //{ provide: ORIGIN, useValue: 'http://localhost:8100' }
+    { provide: ORIGIN, useValue: 'https://sherpa.firebaseapp.com' }
   ],
   bootstrap: [AppComponent]
 })
