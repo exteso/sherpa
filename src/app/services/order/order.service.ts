@@ -46,8 +46,12 @@ export class OrderService {
     let yearStart: any = new Date(Date.UTC(d.getUTCFullYear(),0,1));
     // Calculate full weeks to nearest Thursday
     let weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+    let weekText = weekNo.toString();
+      if (weekNo<10) {
+        weekText = "0"+weekNo;
+      }
     // Return array of year and week number
-    return [d.getUTCFullYear(), weekNo];
+    return [d.getUTCFullYear(), weekText];
   }
 
   static hasYear53Weeks(year: number){
