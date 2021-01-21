@@ -284,9 +284,9 @@ export class OrderListPage implements OnInit, OnDestroy {
   }
 }
 
-//remove <,> and additional spaces
+//remove everything which is not A-Z or 0-9
 function normalizeName(name: string) {
-  return name.toUpperCase().replace(/[\s<>]*/g, '')
+  return name.toUpperCase().replace(/[^A-Z0-9]/gi, '')
 }
 
 //some fuzzy logic, as sometimes the import is not 100% correct
