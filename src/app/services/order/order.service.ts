@@ -396,6 +396,7 @@ export class OrderService {
               {'name': 'cioccolato pacco', 'grpIdx':8},
               {'name': 'biscotti + crackers', 'grpIdx':8},
               {'name': 'frutta secca + snacks', 'grpIdx':8},
+              {'name': 'frutta secca cartoni', 'grpIdx':8},
               {'name': 'diversi secchi', 'grpIdx':8},
               {'name': 'idee regalo' , 'grpIdx':8}
               ];
