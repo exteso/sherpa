@@ -11,11 +11,11 @@
 
   "network.offline": "Your internet connection appears to be offline.",
 
-  "intro.slide1.title": "ConProBio",
-  "intro.slide1.text": "<p>Registrati per poter accedere ai servizi ConProBio online.</p><p>Crea e modifica il tuo ordine settimanale.</p><p>I capogruppo vedono l'ordine con i totali del gruppo.</p>",
-  "intro.slide2.title": "ConProBio",
+  "intro.slide1.title": "Grom",
+  "intro.slide1.text": "<p>Registrati per poter accedere ai servizi Grom online.</p><p>Crea e modifica il tuo ordine settimanale.</p><p>I capogruppo vedono l'ordine con i totali del gruppo.</p>",
+  "intro.slide2.title": "Grom",
   "intro.slide2.text": "<p>Clicca su <b>Iscriviti</b> e registrati inserendo la tua mail e creando una nuova password.</p><p>Oppure puoi identificarti usando un account Google (registrazione non necessaria)</p>",
-  "intro.slide3.title": "ConProBio",
+  "intro.slide3.title": "Grom",
   "intro.slide3.text": "<p>Modifica il Profilo per cambiare il tuo gruppo, e cambiare il nome della tua famiglia.</p><p>Più utenti possono definire lo stesso nome di famiglia.</p>",
   "intro.button.login": "Sign In",
   "intro.button.register": "Sign Up",
@@ -35,7 +35,7 @@
   "auth.form.error.firstName": "Please enter your first name",
   "auth.form.lastName": "Cognome",
   "auth.form.error.lastName": "Please enter your last name",
-  "auth.form.groupId": "Nome del gruppo ConProBio",
+  "auth.form.groupId": "Nome del gruppo Grom",
   "auth.form.error.groupId": "Questo gruppo non è stato trovato",
   "auth.form.familyId": "Nome famiglia",
   "auth.form.email": "Email",
@@ -91,7 +91,7 @@
   "home.card.titlea": "ConPro",
   "home.card.titleb": "Bio",
   "home.card.version": "0.8",
-  "home.card.description": "Portale Consumatori ConProBio",
+  "home.card.description": "Portale Consumatori Grom",
 
   "home.card.item1.title": "item1",
   "home.card.item1.desc": "item1 desc",

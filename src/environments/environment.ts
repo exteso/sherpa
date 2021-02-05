@@ -22,13 +22,13 @@ export const environment = {
   gcmKey: 'AAAAem7bVZo:APA91bFfrNXYY0Dy3dAd9wwQrPkP0JA86i3Jb0zx8GJfRpujvPTmqEHjUODifMw38ubEApgevQC247yTiZjUxS8kzCLzff4sSWK6Rfz1RnrbzBUuMa5gm0gO9gI7s8XEPDfF0_SAAE04',
   // Set to your Firebase app, you can find your credentials on Firebase app console -> Add Web App.
   firebase: {
-    apiKey: "AIzaSyCm5U5RRcym0YJBkPgjTDCexMvYc0u6IOM",
-    authDomain: "sherpa.firebaseapp.com",
-    databaseURL: "https://sherpa.firebaseio.com",
-    projectId: "sherpa-30d3a",
-    storageBucket: "sherpa-30d3a.appspot.com",
-    messagingSenderId: "675870338903",
-    appId: "1:675870338903:web:4868f7a9a0dd3c2a585812"
+    apiKey: "AIzaSyBCfmxXJ66XVlNqrgf-O0yrmmn6jJeeN5c",
+    authDomain: "grom-bc83c.web.app",
+    projectId: "grom-bc83c",
+    storageBucket: "grom-bc83c.appspot.com",
+    messagingSenderId: "550087426808",
+    appId: "1:550087426808:web:d0ef943d2ac0aebfdf710d",
+    measurementId: "G-7464Z70HBR"
   },
   
   // You can find your googleWebClientId on your Firebase app console -> Authentication -> Sign-in Method -> Google -> Web client ID

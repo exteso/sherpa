@@ -15,7 +15,7 @@ export class ExcelService {
   public exportAsExcelFile(json: any[], orderWeek: string, groupId: string): void {
 
     var worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet([
-      { A: "Conprobio", B: "", C: "", D: "Settimana" },
+      { A: "Grom", B: "", C: "", D: "Settimana" },
       { A: "", B: "", C: "", D: "Gruppo" }
     ], { skipHeader: true});
     
@@ -43,7 +43,7 @@ export class ExcelService {
       { width: 10 }
     ]
     
-    worksheet['A1'].v = 'CONPROBIO';
+    worksheet['A1'].v = 'Grom';
     worksheet['D1'].v = 'Settimana: '+orderWeek;
     worksheet['D2'].v = 'Gruppo: '+groupId;
     const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };

@@ -13,7 +13,7 @@ export class CrudPage implements OnInit {
 
   constructor() {
     this.pages = [
-      { title: 'Gruppi ConProBio', url: '/group-list', direct: 'forward', icon: 'people' },
+      { title: 'Gruppi Grom', url: '/group-list', direct: 'forward', icon: 'people' },
       { title: 'Catalogo Prodotti Settimanale', url: '/catalog-list', direct: 'forward', icon: 'calendar' },
       { title: 'Ordine Settimanale Gruppo Roncaccio', url: '/order-list', direct: 'forward', icon: 'cart' }
     ];

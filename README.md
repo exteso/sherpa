@@ -6,7 +6,7 @@ Run `ionic serve` for a dev server. Navigate to `http://localhost:8100/`. The ap
 
 Important: at the moment calling the functions on the server using sherpa.firebase.com doesn't work
 Try calling https://sherpa.firebaseapp.com/sherpa-30d3a/us-central1/prepareOrder to see if a warmed up function works!
-I have to run functions emulator locally to fill the conprobio page
+I have to run functions emulator locally to fill the Grom page
 
 Run `npm install`
 Run `cd functions && npm install && npm run build && cd ..`

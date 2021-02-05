@@ -1,6 +1,7 @@
 {
   "projects": {
     "test": "sherpa-30d3a",
-    "default": "sherpa-30d3a"
+    "grom": "grom-bc83c",
+    "default": "grom-bc83c"
   }
 }

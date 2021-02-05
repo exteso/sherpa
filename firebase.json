@@ -12,7 +12,7 @@
     ],
     "rewrites": [
       {
-        "source": "/sherpa-30d3a/us-central1/prepareOrder",
+        "source": "/grom-bc83c/us-central1/prepareOrder",
         "function": "prepareOrder"
       },
       {

@@ -11,12 +11,12 @@
 
   "network.offline": "Your internet connection appears to be offline.",
 
-  "intro.slide1.title": "ConProBio",
-  "intro.slide1.text": "ConProBio is for you",
-  "intro.slide2.title": "ConProBio",
-  "intro.slide2.text": "ConProBio is for local producers",
-  "intro.slide3.title": "ConProBio",
-  "intro.slide3.text": "ConProBio is for Ticino wellbeing",
+  "intro.slide1.title": "Grom",
+  "intro.slide1.text": "Grom is for you",
+  "intro.slide2.title": "Grom",
+  "intro.slide2.text": "Grom is for local producers",
+  "intro.slide3.title": "Grom",
+  "intro.slide3.text": "Grom is for Ticino wellbeing",
   "intro.button.login": "Sign In",
   "intro.button.register": "Sign Up",
 
@@ -88,7 +88,7 @@
   "home.card.titlea": "ConPro",
   "home.card.titleb": "Bio",
   "home.card.version": "0.5",
-  "home.card.description": "ConProBio Customer Portal",
+  "home.card.description": "Grom Customer Portal",
 
   "home.card.item1.title": "Next Order",
   "home.card.item1.desc": "Create & Manage your next order",
