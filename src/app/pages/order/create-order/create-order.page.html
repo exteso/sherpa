@@ -19,7 +19,7 @@
   </ion-toolbar>
   <ion-searchbar color="dark" debounce="400" [(ngModel)]="searchTerm" (ionChange)="search($event.detail.value)" [placeholder]="translate.get('productlist.search')" focus cancelButtonText="Custom Cancel" animated></ion-searchbar>
   <ion-segment *ngIf="!searchTerm && !showBasketOnly()" scrollable [(ngModel)]="visibleCategoryGroup" (ionChange)="segmentChanged($event)">
-      <ion-segment-button [value]="group" *ngFor="let group of categoryGroups">
+      <ion-segment-button [value]="group" *ngFor="let group of categoriesGroupFromProducts$ | async">
         <ion-label> <span *ngIf="group.indexOf('+')>0">
                       {{group.split('+')[0]}}<br/>{{group.split('+')[1]}}  
                     </span>

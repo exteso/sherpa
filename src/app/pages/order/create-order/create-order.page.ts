@@ -6,7 +6,7 @@ import { AuthService, FirestoreService, TranslateProvider, LoadingService, Toast
 import { Product } from 'src/app/models/product';
 import { combineLatest } from 'rxjs';
 import { Grocery } from 'src/app/models/grocery';
-import { map, withLatestFrom, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Order } from 'src/app/models/order';
 import { DecimalPipe } from '@angular/common';
@@ -37,9 +37,9 @@ export class CreateOrderPage implements OnInit, OnDestroy {
   myGroups$: Observable<Group[]>
   currentUser: User;
   availableProducts$: Observable<Product[]>;
+  categoriesGroupFromProducts$: Observable<string[]>;
   familyWeekOrder$: BehaviorSubject<Order>;
   filteredGroceryItems$: Observable<Grocery[]>;
-  categoryGroups: string[];
   visibleCategoryGroup: string;
   visibleCategoryGroup$: BehaviorSubject<string>;
   initializeGroceryItems$: Observable<Grocery[]>;
@@ -98,10 +98,6 @@ export class CreateOrderPage implements OnInit, OnDestroy {
 
     this.deliveryDates$ = this.orderService.getOrderDeliveryDates$(orderWeek);
     
-    this.categoryGroups = this.orderService.getCategoryGroups();
-    this.visibleCategoryGroup=this.categoryGroups[0];
-    this.visibleCategoryGroup$.next(this.visibleCategoryGroup);
-
     this.availableProducts$ = this.orderService.getAvailableProducts(orderWeek)
                                   .pipe(
                                     tap(products => {
@@ -109,6 +105,28 @@ export class CreateOrderPage implements OnInit, OnDestroy {
                                       this.loading.dismiss();
                                       this.toast.showToast('Loaded catalog with '+this.nrOfProducts+' products');
                                     }));
+    this.categoriesGroupFromProducts$ = this.availableProducts$.pipe(
+      map((products: Product[]) => {
+        const categories = this.orderService.getCategories();
+        const categoryGroups = this.orderService.getCategoryGroups();
+        let catGroups: Array<string> = [];
+        products.forEach(p => {
+          const productCat = categories.find(c => c.name === p.category);
+          const productGrpCat = categoryGroups[productCat.grpIdx];
+          if (!catGroups.includes(productGrpCat)) {
+            catGroups.push(productGrpCat);
+          }
+          
+        });
+        return catGroups;
+      }),
+      tap(catGroups =>  {
+        this.visibleCategoryGroup=catGroups[0];
+        this.visibleCategoryGroup$.next(this.visibleCategoryGroup);
+      }),
+      
+      );
+
     if (this.groupId && this.familyId) {
       this.subscription2 = this.orderService.getMyOrder(orderWeek, this.groupId, this.familyId).subscribe(
         myOrder => {
@@ -253,7 +271,7 @@ export class CreateOrderPage implements OnInit, OnDestroy {
     //if it is not the first product in this category don't show the category anymore
     if (product.guiOrder != 0) return false; 
 
-    // we always show the category before the first product if we show all the products
+    // we always show the category before the first product but only when we show all the products
     if (!this.showBasketOnly()) return true;
     
     // if showBasketOnly we show only categories with at least 1 product 
