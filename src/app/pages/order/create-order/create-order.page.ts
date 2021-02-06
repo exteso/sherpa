@@ -111,7 +111,10 @@ export class CreateOrderPage implements OnInit, OnDestroy {
         const categoryGroups = this.orderService.getCategoryGroups();
         let catGroups: Array<string> = [];
         products.forEach(p => {
-          const productCat = categories.find(c => c.name === p.category);
+          let productCat = categories.find(c => c.name.trim().toLowerCase() === p.category.trim().toLowerCase());
+          if (!productCat) {
+            productCat = {name: "Unkonwn category", grpIdx:0};
+          }
           const productGrpCat = categoryGroups[productCat.grpIdx];
           if (!catGroups.includes(productGrpCat)) {
             catGroups.push(productGrpCat);
